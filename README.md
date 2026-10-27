@@ -10,7 +10,7 @@ the existing `microsoft-foundry` plugin or provide the native `azd ai` workflow.
   encountered issue suggests a version mismatch, not just because the version
   differs from this plugin.
 - When installation or an update is needed, select a published matching
-  [FoundryX CLI release](https://github.com/microsoft/foundryx-plugin/releases?q=FoundryX&expanded=true),
+  [FoundryX CLI release](https://github.com/microsoft/FoundryX/releases?q=FoundryX&expanded=true),
   including prereleases, for the intended service environment, OS and architecture.
   Use the full release version rather than GitHub's latest-release endpoint.
   Standalone binaries do not require Node.js or npm. Linux sign-in requires
@@ -35,24 +35,24 @@ foundryx auth login
 After the plugin is published at the root of this repository's default branch:
 
 ```text
-copilot plugin marketplace add microsoft/foundryx-plugin
+copilot plugin marketplace add microsoft/FoundryX
 copilot plugin install foundry-agent@foundryx
 ```
 
 The repository includes a small catalog listing only this root plugin. Direct
-installation with `copilot plugin install microsoft/foundryx-plugin` currently
+installation with `copilot plugin install microsoft/FoundryX` currently
 works, but Copilot CLI warns that direct installs are deprecated.
 
 In VS Code, run **Chat: Install Plugin From Source** from the Command Palette and
-enter `https://github.com/microsoft/foundryx-plugin`. Alternatively, use **Chat: Add
-Plugin Marketplace** with `microsoft/foundryx-plugin`, browse it and install
-`foundry-agent`.
-Installing the skill does not enable canvas capabilities in a host that lacks them.
+enter `https://github.com/microsoft/FoundryX`. Alternatively, use **Chat: Add
+Plugin Marketplace** with `microsoft/FoundryX`, browse it and install
+`foundry-agent`. Installing the skill does not enable canvas capabilities in a host
+that lacks them.
 
 For a local checkout, use the repository root:
 
 ```text
-copilot plugin install <path-to-foundryx-plugin>
+copilot plugin install <path-to-FoundryX>
 ```
 
 Start a new Copilot session after installation. Use `copilot plugin list` to
@@ -91,7 +91,7 @@ deployment does not automatically publish an Agent to Microsoft 365 or Teams.
 ## Package layout
 
 ```text
-foundryx-plugin/
+FoundryX/
   marketplace.json
   plugin.json
   skills/foundry-agent/SKILL.md
@@ -112,38 +112,16 @@ version; CLI builds may append an environment suffix. Follow the skill's
 prerequisite checks rather than reinstalling a working CLI merely because its
 version differs.
 
-This repository distributes the standalone `foundry-agent` plugin. Its generated
-contents come from the FoundryX source repository; update the source and re-export
-rather than editing the generated skill or canvas here. Public standalone CLI
-binaries are distributed through this repository's releases, not inside the plugin.
-Review public changes before committing or pushing. No credentials, tenant
-inventory, native connection definitions or CLI installation packages are included.
+This repository distributes the standalone plugin and public CLI binaries. The
+CLI executable is a separate release asset, not a component inside the plugin.
+The plugin contains no credentials, tenant inventory or native connection definitions.
 
-## Releasing CLI binaries
+## CLI release files
 
-The **Build and release FoundryX CLI binary** GitHub Actions workflow publishes
-Windows x64/ARM64, macOS x64/ARM64 and Linux x64 binaries with checksums and source
-provenance. It builds from a trusted private FoundryX source branch; this public
-repository contains only the release automation and generated plugin.
-
-1. Configure the repository Actions secret `FOUNDRYX_SOURCE_SSH_KEY` with the
-   private key corresponding to a read-only deploy key on
-   `SmallBlackHole/foundry-orchestrator-agent`. Set it through GitHub repository
-   settings; never put key material in a file committed to this repository.
-2. Commit and push the source changes, keeping the CLI package/lockfile, skill and
-   canvas manifest base versions aligned. Export and review the matching plugin,
-   then commit and push this repository's plugin and release automation.
-3. Obtain explicit confirmation before manually running the workflow. Select its
-   `main` branch, a trusted `source_branch` (default `main`) and an `environment`
-   matching the intended service profile (default `staging`).
-4. The workflow resolves the source commit once, builds and tests all five native
-   targets with Node.js 24, and publishes a **prerelease**, not a draft, tagged
-   `foundryx-v<version>-<environment>`. It does not overwrite an existing release.
-   Verify all five binaries, `SHA256SUMS`, `release.json` and `release-notes.md`
-   before announcing the release.
-
-Repository setup alone does not publish binaries. Confirm a matching release
-exists before directing users to install the CLI.
+Each CLI release provides Windows x64/ARM64, macOS x64/ARM64 and Linux x64 binaries,
+`SHA256SUMS`, `release.json` and installation notes. Select the version and service
+environment that match your intended use. The release metadata records platform,
+runtime, executable size and SHA-256 checksums.
 
 ## Contributing
 

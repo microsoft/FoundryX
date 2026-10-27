@@ -88,6 +88,14 @@ for subscription administrators. Per-user tool consent remains a manual action.
 Deployment, invocation, evaluation and publishing can incur costs; ordinary
 deployment does not automatically publish an Agent to Microsoft 365 or Teams.
 
+## Builder documentation
+
+- [Builder concepts and reference](doc/builder-guide.md) explains access, CLI and
+  Canvas capabilities, tools, evaluation, monitoring, publishing, and troubleshooting.
+- [Walkthrough: Build and operate your first agent](doc/build-first-agent.md)
+  covers sign-in, development, deployment, remote invocation, and Canvas inspection,
+  with optional tool, evaluation, monitoring, and publishing steps.
+
 ## Package layout
 
 ```text

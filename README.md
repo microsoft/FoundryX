@@ -72,6 +72,9 @@ its builder canvas uses a different canvas ID.
 
 ## Use
 
+For tenant setup, project permissions, model and tool access, and employee
+onboarding, see the [FoundryX administrator guide](doc/enterprise-admin-agent-access.md).
+
 Invoke `/foundry-agent` for FoundryX workflows. In clients that qualify plugin
 components, select the `foundry-agent` skill from this plugin in the skill picker.
 It discovers projects and tools, builds and operates Agents, and uses the hosted

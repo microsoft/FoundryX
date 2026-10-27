@@ -53,7 +53,9 @@ The permissions support these operations:
 
 Onboarding does not grant the FoundryX enterprise applications access to a specific Azure resource. It does not assign a service principal an Azure subscription, resource group, or Foundry resource role.
 
-The permissions allow the FoundryX API to request Microsoft Graph and Azure Resource Manager tokens on behalf of the signed-in user. Each Azure operation remains limited by that user's existing Azure RBAC assignments.
+The delegated permissions allow the FoundryX API to request Microsoft Graph and Azure Resource Manager tokens on behalf of the signed-in user. Delegated Azure management operations remain limited by that user's existing Azure RBAC assignments.
+
+Project registration is a separate step. An authorized subscription administrator grants the customer-tenant FoundryX service identity access to the selected resources. FoundryX can then authorize employees through project membership and resource policies without assigning Azure roles to each employee. See the [administrator guide](enterprise-admin-agent-access.md).
 
 ## Completion criteria
 
@@ -62,4 +64,4 @@ After consent, FoundryX must:
 - Verify that API, Portal, and CLI consent completed for the same tenant.
 - Activate the tenant for the FoundryX private preview.
 
-After activation, users can sign in with work or school accounts and access FoundryX projects assigned to them. Azure operations continue to follow each signed-in user's Azure RBAC assignments.
+After activation, users can sign in with work or school accounts. Access to registered FoundryX projects requires a matching project grant and remains subject to the project's model and tool policy. Subscription management operations still require the administrator's Azure authority.

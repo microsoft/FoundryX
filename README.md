@@ -7,6 +7,10 @@ GitHub Copilot plugin for FoundryX-managed Microsoft Foundry projects. It includ
 the `foundry-agent` skill and **FoundryX Canvas (Preview)** (`foundryx-canvas`). It does not change
 the existing `microsoft-foundry` plugin or provide the native `azd ai` workflow.
 
+For capabilities, architecture, and governance, see the
+[FoundryX overview](doc/overview.md). Browse the
+[documentation contents](doc/overview.md#table-of-contents) for administration and Builder guides.
+
 ## Prerequisites
 
 - Use the installed FoundryX CLI (`foundryx`). Install only if it is missing or an

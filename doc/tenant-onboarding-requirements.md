@@ -17,7 +17,7 @@ The role must allow the administrator to grant tenant-wide admin consent for the
 
 Before opening the invitation, run the FoundryX role-check script with the customer tenant ID:
 
-1. Download `Check-FoundryXAdminConsentRole.ps1` from the onboarding guide.
+1. Download `Check-FoundryXAdminConsentRole.ps1` from the onboarding guide. The repository copy is `doc/Check-FoundryXAdminConsentRole.ps1`.
 2. Open Windows PowerShell in the folder that contains the script.
 3. Unblock the downloaded file:
 

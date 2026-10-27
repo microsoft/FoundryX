@@ -4,6 +4,8 @@ Use FoundryX to give employees access to customer-owned Microsoft Foundry projec
 
 This guide covers customer administration in the FoundryX private preview. It does not cover deployment of the FoundryX service or provider-side tenant administration. Your organization retains ownership of its subscriptions, resources, quota, costs, and security policy.
 
+**Staging portal:** [FoundryX Admin Center](https://foundryx-portal-staging.redsea-0f4601f0.westus2.azurecontainerapps.io/)
+
 Use your organization's sign-in process. This guide contains no shared test accounts, passwords, or credentials.
 
 ## In this guide
@@ -92,13 +94,17 @@ The CLI creation path provisions native resources, including monitoring. It requ
 
 ## Sign in to the correct environment and tenant
 
-1. Open the Admin Center address supplied by your FoundryX service operator. Use the same environment for the portal and CLI.
+1. Open the staging portal linked above. For another environment, use the Admin Center address supplied by your FoundryX service operator. Use the same environment for the portal and CLI.
 2. Sign in with your work or school account. The root address selects the account's home tenant.
 3. To use a different tenant where the account is a member or guest, open `https://<admin-center-host>/?tenant=<tenant-id>`.
 4. If already signed in, open **Account**, find **Current directory**, and select **Switch**. Use **Switch account** when you need a different identity.
-5. Open **Permissions**. Confirm that the expected projects are visible before making changes.
+5. On the **Overview** landing page, select **Manage project permissions** or **Permissions** in the left navigation. Confirm that the expected projects are visible before making changes.
 
 Older `/t/<tenant-id>` links redirect to the tenant-query form. Switching tenants does not grant access or onboard a tenant.
+
+![FoundryX Admin Center Overview landing page with navigation and the Manage project permissions action.](images/admin-landing-page.png)
+
+*The staging Admin Center landing page after sign-in. The account button is masked to exclude account details.*
 
 For CLI administration, follow the [installation guidance](../README.md#prerequisites), then sign in to the intended tenant:
 

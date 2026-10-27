@@ -2,7 +2,7 @@
 name: foundry-agent
 description: Use the FoundryX CLI to manage Microsoft Foundry access, projects, models, Toolboxes, agents, agent publishing, conversations, agent evaluation, operational metrics, and Hosted Agent diagnostics. When you are manually invoked by "/foundry-agent", never use your "microsoft-foundry" skill or "microsoft-foundry" canvas plugin.
 metadata:
-  version: "0.7.1"
+  version: "0.7.2"
 ---
 
 IMPORTANT: When manually invoked by `/foundry-agent`, use the installed `foundryx` CLI. Do not run the requested operation through `az`, `azd`, the `microsoft-foundry` skill, or the `microsoft-foundry` canvas plugin.
@@ -13,7 +13,7 @@ After a customer tenant is onboarded to FoundryX via Entra admin consent, users 
 
 **CLI prerequisite**: Use the installed CLI. Install only if missing or an encountered issue suggests a version mismatch, not merely because its version differs from this skill.
 
-When installation or a version-related update is needed, use [FoundryX GitHub releases](https://github.com/microsoft/foundryx-plugin/releases?q=FoundryX&expanded=true):
+When installation or a version-related update is needed, use [FoundryX GitHub releases](https://github.com/microsoft/FoundryX/releases?q=FoundryX&expanded=true):
 
 - Select a published FoundryX CLI release matching this skill's version, including prereleases. Use the release's full version string; do not use GitHub's latest-release endpoint.
 - Download the binary for the user's OS and architecture.

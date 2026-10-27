@@ -1,5 +1,8 @@
 # FoundryX plugin (preview)
 
+> [!IMPORTANT]
+> FoundryX is an experimental project. It is currently available only by invitation to selected customers.
+
 GitHub Copilot plugin for FoundryX-managed Microsoft Foundry projects. It includes
 the `foundry-agent` skill and **FoundryX Canvas (Preview)** (`foundryx-canvas`). It does not change
 the existing `microsoft-foundry` plugin or provide the native `azd ai` workflow.
@@ -71,6 +74,11 @@ CLI credential cache. The native `microsoft-foundry` plugin can remain installed
 its builder canvas uses a different canvas ID.
 
 ## Use
+
+For the access model, roles, resource policies, and administration options, see
+[FoundryX administration concepts and reference](doc/enterprise-admin-agent-access.md).
+For the step-by-step portal task, follow
+[Walkthrough: Register project permissions](doc/register-project-permissions.md).
 
 Invoke `/foundry-agent` for FoundryX workflows. In clients that qualify plugin
 components, select the `foundry-agent` skill from this plugin in the skill picker.

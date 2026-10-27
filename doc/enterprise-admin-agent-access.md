@@ -18,7 +18,6 @@ Use your organization's sign-in process. This guide contains no shared test acco
 - [Verify access and hand off to employees](#verify-access-and-hand-off-to-employees)
 - [Disable or remove a permission](#disable-or-remove-a-permission)
 - [Troubleshoot](#troubleshoot)
-- [Implementation reference](#implementation-reference)
 
 ## Understand the access model
 
@@ -53,7 +52,7 @@ Subscription managers can administer permissions and models without project memb
 
 Saving a new permission is not a read-only operation. FoundryX uses the administrator's delegated Azure authority to provision access for the FoundryX API enterprise application in the customer tenant.
 
-The implementation provisions access at these scopes:
+Project registration provisions access at these scopes:
 
 | Scope | Service access |
 | --- | --- |
@@ -226,7 +225,7 @@ The Admin Center controls which tools project members can use. Resource creation
 
 Allow a Toolbox **and every project connection it references**. Allowing only the Toolbox does not override connection restrictions. A public MCP server used directly is distinct from a project connection or Toolbox.
 
-The reviewed portal implementation automatically includes **Web search** when available and does not let you clear it in the picker. A later portal policy save can add it again. If your policy must exclude web search or deny all tools, use an explicit CLI policy and verify it after any portal edits.
+The permission form automatically includes **Web search** when available and does not let you clear it in the picker. A later portal policy save can add it again. If your policy must exclude web search or deny all tools, use an explicit CLI policy and verify it after any portal edits.
 
 ### Create or maintain shared resources
 
@@ -370,19 +369,3 @@ If deletion fails after cleanup starts, the permission remains disabled as **Del
 Import can succeed even when monitoring setup needs attention. Inspect any returned monitoring error separately. The monitoring recovery commands are available through the CLI, not the permission form.
 
 For support, record the operation, error code, request ID, environment, and time. Share project or tenant identifiers only through your organization's approved support channel. Never include passwords, tokens, connection keys, or sensitive tool output.
-
-## Implementation reference
-
-The workflow and authorization statements above were checked against the FoundryX implementation on 27 October 2026, revision `543792e1cdd04145d18b45f3ebded31fbe34e564`. The screenshot shows the deployed preview form, not proof that the service runs that source revision. Source paths below are relative to the implementation's `FoundryX` directory.
-
-| Behavior | Implementation and supporting tests |
-| --- | --- |
-| Tenant selection and sign-in recovery | `portal/src/client.ts`, `portal/src/components/shell/nav/profile/ProfileButton.tsx`; `portal/tests/client.test.ts`, `portal/tests/claims-challenge.test.ts`. |
-| Subscription authority, effective roles, and model-management delegation | `app/permissions.py`, `app/azure_client.py`; `tests/test_api.py`, `tests/test_access.py`. |
-| Form requirements, default roles, model/tool defaults, and discovery recovery | `portal/src/ManageProjectPermissionsPage.tsx`, `portal/src/EntraChipPicker.tsx`; `portal/tests/ManageProjectPermissionsPage.test.tsx`, `portal/e2e/permission-discovery.spec.ts`. |
-| Import, Azure service access, and partial saves | `app/service.py`, `app/project_import.py`, `app/onboarding.py`, `portal/src/App.tsx`; `tests/test_permission_policy.py`, `portal/tests/PermissionLifecycle.test.tsx`. |
-| Model and tool policy semantics | `app/resource_policy.py`, `app/toolboxes.py`; `tests/test_permission_policy.py`, `tests/test_permission_api.py`. |
-| Membership limits and overlapping grants | `app/service.py`, `app/permissions.py`, `portal/src/ProjectMembersTable.tsx`; `tests/test_api.py`. |
-| Connection and Toolbox authority | `app/connections.py`, `app/toolboxes.py`; `tests/test_api.py`. |
-| Read-only diagnostics and CLI syntax | `app/access.py`, `cli/src/access.ts`, `cli/src/main.ts`; `tests/test_access.py`, `cli/test/access.test.ts`. |
-| Permission deletion and retained native resources | `app/project_delete.py`, `portal/src/DeletePermissionDialog.tsx`; `tests/test_permission_delete.py`. |

@@ -1,5 +1,8 @@
 # FoundryX administration concepts and reference
 
+> [!IMPORTANT]
+> FoundryX is an experimental project. It is currently available only by invitation to selected customers.
+
 Use FoundryX to give employees access to customer-owned Microsoft Foundry projects without assigning Azure roles to each employee. Administrators register projects, select the models and tools that members can use, and assign access through Microsoft Entra users, groups, or the tenant.
 
 This page explains the access model, resource policies, and administration options in the FoundryX private preview. For the step-by-step portal task, follow [Walkthrough: Register project permissions](register-project-permissions.md).

@@ -1,5 +1,8 @@
 # FoundryX plugin (preview)
 
+> [!IMPORTANT]
+> FoundryX is an experimental project. It is currently available only by invitation to selected customers.
+
 GitHub Copilot plugin for FoundryX-managed Microsoft Foundry projects. It includes
 the `foundry-agent` skill and **FoundryX Canvas (Preview)** (`foundryx-canvas`). It does not change
 the existing `microsoft-foundry` plugin or provide the native `azd ai` workflow.

@@ -1,5 +1,8 @@
 # Walkthrough: Register project permissions
 
+> [!IMPORTANT]
+> FoundryX is an experimental project. It is currently available only by invitation to selected customers.
+
 Register an existing Microsoft Foundry project in FoundryX, choose the models and tools that employees can use, and assign access. At the end of this walkthrough, the project has a saved permission and a representative employee has verified their access.
 
 For role definitions, policy semantics, and administration options, see [FoundryX administration concepts and reference](enterprise-admin-agent-access.md).

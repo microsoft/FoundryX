@@ -1,5 +1,8 @@
 # FoundryX tenant onboarding requirements
 
+> [!IMPORTANT]
+> FoundryX is an experimental project. It is currently available only by invitation to selected customers.
+
 This document records the requirements in the FoundryX tenant onboarding guide. The guide describes onboarding for the FoundryX private preview.
 
 ## Administrator requirements

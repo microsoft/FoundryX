@@ -1,23 +1,22 @@
-# FoundryX administrator guide
+# FoundryX administration concepts and reference
 
 Use FoundryX to give employees access to customer-owned Microsoft Foundry projects without assigning Azure roles to each employee. Administrators register projects, select the models and tools that members can use, and assign access through Microsoft Entra users, groups, or the tenant.
 
-This guide covers customer administration in the FoundryX private preview. It does not cover deployment of the FoundryX service or provider-side tenant administration. Your organization retains ownership of its subscriptions, resources, quota, costs, and security policy.
+This page explains the access model, resource policies, and administration options in the FoundryX private preview. For the step-by-step portal task, follow [Walkthrough: Register project permissions](register-project-permissions.md).
+
+Customer administration does not include deployment of the FoundryX service or provider-side tenant administration. Your organization retains ownership of its subscriptions, resources, quota, costs, and security policy.
 
 **Staging portal:** [FoundryX Admin Center](https://foundryx-portal-staging.redsea-0f4601f0.westus2.azurecontainerapps.io/)
 
 Use your organization's sign-in process. This guide contains no shared test accounts, passwords, or credentials.
 
-## In this guide
+## In this reference
 
 - [Understand the access model](#understand-the-access-model)
 - [Prepare the tenant and resources](#prepare-the-tenant-and-resources)
-- [Sign in to the correct environment and tenant](#sign-in-to-the-correct-environment-and-tenant)
-- [Register an existing project](#register-an-existing-project)
 - [Control model access and deployment](#control-model-access-and-deployment)
 - [Prepare and allow tools](#prepare-and-allow-tools)
 - [Manage project membership](#manage-project-membership)
-- [Verify access and hand off to employees](#verify-access-and-hand-off-to-employees)
 - [Disable or remove a permission](#disable-or-remove-a-permission)
 - [Troubleshoot](#troubleshoot)
 
@@ -67,6 +66,22 @@ Review these scopes against your organization's Azure policy before registration
 
 Project users receive no backend credential or individual Azure role through this process. FoundryX checks their access before using the customer-tenant service identity.
 
+### Registration lifecycle
+
+FoundryX verifies the subscription and tenant, saves the policy in a disabled import record, provisions service access, and discovers existing model deployments and agents. It enables the permission after successful resource registration.
+
+Import records resource identities and agent/version metadata. It does not copy agent prompts, source code, connection credentials, or conversation content into its project-registration metadata.
+
+The portal applies the import or policy change **before** it saves membership changes, and saves each membership change separately. The whole form is not one atomic transaction. If a later step fails, earlier changes can remain.
+
+An incomplete import remains visible as **Import incomplete** and stays disabled. Retrying preserves the saved policy. Reimporting a completed permission does not reset membership or its existing policy. See [Troubleshoot](#troubleshoot) for recovery actions.
+
+### Authorization and runtime verification
+
+`access check` makes no resource changes. `allowed: true` confirms authorization only, not runtime health. `allowed: false` reports a blocking rule; `allowed: null` means authority could not be verified. Denied and unverified checks exit nonzero. The real operation checks access again.
+
+A successful form save does not prove that an employee can build and run an agent. The [registration walkthrough](register-project-permissions.md#6-verify-employee-access) includes employee access and runtime verification.
+
 ## Prepare the tenant and resources
 
 Before creating a permission, confirm the following:
@@ -92,61 +107,11 @@ foundryx access project create <resource-name> --subscription <subscription-id> 
 
 The CLI creation path provisions native resources, including monitoring. It requires subscription management authority and can incur Azure costs. Review the returned project and any setup errors before granting employee access.
 
-## Sign in to the correct environment and tenant
+For portal sign-in and registration, follow the [registration walkthrough](register-project-permissions.md). Only a subscription manager can create a new permission; Project Owner membership alone is not sufficient.
 
-1. Open the staging portal linked above. For another environment, use the Admin Center address supplied by your FoundryX service operator. Use the same environment for the portal and CLI.
-2. Sign in with your work or school account. The root address selects the account's home tenant.
-3. To use a different tenant where the account is a member or guest, open `https://<admin-center-host>/?tenant=<tenant-id>`.
-4. If already signed in, open **Account**, find **Current directory**, and select **Switch**. Use **Switch account** when you need a different identity.
-5. On the **Overview** landing page, select **Manage project permissions** or **Permissions** in the left navigation. Confirm that the expected projects are visible before making changes.
+CLI examples in this reference assume the intended environment and tenant are selected. Follow the [CLI installation guidance](../README.md#prerequisites) and [sign-in and access checks](register-project-permissions.md#6-verify-employee-access) before using them.
 
-Older `/t/<tenant-id>` links redirect to the tenant-query form. Switching tenants does not grant access or onboard a tenant.
-
-![FoundryX Admin Center Overview landing page with navigation and the Manage project permissions action.](images/admin-landing-page.png)
-
-*The staging Admin Center landing page after sign-in. The account button is masked to exclude account details.*
-
-For CLI administration, follow the [installation guidance](../README.md#prerequisites), then sign in to the intended tenant:
-
-```text
-foundryx --version
-foundryx auth login --tenant <tenant-id>
-foundryx auth status
-foundryx access show
-```
-
-Commands below use the **FoundryX project UUID**, returned by `foundryx access project list`. It is not the native Azure resource ID. Native resource IDs are used for discovery and import.
-
-## Register an existing project
-
-Only a subscription manager can create a new permission. A Project Owner can edit an existing project's resource policy but cannot register or delete the permission using the project role alone.
-
-![New permission dialog before selecting resources or identities.](images/admin-new-permission.png)
-
-*The deployed preview form, captured before selecting a subscription, project, or identity. No account or tenant-specific values are shown. Preview deployments can differ in labels and optional fields.*
-
-1. In **Permissions**, select **New permission**.
-2. Select **Azure subscription**. Discovery uses your signed-in Azure identity; the service does not substitute its own identity when discovery is denied.
-3. Select **Foundry project**. The picker lists existing projects that are not already registered. Use **Create new Foundry project** if you need to create one, then reopen the form to discover it.
-4. Review **Allowed models**. Select the required deployment names, not only the underlying model family. The form can preselect existing GPT-5 deployments; verify the selections rather than assuming a model was provisioned.
-5. Review **Allowed tools**. Select the required built-in tools, project connections, and Toolboxes. This step allows existing resources; it does not create or repair them.
-6. Under **Microsoft Entra identity**, select at least one user, group, or the tenant. Review each **Foundry X role**. For subscription managers and Owners, newly selected identities default to **Consumer**; change builders to **User**. Assign an individual or group Owner access for connection and Toolbox administration; subscription authority does not supply that project role.
-7. Select **Save permissions** and wait for the operation to finish.
-8. Open the permission by its project name. Verify its models, allowed tools, and Microsoft Entra assignments.
-
-The form cannot save a new permission until it has a project, at least one identity, and a successful model-discovery result. A successful discovery can contain no models; that is different from a failed discovery.
-
-If tool discovery fails, the new-permission form can offer to save with **tools disabled**. This saves an empty tool allowlist. Resolve the discovery problem, then use **Edit** to enable the intended tools.
-
-### What happens when you save
-
-FoundryX verifies the subscription and tenant, saves the policy in a disabled import record, provisions service access, and discovers existing model deployments and agents. It enables the permission after successful resource registration.
-
-Import records resource identities and agent/version metadata. It does not copy agent prompts, source code, connection credentials, or conversation content into its project-registration metadata.
-
-The portal applies the import or policy change **before** it saves membership changes, and saves each membership change separately. The whole form is not one atomic transaction. If a later step fails, earlier changes can remain. Reopen the permission, inspect the saved policy and members, and complete only the missing changes.
-
-An incomplete import remains visible as **Import incomplete** and stays disabled. Use its **...** menu and **Retry import**, or remove the permission if you intend to revoke the partially provisioned access. Retrying preserves the saved policy. Reimporting a completed permission does not reset membership or its existing policy.
+Commands use the **FoundryX project UUID**, returned by `foundryx access project list`. It is not the native Azure resource ID. Native resource IDs are used for discovery and import.
 
 ## Control model access and deployment
 
@@ -291,39 +256,6 @@ A Manager can add User grants or remove existing User grants for individuals and
 Removing one assignment does not necessarily remove effective access. Check remaining direct, group, and tenant-wide grants. A direct role downgrade cannot reduce access received from another grant.
 
 CLI equivalents and access diagnostics are in [Project permissions and access diagnostics](../skills/foundry-agent/references/permissions.md).
-
-## Verify access and hand off to employees
-
-Do not treat a successful form save as proof that an employee can build and run an agent.
-
-1. Reopen the permission and confirm the intended models, tools, identities, and roles.
-2. Have a representative employee sign in to the same FoundryX environment and tenant.
-3. Have the employee inspect their effective project access:
-
-   ```text
-   foundryx access project list
-   foundryx access show --project <project-id>
-   foundryx access check --project <project-id> --action agent.deploy --model <deployment-name>
-   ```
-
-4. For an agent with tools, include every declared tool in the read-only authorization check:
-
-   ```text
-   foundryx access check --project <project-id> --action agent.deploy --model <deployment-name> --tool toolbox:<toolbox-name> connection:<connection-name>
-   ```
-
-5. Confirm that the employee has at least User access, the project is enabled, and the required resources are allowed.
-6. Have the employee deploy and invoke a representative agent. This can incur usage costs:
-
-   ```text
-   foundryx agent invoke "Verify the configured tool with a non-sensitive request." --agent-id <agent-id> --project <project-id>
-   ```
-
-7. Complete any per-user tool consent and verify the actual tool result, not only the agent's text response.
-
-`access check` makes no resource changes. `allowed: true` confirms authorization only, not runtime health. `allowed: false` reports a blocking rule; `allowed: null` means authority could not be verified. Denied and unverified checks exit nonzero. The real operation checks access again.
-
-Give employees the tenant sign-in link, FoundryX project UUID, approved model deployment names, approved tool names or endpoints, and the contact for access changes. Link them to the [plugin installation and usage guide](../README.md). Do not send backend credentials or ask them to use an administrator account.
 
 ## Disable or remove a permission
 

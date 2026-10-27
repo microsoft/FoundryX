@@ -55,7 +55,7 @@ Onboarding does not grant the FoundryX enterprise applications access to a speci
 
 The delegated permissions allow the FoundryX API to request Microsoft Graph and Azure Resource Manager tokens on behalf of the signed-in user. Delegated Azure management operations remain limited by that user's existing Azure RBAC assignments.
 
-Project registration is a separate step. An authorized subscription administrator grants the customer-tenant FoundryX service identity access to the selected resources. FoundryX can then authorize employees through project membership and resource policies without assigning Azure roles to each employee. See the [administrator guide](enterprise-admin-agent-access.md).
+Project registration is a separate step. An authorized subscription administrator grants the customer-tenant FoundryX service identity access to the selected resources. FoundryX can then authorize employees through project membership and resource policies without assigning Azure roles to each employee. See [administration concepts and reference](enterprise-admin-agent-access.md) for the access model, or follow the [registration walkthrough](register-project-permissions.md) to set up a project permission.
 
 ## Completion criteria
 

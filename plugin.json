@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "foundry-agent",
+  "version": "0.7.1",
+  "description": "FoundryX skill and Agent canvas for customer-owned Microsoft Foundry projects.",
+  "author": {
+    "name": "Microsoft",
+    "url": "https://github.com/microsoft"
+  },
+  "repository": "https://github.com/microsoft/foundryx-plugin",
+  "keywords": [
+    "foundry-agent",
+    "foundryx",
+    "agents",
+    "canvas"
+  ]
+}

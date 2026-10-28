@@ -112,7 +112,7 @@ The CLI creation path provisions native resources, including monitoring. It requ
 
 For portal sign-in and registration, follow the [registration walkthrough](register-project-permissions.md). Only a subscription manager can create a new permission; Project Owner membership alone is not sufficient.
 
-CLI examples in this reference assume the intended environment and tenant are selected. Follow the [CLI installation guidance](../README.md#prerequisites) and [sign-in and access checks](register-project-permissions.md#6-verify-employee-access) before using them.
+CLI examples in this reference assume the intended environment and tenant are selected. For direct terminal use, follow [Manual CLI setup](builder-guide.md#manual-cli-setup-optional) and the [sign-in and access checks](register-project-permissions.md#6-verify-employee-access).
 
 Commands use the **FoundryX project UUID**, returned by `foundryx access project list`. It is not the native Azure resource ID. Native resource IDs are used for discovery and import.
 

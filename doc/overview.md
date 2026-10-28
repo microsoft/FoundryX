@@ -109,7 +109,7 @@ monitoring to guide improvements.
 | Surface | Current purpose |
 | --- | --- |
 | Copilot plugin, `foundry-agent` | Provides the `/foundry-agent` skill and FoundryX Canvas. The coding agent uses the skill and CLI to develop and operate agents. |
-| FoundryX CLI, `foundryx` | Provides sign-in, resource discovery, access checks, agent deployment and invocation, evaluation, diagnostics, and publishing workflows. It is installed separately from the plugin. |
+| FoundryX CLI, `foundryx` | Provides sign-in, resource discovery, access checks, agent deployment and invocation, evaluation, diagnostics, and publishing workflows. It is separate from the plugin; the skill handles its setup when needed. |
 | FoundryX Canvas, `foundryx-canvas` | Provides a graphical view of deployed agents, details, lifecycle actions, monitoring, and publishing. It is not a source editor or an interactive agent chat. |
 
 The plugin supports Prompt and Hosted agent workflows. Canvas requires a
@@ -126,15 +126,15 @@ See the [Builder guide](builder-guide.md) for current capabilities and limits.
 
 Use these guides to prepare your organization's environment and build and
 operate agents. For installation, see
-[Install the FoundryX CLI and Copilot plugin](../README.md#prerequisites).
+[Install the Copilot plugin](../README.md#install); the skill guides CLI setup and sign-in.
 
 | Document | Audience | What it covers |
 | --- | --- | --- |
 | [Tenant onboarding requirements](tenant-onboarding-requirements.md) | Administrators | Required Microsoft Entra roles, administrator consent, and tenant activation. |
 | [Administration concepts and reference](enterprise-admin-agent-access.md) | Administrators | Access boundaries, project roles, model and tool policies, membership, and troubleshooting. |
 | [Walkthrough: Register project permissions](register-project-permissions.md) | Administrators | Register an existing Foundry project, select allowed resources, assign roles, and verify employee access. |
-| [Builder concepts and reference](builder-guide.md) | Builders | Installation, access, CLI and Canvas capabilities, tools, evaluation, monitoring, publishing, and troubleshooting. |
-| [Walkthrough: Build and operate your first agent](build-first-agent.md) | Builders | Install, sign in, create, deploy, invoke, and inspect an agent, with optional tool, evaluation, monitoring, and publishing steps. |
+| [Builder concepts and reference](builder-guide.md) | Builders | Plugin-first setup, upgrades, access, CLI and Canvas capabilities, tools, evaluation, monitoring, publishing, and optional manual CLI setup. |
+| [Walkthrough: Build and operate your first agent](build-first-agent.md) | Builders | Install the plugin, let Copilot guide setup and sign-in, then create, deploy, invoke, and inspect an agent. |
 
 ### Supporting script
 

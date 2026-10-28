@@ -88,8 +88,8 @@ See [Registration lifecycle](enterprise-admin-agent-access.md#registration-lifec
 
 ## 6. Verify employee access
 
-1. Have a representative employee sign in to the same FoundryX environment and tenant.
-2. After [installing the CLI](../README.md#prerequisites), have the employee sign in and inspect their access:
+1. Have a representative employee follow the [plugin workflow](../README.md#use) in the same FoundryX environment and tenant. Let Copilot check CLI setup and guide their Microsoft sign-in.
+2. Ask Copilot to inspect the employee's access. For manual CLI verification, follow [optional CLI setup](builder-guide.md#manual-cli-setup-optional), then use:
 
    ```text
    foundryx --version

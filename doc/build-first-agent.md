@@ -7,80 +7,49 @@ Build an agent in a project prepared by your organization, invoke it, and find i
 
 For role definitions, tools, evaluation, monitoring, and publishing, see [FoundryX Builder concepts and reference](builder-guide.md).
 
-> [!IMPORTANT]
-> **Install first: the Copilot path needs both the FoundryX CLI and the foundry-agent plugin.**
-> The plugin does not install the CLI. Start with [Step 1: Installation](#1-install-the-cli-and-copilot-plugin) before sign-in or agent development.
-
 ## Before you begin
 
 Confirm these prerequisites:
 
 - Your tenant is active in FoundryX, and your administrator has registered and enabled a Foundry project.
 - You have **User**, **Manager**, or **Owner** access to that project. Consumer access permits invocation, not development.
-- Your administrator has supplied the intended service environment, tenant ID, project, approved model deployment, and contact for access changes.
+- Know your organization's intended service environment and tenant if they specify one. Copilot can discover accessible projects/models and help you choose.
 - The project has a ready, allowed model deployment. Required tools or Toolboxes are already configured and allowed if your agent needs them.
-- You have a local workspace and a Copilot client for the Copilot path. Install the CLI and plugin in Step 1 below.
-- For local Hosted Agent testing, Python and access to the sample dependencies are available. Canvas requires a Copilot host with Canvas extension support.
+- You have a workspace and a compatible coding-agent client that can execute commands and install user-owned tools when needed.
+- Local Hosted Agent testing needs Python and access to its dependencies; Copilot checks those if used. Canvas requires a host with canvas extension support.
 
 Use your own work or school account and approved, non-sensitive sample inputs. This guide contains no shared test accounts or credentials. Deployment, invocation, tools, and later evaluation or publishing can incur charges.
 
-## 1. Install the CLI and Copilot plugin
+## 1. Install the Copilot plugin
 
-Install both components before continuing:
+Follow [Install the plugin](../README.md#install) for your client, then start a
+new conversation in your workspace. Confirm that `foundry-agent` is enabled.
+You do not need to install the CLI manually before continuing.
 
-| Component | Installation instructions |
-| --- | --- |
-| **FoundryX CLI** (`foundryx`) | [Install the CLI](builder-guide.md#1-install-the-foundryx-cli) for your administrator's service environment and your platform. Keep a working installation. |
-| **Copilot plugin** (`foundry-agent`) | [Install the plugin](builder-guide.md#2-install-the-plugin-in-your-copilot-client) in Copilot CLI, VS Code/Insiders, or Copilot App. |
-
-**Start a new Copilot session after installation.** Confirm that `foundry-agent` is enabled in your client and that this command works:
-
-```text
-foundryx --version
-```
-
-Installation does not sign you in or grant project access. Platform requirements, client-specific steps, and older-installation guidance are in the [Builder guide](builder-guide.md#install-the-cli-and-copilot-plugin).
+For an existing installation, see [Upgrade](../README.md#upgrade).
 
 ## 2. Sign in and verify your access
 
-1. Open a terminal and check the installed CLI:
+Ask Copilot to handle setup and access discovery:
 
-   ```text
-   foundryx --version
-   foundryx auth status
-   ```
+```text
+/foundry-agent Help me get started with FoundryX. Check CLI setup and sign-in, then help me choose an accessible project and a ready, allowed model.
+```
 
-2. If not signed in, or if you need to change tenants, run:
-
-   ```text
-   foundryx auth login --tenant <tenant-id>
-   ```
-
-3. Complete Microsoft sign-in with your own account. Inspect your projects and access:
-
-   ```text
-   foundryx access project list
-   foundryx access show --project <project-id>
-   foundryx model list --project <project-id>
-   ```
-
-4. Select an enabled project where your role is User or higher. Copy its **FoundryX project UUID** for `<project-id>`. Do not use the Azure resource ID.
-5. Select a model with `allowed: true` and ready provisioning state (`Succeeded`). Use its deployment `name` for `<deployment-name>`, not the underlying model family.
-6. Check deployment authorization:
-
-   ```text
-   foundryx access check --project <project-id> --action agent.deploy --model <deployment-name>
-   ```
+Copilot checks the existing CLI, installs it only when needed, and guides
+Microsoft sign-in. Complete the sign-in flow yourself and answer any environment,
+tenant, project, or model questions. Copilot resolves project IDs and checks
+deployment authorization; no terminal commands or copied UUIDs are needed.
 
 Continue only when access is allowed. A successful authorization check does not prove that the agent or tools work. If no suitable project or model appears, ask your administrator; do not create a personal Azure subscription as a workaround.
 
 ## 3. Create the agent in Copilot
 
-1. Create or select a workspace you control, then start a new Copilot session.
-2. Invoke the FoundryX skill explicitly to avoid confusion with other Foundry skills. Copilot will guide you through project, model, and configuration choices:
+1. Continue in the same workspace and conversation.
+2. Describe the Agent you want using the project and model you selected:
 
    ```text
-   /foundry-agent Build a new Foundry Hosted agent named supply-chain-assistant. It should summarize inventory information that I provide and identify supplier risks. Discover the projects I can access and ask me to choose one. Then show its ready, allowed model deployments and ask me to choose a model. Confirm any other required configuration with me before creating or deploying the agent. Ask one question at a time. Start without external tools and do not invent business data. Check for an existing agent with this name before creating it.
+   /foundry-agent Build a Hosted agent named supply-chain-assistant using the project and model we selected. It should summarize inventory information I provide and identify supplier risks. Start without external tools and do not invent business data. Show the plan and ask before deploying.
    ```
 
 3. Answer Copilot's configuration questions, then review the selected project, model, source, and `foundryx.yaml`. For a Hosted agent, check `.agentignore` so that credentials and unrelated files are not uploaded.
@@ -90,7 +59,7 @@ Continue only when access is allowed. A successful authorization check does not 
 
 ### CLI alternative
 
-If you prefer to work directly, scaffold the basic Hosted sample:
+If you prefer to work directly, follow [Manual CLI setup (optional)](builder-guide.md#manual-cli-setup-optional), then scaffold the basic Hosted sample:
 
 ```powershell
 foundryx agent init .\supply-chain-assistant --sample basic
@@ -160,7 +129,7 @@ In a Canvas-capable Copilot host, the skill normally opens FoundryX Canvas after
 
 See the [Canvas action reference and CLI equivalents](builder-guide.md#manage-deployed-agents-in-canvas).
 
-The personal list shows agents attributed to you in enabled projects where you have developer access. Agents with unknown creators do not appear. For a project-wide text listing, or a host without Canvas, use:
+The personal list shows agents attributed to you in enabled projects where you have developer access. Agents with unknown creators do not appear. For a host without Canvas, ask Copilot to list your Agents as text. For a project-wide text listing, the direct CLI equivalent is:
 
 ```text
 foundryx agent list --project <project-id>

@@ -11,7 +11,8 @@ Your organization retains ownership of its Azure resources, quota, costs, and se
 
 ## In this reference
 
-- [Install the CLI and Copilot plugin](#install-the-cli-and-copilot-plugin)
+- [Get started with the plugin](#get-started-with-the-plugin)
+- [Upgrade the plugin and CLI](../README.md#upgrade)
 - [Understand Builder access](#understand-builder-access)
 - [Choose CLI, Copilot, or Canvas](#choose-cli-copilot-or-canvas)
 - [Configure and develop an agent](#configure-and-develop-an-agent)
@@ -20,85 +21,30 @@ Your organization retains ownership of its Azure resources, quota, costs, and se
 - [Evaluate and improve an agent](#evaluate-and-improve-an-agent)
 - [Monitor and troubleshoot an agent](#monitor-and-troubleshoot-an-agent)
 - [Publish to your organization](#publish-to-your-organization)
+- [Manual CLI setup (optional)](#manual-cli-setup-optional)
 - [Troubleshoot](#troubleshoot)
 
-## Install the CLI and Copilot plugin
+## Get started with the plugin
 
-The CLI and plugin are separate installations. Complete both for the Copilot Builder experience; the plugin does not install the CLI. Direct CLI use needs only the CLI. Canvas also needs a host with Canvas extension support.
+1. [Install the `foundry-agent` plugin](../README.md#install) in your coding-agent client.
+2. Start a new conversation in a workspace you control and [describe the Agent you want](../README.md#use).
+3. Let the skill check CLI setup, guide sign-in, discover your accessible projects/models, and run the requested workflow.
 
-| Component | What it provides | How to install |
-| --- | --- | --- |
-| **FoundryX CLI** (`foundryx`) | Sign-in and commands that operate on your FoundryX projects and agents. | Download a standalone executable from [FoundryX CLI releases](https://github.com/microsoft/FoundryX/releases?q=FoundryX&expanded=true). |
-| **Copilot plugin** (`foundry-agent`) | The `/foundry-agent` skill and FoundryX Canvas. | Install from the `microsoft/FoundryX` marketplace in your chosen Copilot client. |
+No manual CLI installation or terminal preflight is required for this path.
+The CLI remains a separate runtime dependency: the skill installs it if missing
+or updates it when a compatibility issue requires one, keeping a working installation.
+If the intended service environment or tenant is unclear, supply your organization's
+choice when asked. You complete Microsoft sign-in and approve requested operations.
+Never put passwords, tokens, or connection keys into chat.
 
-### 1. Install the FoundryX CLI
+Your tenant and project access must already be available; the plugin cannot grant
+them. The coding-agent host must support command execution. Local Hosted Agent
+testing additionally needs Python and access to its dependencies; the coding agent
+checks those when that path is used. Canvas needs a host with canvas extension
+support, but is not required for the CLI workflow.
 
-If a working CLI is already installed, verify it and skip the download.
-
-1. Open [FoundryX CLI releases](https://github.com/microsoft/FoundryX/releases?q=FoundryX&expanded=true), including prereleases.
-2. Select the release for the **service environment supplied by your administrator**, your operating system, and your architecture. Use the full release version, not GitHub's latest-release endpoint.
-3. Place the executable in a user-owned binary directory and add that directory to your PATH. Use `foundryx.exe` on Windows or `foundryx` on macOS/Linux. On macOS/Linux, make it executable with `chmod +x`.
-4. Open a new terminal so that PATH changes take effect, then check:
-
-   ```text
-   foundryx --version
-   foundryx --help
-   ```
-
-Standalone binaries do not require Node.js or npm. Linux sign-in requires `libsecret-1` and a running Secret Service/keyring. Retain the CLI service profile for your intended environment; the plugin does not select an environment.
-
-If `foundryx` is not found, use the executable's absolute path until PATH is refreshed. Do not replace a working CLI only because its version differs from the plugin. See [CLI prerequisites](../README.md#prerequisites).
-
-### 2. Install the plugin in your Copilot client
-
-Choose **one** client path below. All paths install the same `foundry-agent` plugin.
-
-#### GitHub Copilot CLI
-
-Run:
-
-```text
-copilot plugin marketplace add microsoft/FoundryX
-copilot plugin install foundry-agent@foundryx
-copilot plugin list
-```
-
-Confirm that `foundry-agent` is enabled.
-
-#### VS Code or VS Code Insiders
-
-1. Open the Command Palette with **Ctrl+Shift+P**.
-2. Run **Chat: Install Plugin From Source**.
-3. Enter `https://github.com/microsoft/FoundryX` and complete installation.
-
-Alternatively, run **Chat: Add Plugin Marketplace**, enter `microsoft/FoundryX`, browse the marketplace, and install `foundry-agent`.
-
-#### GitHub Copilot App
-
-1. Open **Customize** and its marketplace-management controls.
-2. Add the marketplace `microsoft/FoundryX`.
-3. Browse or search for `foundry-agent`, then install and enable it.
-
-### 3. Start a new session
-
-Start a new Copilot session after installation so that the skill and Canvas can load. Canvas is available only in a host with Canvas extension support; installing the plugin does not add that support to a host that lacks it.
-
-If you used an older preview, inspect and disable only duplicate `foundry-agent` skills or FoundryX canvas extensions. If the plugin was installed from another repository, remove that copy before installing this one. Do not delete shared Copilot configuration or credential storage. The native `microsoft-foundry` plugin can remain installed. See [plugin installation](../README.md#install).
-
-**Installation is complete when** `foundryx --version` works and your Copilot client shows `foundry-agent` enabled. Installation does not sign you in or grant project access.
-
-### 4. Sign in to your organization's tenant
-
-Check your sign-in state, then sign in if needed:
-
-```text
-foundryx auth status
-foundryx auth login --tenant <tenant-id>
-```
-
-Replace `<tenant-id>` with the directory supplied by your administrator. Without `--tenant`, login uses the account's home tenant. Complete the Microsoft sign-in flow yourself. Do not put passwords, tokens, or connection keys into chat or configuration.
-
-The CLI and Canvas share the account and credential cache. Reload Canvas after an account or tenant change. `foundryx auth logout` clears the FoundryX session and its separate publishing credentials; it does not sign you out of every Microsoft browser session.
+See [Upgrade](../README.md#upgrade) for plugin updates and agent-guided CLI checks.
+Use [Manual CLI setup](#manual-cli-setup-optional) only for direct terminal use or troubleshooting.
 
 ## Understand Builder access
 
@@ -406,11 +352,46 @@ foundryx agent publish-status <agent-id> --project <project-id>
 
 Use a higher explicit semantic package version for each new upload attempt. If status is `submitting`, use `publish-status` to resume checking. If it is `unknown`, reconcile the request with support before another upload. Do not delete the local publishing journal, switch machines, or invent a new app ID to bypass an uncertain submission.
 
+## Manual CLI setup (optional)
+
+Use this reference if you prefer the CLI directly or need to troubleshoot setup.
+It is not a prerequisite for the plugin-first workflow.
+
+1. If a working CLI is already installed, keep it and skip the download.
+2. Otherwise, open [FoundryX CLI releases](https://github.com/microsoft/FoundryX/releases?q=FoundryX&expanded=true), including prereleases.
+3. Select the release for your intended **service environment**, operating system, and architecture. Use the full release version, not GitHub's latest-release endpoint.
+4. Put the executable in a user-owned binary directory on PATH: `foundryx.exe` on Windows or `foundryx` on macOS/Linux. On macOS/Linux, make it executable with `chmod +x`.
+5. Open a new terminal, or use the executable's absolute path until PATH is refreshed:
+
+   ```text
+   foundryx --version
+   foundryx --help
+   ```
+
+Standalone binaries do not require Node.js or npm. Linux sign-in requires
+`libsecret-1` and a running Secret Service/keyring. When replacing a CLI, choose
+the same service environment and preserve its configuration and credentials.
+Close running FoundryX processes or Canvas if they prevent replacing the executable.
+
+Check sign-in and use your organization's tenant when needed:
+
+```text
+foundryx auth status
+foundryx auth login --tenant <tenant-id>
+```
+
+Without `--tenant`, login uses the account's home tenant. Complete Microsoft
+sign-in yourself; do not put credentials in chat or configuration. The CLI and
+Canvas share the account and credential cache, so reload Canvas after an account
+or tenant change. Normal client upgrades do not require logout.
+`foundryx auth logout` clears FoundryX and publishing credentials, not every
+Microsoft browser session.
+
 ## Troubleshoot
 
 | Symptom or code | Check and action |
 | --- | --- |
-| `foundryx` is not found | Install the separate CLI for your environment and platform. Refresh the terminal PATH, or use the executable's absolute path. |
+| `foundryx` is not found | Ask `/foundry-agent` to check CLI setup. For direct terminal use, follow [Manual CLI setup](#manual-cli-setup-optional). A coding-agent host that cannot execute commands needs a different supported host, not a local-only installation workaround. |
 | Plugin or Canvas is missing | Check `copilot plugin list`, start a new session, and confirm the host supports Canvas. Do not load duplicate FoundryX plugins. The CLI remains usable without Canvas. |
 | Tenant is inactive or no projects appear | Check the environment, account, tenant, and `access show`. Ask the administrator to confirm active tenant onboarding and an enabled project grant. |
 | You can invoke but cannot build | Consumer access is insufficient. Ask for project User access or higher. |

@@ -13,33 +13,26 @@ For capabilities, architecture, and governance, see the
 
 ## Prerequisites
 
-- Use the installed FoundryX CLI (`foundryx`). Install only if it is missing or an
-  encountered issue suggests a version mismatch, not just because the version
-  differs from this plugin.
-- When installation or an update is needed, select a published matching
-  [FoundryX CLI release](https://github.com/microsoft/FoundryX/releases?q=FoundryX&expanded=true),
-  including prereleases, for the intended service environment, OS and architecture.
-  Use the full release version rather than GitHub's latest-release endpoint.
-  Standalone binaries do not require Node.js or npm. Linux sign-in requires
-  `libsecret-1` and a running Secret Service/keyring.
-- Retain the CLI service profile for the FoundryX environment you intend to use.
-  This plugin contains no service profile and does not select an environment.
-- Use GitHub Copilot App with canvas extension support for the graphical view.
-  The skill can also be used in a compatible Copilot CLI session.
+- Install and enable the `foundry-agent` plugin using the [steps below](#install).
+- FoundryX access from your organization. Installing the plugin does not onboard
+  your tenant or grant project permissions.
+- A compatible coding-agent client and workspace where the agent can execute
+  commands and, when needed, install user-owned tools.
+- A host with canvas extension support if you want the graphical view. Other
+  compatible hosts can use the CLI workflow without Canvas.
 
-Installing the plugin does not run CLI installation hooks, sign in or grant
-permissions. The skill provides CLI installation guidance when needed; it does
-not bundle the executable. Complete sign-in when needed:
+You do not need to install or run the FoundryX CLI manually before starting.
+The skill checks the installed CLI and handles installation when it is missing,
+or an update when a compatibility issue requires one. The plugin installer itself
+does not bundle the CLI, run installation hooks, or sign you in.
 
-```text
-foundryx --version
-foundryx auth status
-foundryx auth login
-```
+For direct terminal use or troubleshooting, see
+[Manual CLI setup (optional)](doc/builder-guide.md#manual-cli-setup-optional).
 
 ## Install
 
-After the plugin is published at the root of this repository's default branch:
+For a new installation, use the marketplace below. If the plugin is already
+installed, follow [Upgrade](#upgrade).
 
 ```text
 copilot plugin marketplace add microsoft/FoundryX
@@ -51,8 +44,7 @@ installation with `copilot plugin install microsoft/FoundryX` currently
 works, but Copilot CLI warns that direct installs are deprecated.
 
 In VS Code, run **Chat: Install Plugin From Source** from the Command Palette and
-enter `https://github.com/microsoft/FoundryX`. Alternatively, use **Chat: Add
-Plugin Marketplace** with `microsoft/FoundryX`, browse it and install
+enter `https://github.com/microsoft/FoundryX`. Alternatively, use **Chat: Add Plugin Marketplace** with `microsoft/FoundryX`, browse it and install
 `foundry-agent`. Installing the skill does not enable canvas capabilities in a host
 that lacks them.
 
@@ -77,6 +69,23 @@ only those exact components; do not delete shared Copilot configuration or the
 CLI credential cache. The native `microsoft-foundry` plugin can remain installed:
 its builder canvas uses a different canvas ID.
 
+## Upgrade
+
+Update `foundry-agent` through the same client/interface used to install it.
+
+**GitHub Copilot CLI:**
+
+```text
+copilot plugin update foundry-agent@foundryx
+```
+
+**VS Code / Insiders:** Open the Command Palette and run **Chat: Open Customizations** to manage / upgrade plugin or even the marketplace.
+
+For a local installation, reinstall from the updated checkout. Start a new
+Copilot session and reopen Canvas after updating. The skill checks the CLI
+separately and updates it only when needed; keep a working installation and
+preserve your service environment, configuration and sign-in.
+
 ## Use
 
 For the access model, roles, resource policies, and administration options, see
@@ -88,6 +97,9 @@ Invoke `/foundry-agent` for FoundryX workflows. In clients that qualify plugin
 components, select the `foundry-agent` skill from this plugin in the skill picker.
 It discovers projects and tools, builds and operates Agents, and uses the hosted
 FoundryX API through the installed CLI.
+
+Let the coding agent handle CLI setup, commands and resource discovery. Complete
+Microsoft sign-in yourself when prompted and review requested operations.
 
 For a graphical list of deployed Agents, ask Copilot to open the FoundryX Agent
 canvas. The skill opens it directly; no separate open command is needed.

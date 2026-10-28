@@ -2,10 +2,38 @@ import { execFile, spawn } from "node:child_process";
 import { createInterface } from "node:readline";
 import { promisify } from "node:util";
 import { isAbsolute } from "node:path";
+import { userInfo } from "node:os";
 
 const execute = promisify(execFile);
 
+async function refreshPath() {
+    try {
+        const windows = process.platform === "win32";
+        const { stdout } = windows
+            ? await execute("powershell.exe", [
+                "-NoProfile", "-NonInteractive", "-Command",
+                "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); "
+                + "[Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')",
+            ], { timeout: 15_000, windowsHide: true })
+            : await execute(process.env.SHELL || userInfo().shell || "/bin/sh", [
+                "-ilc", "printf '\\0%s\\0' \"$PATH\"",
+            ], { timeout: 15_000, killSignal: "SIGKILL" });
+        // Delimit shell output so startup messages cannot become PATH entries.
+        const refreshed = windows ? stdout.trim() : stdout.split("\0")[1] || "";
+        const separator = windows ? ";" : ":";
+        const inherited = process.env.PATH?.split(separator) || [];
+        const entries = [
+            ...(windows ? inherited.filter(Boolean) : inherited),
+            ...refreshed.split(separator).filter(Boolean),
+        ];
+        process.env.PATH = [...new Set(entries)].join(separator);
+    } catch {
+        // Keep the inherited PATH available if system or shell settings cannot be read.
+    }
+}
+
 export async function startCliBridge() {
+    await refreshPath();
     let metadata;
     try {
         const { stdout } = process.platform === "win32"
@@ -16,7 +44,7 @@ export async function startCliBridge() {
             : await execute("foundryx", ["auth", "canvas", "--entrypoint"], { timeout: 15_000 });
         metadata = JSON.parse(stdout);
     } catch {
-        throw new Error("The canvas requires FoundryX CLI 0.4.1 or later on PATH. Install the matching release and reload extensions.");
+        throw new Error("The canvas requires FoundryX CLI 0.4.1 or later on PATH. Finish installing the matching release and reopen the canvas.");
     }
     if (metadata.protocol !== 1 || typeof metadata.entrypoint !== "string" || !isAbsolute(metadata.entrypoint)
         || typeof metadata.node !== "string" || !isAbsolute(metadata.node)) {

@@ -2,7 +2,7 @@
 name: foundry-agent
 description: Use the FoundryX CLI to manage Microsoft Foundry access, projects, models, Toolboxes, agents, agent publishing, conversations, agent evaluation, operational metrics, and Hosted Agent diagnostics. When you are manually invoked by "/foundry-agent", never use your "microsoft-foundry" skill or "microsoft-foundry" canvas plugin.
 metadata:
-  version: "0.7.2"
+  version: "0.7.3"
 ---
 
 IMPORTANT: When manually invoked by `/foundry-agent`, use the installed `foundryx` CLI. Do not run the requested operation through `az`, `azd`, the `microsoft-foundry` skill, or the `microsoft-foundry` canvas plugin.
@@ -31,7 +31,6 @@ Match the user's request against **Capability** and **When to use** in the routi
 | Manage Foundry models | Listing, viewing, or calling project models, inspecting model catalog/quota, or deploying, scaling, and deleting project model deployments | `foundryx model *` | [Foundry models](#foundry-models) |
 | Build, deploy & operate Agents | Discovering and reusing existing project tools/Toolboxes, scaffolding, locally testing, deploying, invoking, or debugging Prompt and Hosted Agents | `foundryx access project list`, `foundryx connection list\|show`, `foundryx toolbox list\|show`, `foundryx agent *` | [Foundry Agents](#foundry-agents)<br>[Discover and reuse tools](references/tool-discovery.md)<br>[Prompt Agent tools](references/prompt-agent-tools.md)<br>[Hosted Agent Toolbox](references/hosted-agent-toolbox.md) |
 | Administer tool resources | Explicitly requested connection configuration/credential lifecycle or Toolbox version/default/deletion administration; never an automatic builder fallback | `foundryx connection create\|update\|credentials set\|delete`, `foundryx toolbox create\|version create\|publish\|delete\|version delete` | [RemoteTool MCP connections](references/connection-create.md)<br>[Toolboxes & versions](references/toolbox.md) |
-| Prepared trial resources | User explicitly asks for `GitHubToolbox`, `GitHubOAuthToolbox`, `WorkIQToolbox`, or Contoso enterprise documents/policies | `foundryx access project list`, `foundryx agent *` | [Prepared trial resources](references/prepared-resources.md)<br>[Contoso enterprise knowledge](references/contoso-knowledge.md) |
 | Trace and diagnose Agents | Searching conversations, reconstructing traces, diagnosing failures or latency, or correlating response-level evaluation events | `foundryx agent trace query` | [Agent tracing](references/tracing.md) |
 | Evaluate, monitor & publish Agents | Running Agent evaluations (`eval.yaml`), querying Application Insights operational metrics, or publishing a deployed Agent to M365/Teams | `foundryx agent eval *`, `foundryx agent metrics`, `foundryx auth publish *`, `foundryx agent publish\|publish-status` | [Inspect, diagnose, evaluate, monitor & publish](#step-6-inspect-diagnose-evaluate-monitor-and-publish)<br>[Agent evaluation](references/evaluation.md)<br>[Operational metrics](references/metrics.md)<br>[M365 / Teams publishing](references/publishing.md) |
 | Open FoundryX canvas | User explicitly asks to list or view deployed Agents | `foundryx-canvas` canvas | [FoundryX Canvas](references/canvas.md) |
@@ -125,6 +124,10 @@ Regional capacity can still fail despite fitting quota; report quota or capacity
 
 Requires effective project `user`, `manager`, or `owner` (`consumer` may invoke deployed Agents).
 
+For text listings, `foundryx agent list --project <project-id>` returns all project
+Agents. Add `--owned-only` for Agents created by the signed-in user when supported
+by the installed CLI's `foundryx agent list --help`.
+
 Inspect project restrictions with `foundryx access show --project <project-id>` before
 selecting resources. When project, model, or tool permissions block development or an
 authorization check fails, follow [Permissions & access](references/permissions.md#diagnose-a-refusal).
@@ -133,9 +136,7 @@ authorization check fails, follow [Permissions & access](references/permissions.
 
 Run `foundryx access project list` to resolve `<project-id>` (pass the UUID via `--project <project-id>`, or omit it when `foundryx.yaml` sets top-level `project`; if `project list` is empty, inspect `foundryx access show` and follow [Permissions & access](references/permissions.md); ask the user to choose when multiple valid targets remain).
 
-Choose the simplest path that satisfies the request: for generic requests ("create a sample agent"), build a tool-free Prompt Agent or `basic` Hosted Agent and ask only for Agent kind (`Prompt` vs `Hosted`) when unclear. Do not suggest or mention tools, MCP servers, connections, Toolboxes, Azure AI Search, or prepared trial resources unless the user asks for tools, external data, or a named resource.
-
-- **Prepared trial resources**: When the user asks for Contoso documents, `GitHubToolbox`, `GitHubOAuthToolbox`, or `WorkIQToolbox`, read [Prepared trial resources](references/prepared-resources.md) (and [Contoso enterprise knowledge](references/contoso-knowledge.md) for Contoso policies) before choosing a project or sample.
+Choose the simplest path that satisfies the request: for generic requests ("create a sample agent"), build a tool-free Prompt Agent or `basic` Hosted Agent and ask only for Agent kind (`Prompt` vs `Hosted`) when unclear. Do not suggest or mention tools, MCP servers, connections, Toolboxes, or Azure AI Search unless the user asks for tools, external data, or a named resource.
 
 ```text
 foundryx access project list
@@ -143,7 +144,7 @@ foundryx agent list --project <project-id>
 foundryx model list --project <project-id>
 ```
 
-1. **Exact name check**: Pipe full `agent list` JSON stdout into a local parser in the same shell command and return only `items` whose `name` exactly matches the candidate name (a truncated raw-list preview is not a completed name check). Pick a name unique across Prompt and Hosted Agents in `<project-id>`; reuse an existing name only when the user intends to update that Agent.
+1. **Exact name check**: Pipe full project-wide `agent list` JSON stdout (without `--owned-only`) into a local parser in the same shell command and return only `items` whose `name` exactly matches the candidate name (a truncated raw-list preview is not a completed name check). Pick a name unique across Prompt and Hosted Agents in `<project-id>`; reuse an existing name only when the user intends to update that Agent.
 2. **Model check**: Set `agent.model` to an item's `name` (deployment name) with ready status and `allowed: true` from `model list`, never its underlying `model_name`. Check `agent.deploy` with that model and the intended tool keys before deployment.
 
 ### Step 2: Discover and reuse existing tools (only when tools are requested)
@@ -163,13 +164,15 @@ connections in Prompt tools; use an existing Toolbox's returned `endpoint` with 
 Hosted `toolbox` sample. `toolbox show` inspects the published default, not the newest
 unpublished version; `--version` returns a pinned endpoint. Discovery is configuration
 only, never proof of working credentials, consent or execution. Verify after deployment.
+Examples are illustrative, not pre-provisioned inventory. Resolve resource names in
+the selected project; do not assume a connection, Toolbox, Search index or external
+entitlement exists.
 
-Keep the builder path separate from resource administration. If a resource, index,
-credential or authorization is missing, report it for the administrator; do not
-create, publish, replace or repair resources automatically. Existing management
-commands require Project Owner membership, including for subscription administrators, and
-remain available only for separately explicit requests under
-[Administer tool resources](#administer-tool-resources).
+Keep resource administration explicit; do not create or repair shared resources
+automatically. For a missing or blocked tool, follow
+[Requested tool unavailable](references/tool-discovery.md#requested-tool-unavailable)
+for the next step, including setup guidance when the user already has the required
+permissions.
 
 ### Step 3: Initialize and configure `foundryx.yaml` and source
 

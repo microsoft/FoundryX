@@ -22,7 +22,7 @@ Use your own work or school account and approved, non-sensitive sample inputs. T
 
 ## 1. Install the Copilot plugin
 
-Follow [Install the plugin](../README.md#install) for your client, then start a
+Follow [Install the plugin](builder-guide.md#get-started-with-the-plugin) for your client, then start a
 new conversation in your workspace. Confirm that `foundry-agent` is enabled.
 You do not need to install the CLI manually before continuing.
 

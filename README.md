@@ -31,43 +31,10 @@ For direct terminal use or troubleshooting, see
 
 ## Install
 
-For a new installation, use the marketplace below. If the plugin is already
-installed, follow [Upgrade](#upgrade).
-
-```text
-copilot plugin marketplace add microsoft/FoundryX
-copilot plugin install foundry-agent@foundryx
-```
-
-The repository includes a small catalog listing only this root plugin. Direct
-installation with `copilot plugin install microsoft/FoundryX` currently
-works, but Copilot CLI warns that direct installs are deprecated.
-
-In VS Code, run **Chat: Install Plugin From Source** from the Command Palette and
-enter `https://github.com/microsoft/FoundryX`. Alternatively, use **Chat: Add Plugin Marketplace** with `microsoft/FoundryX`, browse it and install
-`foundry-agent`. Installing the skill does not enable canvas capabilities in a host
-that lacks them.
-
-For a local checkout, use the repository root:
-
-```text
-copilot plugin install <path-to-FoundryX>
-```
-
-Start a new Copilot session after installation. Use `copilot plugin list` to
-confirm the `foundry-agent` plugin is enabled. A local install is cached; reinstall
-it after changing the local package.
-
-If `foundry-agent` is installed from another repository or marketplace, uninstall
-that copy before installing from this repository. Existing installations do not
-automatically switch sources.
-
-Do not load duplicate copies of the same skill/canvas. Before activating this
-plugin, remove or disable a separately installed `foundry-agent` skill and the
-standalone `foundry-canvas` extension. Inspect their locations first and remove
-only those exact components; do not delete shared Copilot configuration or the
-CLI credential cache. The native `microsoft-foundry` plugin can remain installed:
-its builder canvas uses a different canvas ID.
+Follow the [Builder guide installation steps](doc/builder-guide.md#get-started-with-the-plugin)
+for VS Code / Insiders, the GitHub Copilot app, or GitHub Copilot CLI.
+The guide includes screenshots, installation checks, and local-checkout instructions.
+If the plugin is already installed, follow [Upgrade](#upgrade).
 
 ## Upgrade
 

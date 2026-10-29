@@ -20,6 +20,9 @@ Use the project UUID for `--project`; native resource IDs are used only for disc
 `null` in `allowed_models` or `allowed_tools` means unrestricted, `[]` means none,
 and an array allows only the listed resources. Model entries are deployment names;
 tool keys are `builtin:<type>`, `connection:<name>` or `toolbox:<name>`.
+Allowing a Toolbox permits its configured tools and connections through that Toolbox,
+including owner-published default changes. Connection grants control direct use;
+removing one does not block the connection inside an allowed Toolbox.
 These policies apply to every member of the project. MCP function `allowed_tools`
 inside an Agent definition is a separate filter within that server.
 
@@ -146,7 +149,8 @@ is not evidence that the user lacks the role. An inaccessible project remains
 unavailable to the caller; resolve it from their accessible project list.
 
 Choose only ready models and discovered connections/Toolboxes with `allowed: true`.
-For Toolbox reuse, check the Toolbox and its referenced connections. If the user's
+For Toolbox reuse, check the Toolbox grant and inspect its configuration; its
+referenced connections do not need separate direct-use grants. If the user's
 requested project, model, or tool is blocked by permissions (for example, `allowed: false`
 or missing project/model/tool access), ask the user to confirm whether to write the
 Agent code and `foundryx.yaml` first without running `foundryx agent deploy` so they

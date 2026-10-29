@@ -44,8 +44,9 @@ do not ask for a value already discovered, set `TOOLBOX_NAME`, or substitute a
 FoundryX UUID/service URL. Set `project: <project-id>`, unique `agent.name` and
 ready deployment `agent.model` in `foundryx.yaml`. Declare the selected resource as
 `agent.tool_resources: ["toolbox:<toolbox-name>"]` so deployment can check the
-project's allowed tools. Use `connection:<name>` or `builtin:<type>` for other
-resources used by the source; use `[]` for none. These declarations support policy
+project's allowed tools. Do not separately declare the Toolbox's internal
+connections or built-ins. Use `connection:<name>` or `builtin:<type>` for resources
+the source uses directly outside the Toolbox; use `[]` for none. These declarations support policy
 checks and do not isolate arbitrary source code at runtime.
 
 ## Step 4: Deploy, invoke remotely, and handle OAuth consent

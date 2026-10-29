@@ -126,7 +126,7 @@ See the [Builder guide](builder-guide.md) for current capabilities and limits.
 
 Use these guides to prepare your organization's environment and build and
 operate agents. For installation, see
-[Install the Copilot plugin](../README.md#install); the skill guides CLI setup and sign-in.
+[Install the Copilot plugin](builder-guide.md#get-started-with-the-plugin); the skill guides CLI setup and sign-in.
 
 | Document | Audience | What it covers |
 | --- | --- | --- |

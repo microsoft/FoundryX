@@ -12,6 +12,9 @@ Your organization retains ownership of its Azure resources, quota, costs, and se
 ## In this reference
 
 - [Get started with the plugin](#get-started-with-the-plugin)
+- [Install in VS Code or VS Code Insiders](#vs-code-or-vs-code-insiders)
+- [Install in the GitHub Copilot app](#github-copilot-app)
+- [Install in GitHub Copilot CLI](#github-copilot-cli)
 - [Upgrade the plugin and CLI](../README.md#upgrade)
 - [Understand Builder access](#understand-builder-access)
 - [Choose CLI, Copilot, or Canvas](#choose-cli-copilot-or-canvas)
@@ -26,9 +29,11 @@ Your organization retains ownership of its Azure resources, quota, costs, and se
 
 ## Get started with the plugin
 
-1. [Install the `foundry-agent` plugin](../README.md#install) in your coding-agent client.
-2. Start a new conversation in a workspace you control and [describe the Agent you want](../README.md#use).
-3. Let the skill check CLI setup, guide sign-in, discover your accessible projects/models, and run the requested workflow.
+Install the `foundry-agent` plugin in your coding-agent client using one of
+the client-specific sections below. Then start a new conversation in a workspace
+you control and [describe the Agent you want](../README.md#use). Let the skill
+check CLI setup, guide sign-in, discover your accessible projects/models, and
+run the requested workflow.
 
 No manual CLI installation or terminal preflight is required for this path.
 The CLI remains a separate runtime dependency: the skill installs it if missing
@@ -45,6 +50,137 @@ support, but is not required for the CLI workflow.
 
 See [Upgrade](../README.md#upgrade) for plugin updates and agent-guided CLI checks.
 Use [Manual CLI setup](#manual-cli-setup-optional) only for direct terminal use or troubleshooting.
+
+The plugin name is `foundry-agent`. Its marketplace source is
+`microsoft/FoundryX`, and the marketplace name is `foundryx`. Adding the
+marketplace makes the plugin available to browse; it does not install the plugin.
+
+### Before installing
+
+If `foundry-agent` is installed from another repository or marketplace, uninstall
+that copy before installing from this repository. Existing installations do not
+automatically switch sources.
+
+Do not load duplicate copies of the same skill/canvas. Before activating this
+plugin, remove or disable a separately installed `foundry-agent` skill and the
+standalone `foundry-canvas` extension. Inspect their locations first and remove
+only those exact components; do not delete shared Copilot configuration or the
+CLI credential cache. The native `microsoft-foundry` plugin can remain installed:
+its builder canvas uses a different canvas ID.
+
+### VS Code or VS Code Insiders
+
+1. Install [VS Code](https://code.visualstudio.com/download) or
+   [VS Code Insiders](https://code.visualstudio.com/insiders/). Set up
+   [GitHub Copilot in VS Code](https://code.visualstudio.com/docs/copilot/setup)
+   and sign in with your GitHub account.
+2. Open the Command Palette: **Ctrl+Shift+P** on Windows/Linux or
+   **Cmd+Shift+P** on macOS.
+3. Run **Chat: Install Plugin from Source**.
+
+   ![VS Code Command Palette with Chat: Install Plugin from Source selected.](images/install-vscode-command.png)
+
+4. Enter `microsoft/FoundryX` and press **Enter**. You can also use the full
+   repository URL: `https://github.com/microsoft/FoundryX`. Review any trust
+   prompt and confirm only if you trust this source.
+
+   ![VS Code Install Plugin from Source prompt with microsoft/FoundryX entered.](images/install-vscode-source.png)
+
+5. Open the Command Palette again and run **Chat: Open Customizations**.
+   Select **Plugins**, find `foundry-agent`, and confirm that it is enabled
+   for your intended workspace.
+6. Start a new Copilot chat in your workspace and
+   [confirm that the skill is available](#confirm-the-installation).
+
+If the install command is missing, update VS Code or try VS Code Insiders.
+Check that the `chat.plugins.enabled` setting is enabled and that your
+organization permits plugins. See the
+[VS Code plugin documentation](https://code.visualstudio.com/docs/agent-customization/agent-plugins)
+for available controls. Installing the plugin does not add canvas support to
+a host that lacks it.
+
+### GitHub Copilot app
+
+1. Install the [GitHub Copilot app](https://github.com/github/app#install),
+   open it, and sign in with your GitHub account.
+2. Select **Customize** in the sidebar, then **+ Add** >
+   **Manage marketplaces...**.
+
+   ![GitHub Copilot app Customize page with the Add menu and Manage marketplaces option visible.](images/install-app-marketplaces.png)
+
+3. In **Source**, enter `microsoft/FoundryX`, then select **Add**. Use this
+   repository source, not a plugin name or a different repository.
+4. Close **Manage marketplaces**. On the **Browse** tab, search for
+   `foundry-agent`. If a marketplace filter is active, select `foundryx` or
+   **All marketplaces**.
+5. Find the `foundry-agent` plugin described as "FoundryX skill and Agent canvas
+   for customer-owned Microsoft Foundry projects." Select **Install** and
+   complete any confirmation prompts after reviewing the source.
+
+   ![GitHub Copilot app Browse results showing the foundry-agent plugin and its Install button.](images/install-app-plugin.png)
+
+6. Select **Installed** and confirm that `foundry-agent` is listed and enabled.
+7. Start a new local session in your workspace and
+   [confirm that the skill is available](#confirm-the-installation).
+
+Menu locations can differ by app version. If **Manage marketplaces...** is not
+in **+ Add**, use the marketplace settings control next to the marketplace
+dropdown on **Customize**. See
+[Customizing the GitHub Copilot app](https://docs.github.com/en/copilot/how-tos/github-copilot-app/customize-github-copilot-app).
+
+### GitHub Copilot CLI
+
+1. Install [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli).
+   Run `copilot` and complete GitHub sign-in if prompted. Exit the interactive
+   session before running the terminal commands below.
+2. In your terminal, register the marketplace and install the plugin:
+
+   ```text
+   copilot plugin marketplace add microsoft/FoundryX
+   copilot plugin install foundry-agent@foundryx
+   ```
+
+3. List installed plugins:
+
+   ```text
+   copilot plugin list
+   ```
+
+   Confirm that `foundry-agent` is listed and enabled. If it is disabled, run:
+
+   ```text
+   copilot plugin enable foundry-agent@foundryx
+   ```
+
+4. From your workspace directory, run `copilot` to start a new session and
+   [confirm that the skill is available](#confirm-the-installation).
+
+These are **GitHub Copilot CLI** commands (`copilot`), not FoundryX CLI
+commands (`foundryx`). You do not need to install the FoundryX CLI manually
+to install this plugin.
+
+### Confirm the installation
+
+In the new chat or session, type `/foundry-agent`. If your client qualifies
+plugin components, select this plugin's `foundry-agent` skill from the skill
+picker. The skill must be available before you continue to
+[Build and operate your first agent](build-first-agent.md).
+
+Plugin installation does not grant FoundryX access or sign you in to Microsoft.
+Complete Microsoft sign-in yourself when the skill requests it.
+
+### Local checkout (optional)
+
+For plugin development, install from the repository root instead of the
+marketplace:
+
+```text
+copilot plugin install <path-to-FoundryX>
+```
+
+In VS Code, use **Chat: Install Plugin from Source** and enter the local
+repository path. A local install is cached; reinstall it after changing the
+local package. Start a new session after reinstalling.
 
 ## Understand Builder access
 

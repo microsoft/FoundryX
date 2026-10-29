@@ -23,7 +23,7 @@ upstream error is an error, not an empty successful list.
 Select resources based on the user's requested purpose. Resolve requested names
 in the selected project, select only entries with `allowed: true`, and inspect
 them before configuration. Never infer authentication or compatibility from a name.
-For a denied resource or referenced connection, follow [Permissions & access](permissions.md).
+For a denied resource, follow [Permissions & access](permissions.md).
 Ask the user to choose if multiple plausible
 resources remain. If discovery succeeds but none match, follow
 [Requested tool unavailable](#requested-tool-unavailable). Failed or incomplete
@@ -39,6 +39,9 @@ never returned. `supported` means a supported configuration path, not verified a
 It summarizes configured tool sources, supported connection references and safe auth
 metadata. It does not enumerate live MCP functions. Missing or outside-project
 connection references require administrator review. Do not follow them to other projects.
+An allowed Toolbox permits its configured connections through the Toolbox even if
+their direct-use grants are absent; inspect them through `toolbox show`, not a
+separate `connection show` that requires direct access.
 Unknown native types or auth modes must remain explicit, not silently converted.
 
 ## 2. Configure the appropriate Agent path

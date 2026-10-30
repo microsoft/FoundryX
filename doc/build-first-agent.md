@@ -26,7 +26,7 @@ Follow [Install the plugin](builder-guide.md#get-started-with-the-plugin) for yo
 new conversation in your workspace. Confirm that `foundry-agent` is enabled.
 You do not need to install the CLI manually before continuing.
 
-For an existing installation, see [Upgrade](../README.md#upgrade).
+For an existing installation, see [Upgrade the plugin and CLI](builder-guide.md#upgrade-the-plugin-and-cli).
 
 ## 2. Sign in and verify your access
 

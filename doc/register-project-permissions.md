@@ -111,7 +111,7 @@ See [Registration lifecycle](enterprise-admin-agent-access.md#registration-lifec
 
 ## 6. Verify employee access
 
-1. Have a representative employee follow the [plugin workflow](../README.md#use) in the same FoundryX environment and tenant. Let Copilot check CLI setup and guide their Microsoft sign-in.
+1. Have a representative employee follow the [plugin workflow](builder-guide.md#get-started-with-the-plugin) in the same FoundryX environment and tenant. Let Copilot check CLI setup and guide their Microsoft sign-in.
 2. Ask Copilot to inspect the employee's access. For manual CLI verification, follow [optional CLI setup](builder-guide.md#manual-cli-setup-optional), then use:
 
    ```text
@@ -133,7 +133,7 @@ See [Registration lifecycle](enterprise-admin-agent-access.md#registration-lifec
 
    Add `connection:<connection-name>` only if the agent also uses that connection directly, outside the Toolbox. Do not separately declare the Toolbox's internal connections or built-in tools.
 
-5. Have the employee deploy a representative agent through their normal [plugin workflow](../README.md#use), then invoke it. Deployment and invocation can incur costs:
+5. Have the employee deploy a representative agent through their normal [plugin workflow](builder-guide.md#get-started-with-the-plugin), then invoke it. Deployment and invocation can incur costs:
 
    ```text
    foundryx agent invoke "Verify the configured tool with a non-sensitive request." --agent-id <agent-id> --project <project-id>

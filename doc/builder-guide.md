@@ -15,7 +15,7 @@ Your organization retains ownership of its Azure resources, quota, costs, and se
 - [Install in VS Code or VS Code Insiders](#vs-code-or-vs-code-insiders)
 - [Install in the GitHub Copilot app](#github-copilot-app)
 - [Install in GitHub Copilot CLI](#github-copilot-cli)
-- [Upgrade the plugin and CLI](../README.md#upgrade)
+- [Upgrade the plugin and CLI](#upgrade-the-plugin-and-cli)
 - [Understand Builder access](#understand-builder-access)
 - [Choose CLI, Copilot, or Canvas](#choose-cli-copilot-or-canvas)
 - [Configure and develop an agent](#configure-and-develop-an-agent)
@@ -31,7 +31,7 @@ Your organization retains ownership of its Azure resources, quota, costs, and se
 
 Install the `foundry-agent` plugin in your coding-agent client using one of
 the client-specific sections below. Then start a new conversation in a workspace
-you control and [describe the Agent you want](../README.md#use). Let the skill
+you control and [describe the Agent you want](build-first-agent.md). Let the skill
 check CLI setup, guide sign-in, discover your accessible projects/models, and
 run the requested workflow.
 
@@ -48,7 +48,7 @@ testing additionally needs Python and access to its dependencies; the coding age
 checks those when that path is used. Canvas needs a host with canvas extension
 support, but is not required for the CLI workflow.
 
-See [Upgrade](../README.md#upgrade) for plugin updates and agent-guided CLI checks.
+See [Upgrade the plugin and CLI](#upgrade-the-plugin-and-cli) for plugin updates and agent-guided CLI checks.
 Use [Manual CLI setup](#manual-cli-setup-optional) only for direct terminal use or troubleshooting.
 
 The plugin name is `foundry-agent`. Its marketplace source is
@@ -181,6 +181,23 @@ copilot plugin install <path-to-FoundryX>
 In VS Code, use **Chat: Install Plugin from Source** and enter the local
 repository path. A local install is cached; reinstall it after changing the
 local package. Start a new session after reinstalling.
+
+### Upgrade the plugin and CLI
+
+Update `foundry-agent` through the same client used to install it.
+
+| Client | How to update |
+| --- | --- |
+| GitHub Copilot CLI | Run `copilot plugin update foundry-agent@foundryx`. |
+| VS Code / Insiders | Run **Chat: Open Customizations** from the Command Palette to manage or upgrade the plugin and marketplace. |
+| GitHub Copilot app | Open **Customize** and manage updates for the installed `foundry-agent` plugin. |
+| Local checkout | Update the checkout and reinstall from its repository path. |
+
+Start a new Copilot session and reopen Canvas after updating. Plugin updates
+distribute the skill and Canvas together; the CLI remains a separate dependency.
+The skill checks the CLI and installs it if missing or updates it when needed
+for compatibility. Keep a working installation and preserve your service
+environment, configuration, and sign-in.
 
 ## Understand Builder access
 

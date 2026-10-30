@@ -23,7 +23,7 @@ Application Developer is not a qualifying administrator role. This role list app
 
 Before opening the invitation, run the FoundryX role-check script with the customer tenant ID:
 
-1. Download [`Check-FoundryXAdminConsentRole.ps1`](Check-FoundryXAdminConsentRole.ps1) from this repository.
+1. Download [`Check-FoundryXAdminConsentRole.ps1`](https://github.com/microsoft/FoundryX/releases/download/Check-FoundryXAdminConsentRole-v1/Check-FoundryXAdminConsentRole.ps1) from this repository.
 2. Open Windows PowerShell in the folder that contains the script.
 3. Unblock the downloaded file:
 

@@ -13,26 +13,33 @@ to the person who signs in to the Admin Center.
 
 ## Administrator requirements
 
-An administrator who completes onboarding must have one of these active Microsoft Entra built-in roles:
+For the current FoundryX delegated permissions, these active Microsoft Entra built-in roles support tenant-wide admin consent:
 
 - Application Administrator
 - Cloud Application Administrator
+- AI Administrator
 - Privileged Role Administrator
 - Global Administrator
 
-The administrator uses this role to approve application permissions for the
-tenant. If the role is eligible through Privileged Identity Management (PIM),
-activate it before starting.
+The role must allow the administrator to grant tenant-wide admin consent for
+the delegated permissions shown during onboarding. A custom role with the
+necessary consent permissions can also qualify. If the role is eligible through
+Privileged Identity Management (PIM), activate it before starting.
 
 These are **Microsoft Entra roles**, not Azure subscription roles. Subscription
 Owner is not required for tenant onboarding. Employees do not need an Entra
 administrator role to sign in after onboarding.
 
+Application Developer is not a qualifying administrator role. This role list
+applies to the current delegated permission set; it must be reviewed if Microsoft
+Graph application permissions are added. See Microsoft's
+[tenant-wide consent prerequisites](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent#prerequisites).
+
 ## Preflight role check
 
 Before opening the invitation, run the FoundryX role-check script with the customer tenant ID:
 
-1. Download [`Check-FoundryXAdminConsentRole.ps1`](Check-FoundryXAdminConsentRole.ps1) from this repository.
+1. Download [`Check-FoundryXAdminConsentRole.ps1`](https://github.com/microsoft/FoundryX/releases/download/Check-FoundryXAdminConsentRole-v1/Check-FoundryXAdminConsentRole.ps1) from this repository.
 2. Open Windows PowerShell in the folder that contains the script.
 3. Unblock the downloaded file:
 
@@ -47,9 +54,11 @@ Before opening the invitation, run the FoundryX role-check script with the custo
    ```
 
 5. Sign in with the account that will approve consent. The script uses Azure CLI and installs it with Windows Package Manager if it is not already available.
-6. Continue when the JSON result contains `"eligibleRoleDetected": true`. If the result is `false`, activate an eligible PIM role or ask an administrator with one of the roles above to complete onboarding.
+6. An `"eligible": true` result means the script recognized an active built-in role from the list above. An `"eligible": false` result means no recognized role was found, not that Microsoft Entra will necessarily deny consent. If applicable, activate an eligible PIM role and sign in again to obtain an updated token, or ask an administrator with one of the roles above to complete onboarding.
 
-The preflight checks active built-in roles only. It cannot detect inactive PIM eligibility or custom roles. The Microsoft Entra admin-consent page is the final authority on whether the account can grant consent.
+The JSON output contains only `eligible`, `tenantId`, `account`, `userObjectId`, and `matchedRoles`. When no role is recognized, `matchedRoles` is an empty array.
+
+The preflight reads active tenant-wide built-in roles from the token's `wids` claim without requesting Microsoft Graph read permissions or changing role assignments or consent grants. It does not evaluate inactive PIM eligibility, custom roles, consent policies, or role changes since token issuance. Do not use a negative preflight result to block an attempt to consent. The Microsoft Entra admin-consent page is the final authority on whether the account can grant consent.
 
 ## Consent and tenant setup
 

@@ -7,6 +7,10 @@ Use FoundryX to give employees access to customer-owned Microsoft Foundry projec
 
 This page explains the access model, resource policies, and administration options in the FoundryX private preview. For the step-by-step portal task, follow [Walkthrough: Grant project access](register-project-permissions.md).
 
+For the permissions required on each portal page, including why subscription
+access is not sufficient to load Toolboxes, see
+[Admin Center permissions by page](admin-portal-permissions.md).
+
 Customer administration does not include deployment of the FoundryX service or provider-side tenant administration. Your organization retains ownership of its subscriptions, resources, quota, costs, and security policy.
 
 **Staging portal:** [FoundryX Admin Center](https://foundryx-portal-staging.redsea-0f4601f0.westus2.azurecontainerapps.io/)
@@ -304,6 +308,7 @@ permission.
 | Organization is not active | Verify the tenant in the sign-in link. Ask the service operator to complete onboarding or review suspension. Switching accounts does not activate a tenant. |
 | **Grant access** or an access action is disabled, or `azure_role_required` | Read the warning or action tooltip. Verify Subscription Owner, or both Contributor and User Access Administrator at subscription scope, in the selected tenant. A project role is not sufficient for registration. |
 | No subscriptions or projects appear | Confirm the tenant and delegated Azure read access. Only supported Foundry accounts and unregistered projects appear in the new-permission picker. A discovery error is not an empty inventory. |
+| Models or tools fail to load in **Grant access** | Check [model management-plane reads](admin-portal-permissions.md#allowed-models) and [tool discovery permissions](admin-portal-permissions.md#allowed-tools). Native Toolbox listing uses the signed-in administrator's Foundry data access; subscription Owner alone does not grant it. Existing registrations use the service identity for resource reads instead. |
 | Directory users or groups fail to load | Check delegated Graph consent and directory access. Resolve the error and retry; do not replace failed results with an assumed empty list. |
 | Additional sign-in verification is requested | Complete the Microsoft sign-in flow. Sign-in checks delegated management access and existing Azure MFA write/delete requirements for subscription managers. It does not add roles or change tenant policy. Later verification can still occur. The portal can retry reads after verification, but it does not automatically replay mutations. Inspect current state before retrying a save. |
 | **Save access** is disabled | Select an unregistered project and at least one identity. Wait for successful model discovery and either successful tool discovery or the new-registration recovery path that saves no allowed tools. |

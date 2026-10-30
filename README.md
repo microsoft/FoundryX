@@ -57,6 +57,8 @@ preserve your service environment, configuration and sign-in.
 
 For the access model, roles, resource policies, and administration options, see
 [FoundryX administration concepts and reference](doc/enterprise-admin-agent-access.md).
+For sign-in, page actions, and the model/tool picker requirements, see
+[Admin Center permissions by page](doc/admin-portal-permissions.md).
 For the step-by-step portal task, follow
 [Walkthrough: Grant project access](doc/register-project-permissions.md).
 

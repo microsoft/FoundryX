@@ -3,7 +3,13 @@
 > [!IMPORTANT]
 > FoundryX is an experimental project. It is currently available only by invitation to selected customers.
 
-This document records the requirements in the FoundryX tenant onboarding guide. The guide describes onboarding for the FoundryX private preview.
+To connect a tenant to FoundryX, an eligible Microsoft Entra administrator must
+approve the application permissions and complete tenant activation.
+
+For permissions needed **after onboarding**, see
+[Admin Center permissions by page](admin-portal-permissions.md). Successful
+onboarding does not grant subscription management or native Foundry data access
+to the person who signs in to the Admin Center.
 
 ## Administrator requirements
 
@@ -15,9 +21,19 @@ For the current FoundryX delegated permissions, these active Microsoft Entra bui
 - Privileged Role Administrator
 - Global Administrator
 
-The role must allow the administrator to grant tenant-wide admin consent for the delegated permissions shown during onboarding. A custom role with the necessary consent permissions can also qualify. If the required role is eligible through Privileged Identity Management (PIM), activate it before starting.
+The role must allow the administrator to grant tenant-wide admin consent for
+the delegated permissions shown during onboarding. A custom role with the
+necessary consent permissions can also qualify. If the role is eligible through
+Privileged Identity Management (PIM), activate it before starting.
 
-Application Developer is not a qualifying administrator role. This role list applies to the current delegated permission set; it must be reviewed if Microsoft Graph application permissions are added. See Microsoft's [tenant-wide consent prerequisites](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent#prerequisites).
+These are **Microsoft Entra roles**, not Azure subscription roles. Subscription
+Owner is not required for tenant onboarding. Employees do not need an Entra
+administrator role to sign in after onboarding.
+
+Application Developer is not a qualifying administrator role. This role list
+applies to the current delegated permission set; it must be reviewed if Microsoft
+Graph application permissions are added. See Microsoft's
+[tenant-wide consent prerequisites](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent#prerequisites).
 
 ## Preflight role check
 
@@ -58,19 +74,36 @@ The administrator completes these steps in order:
 2. **Complete the Portal and CLI consent steps.** Follow the redirects and approve the standard sign-in permissions. The Portal and CLI are preauthorized clients of the API; FoundryX access does not require separate customer-tenant service principals for them.
 3. **Wait for activation to be verified.** Continue only when the result page says **Your organization is connected to FoundryX**. A success redirect alone is not proof of activation.
 
-The permissions support these operations:
+### Application permissions to approve
 
-- Microsoft Graph delegated access lets FoundryX find users and evaluate group-based project access.
-- Azure Resource Manager delegated access lets FoundryX act within the signed-in user's existing Azure role-based access control (RBAC) assignments.
-- Portal and CLI sign-in permissions identify the user and keep the user's session active.
+| Service | Delegated permission | Why FoundryX needs it |
+| --- | --- | --- |
+| Microsoft Graph | `User.ReadBasic.All` | Find users and read their basic profiles. |
+| Microsoft Graph | `GroupMember.Read.All`, together with `User.ReadBasic.All` | Find groups, read group membership, and check group-based access. |
+| Azure Resource Manager (ARM) | `user_impersonation` | Check subscription roles and read or manage Azure resources as the signed-in user. |
+| Microsoft Foundry | `user_impersonation` | List native Toolboxes as the signed-in user. |
+| FoundryX API, through the Portal and CLI | `access_as_user`, plus the sign-in permissions shown during consent | Sign users in and let the clients call the API for them. |
+
+"Delegated" means FoundryX acts on behalf of the signed-in user. The API obtains
+the Graph, ARM, and Foundry tokens; users do not supply these tokens themselves.
+Application consent does not remove directory or guest restrictions.
 
 ## Permission boundary
 
-Onboarding does not grant the FoundryX enterprise applications access to a specific Azure resource. It does not assign a service principal an Azure subscription, resource group, or Foundry resource role.
+**Consent is not project access.** Onboarding does not assign Azure resource
+roles to employees or to the FoundryX service principal. It also does not assign
+FoundryX project roles to employees.
 
-The delegated permissions allow the FoundryX API to request Microsoft Graph and Azure Resource Manager tokens on behalf of the signed-in user. Delegated Azure management operations remain limited by that user's existing Azure RBAC assignments.
+When FoundryX reads Azure or native Foundry resources as the signed-in user,
+that user still needs the required resource permissions. For example, Azure
+subscription Owner alone does not permit native Toolbox reads.
 
-Project registration is a separate step. An authorized subscription administrator grants the customer-tenant FoundryX service identity access to the selected resources. FoundryX can then authorize employees through project membership and resource policies without assigning Azure roles to each employee. See [administration concepts and reference](enterprise-admin-agent-access.md) for the access model, or follow the [registration walkthrough](register-project-permissions.md) to set up a project permission.
+After onboarding, an authorized subscription administrator registers a project
+and grants access. Registration gives the customer tenant's FoundryX service
+principal access to the selected Azure resources. The administrator separately
+assigns employees Consumer, User, Manager, or Owner access to that project
+through FoundryX. These project access grants (ACL entries) do not assign Azure
+roles to employees and are not prerequisites for tenant onboarding.
 
 ## Completion criteria
 
@@ -79,13 +112,22 @@ After consent, FoundryX must:
 - Verify that API, Portal, and CLI consent completed for the same tenant and that the FoundryX API service principal is available.
 - Activate the tenant for the FoundryX private preview.
 
-After activation, users can sign in with work or school accounts. Access to registered FoundryX projects requires a matching project grant and remains subject to the project's model and tool policy. Subscription management operations still require the administrator's Azure authority.
+## Who can sign in after onboarding?
+
+**Any user in the active tenant can sign in to the Admin Center**, subject to the
+organization's Microsoft Entra sign-in policies. No Entra administrator, Azure
+subscription, or FoundryX project role is required just to sign in. Guests must
+use their identity in the onboarded tenant.
+
+Signing in does not grant project access. Users need an individual, group, or
+tenant-wide FoundryX grant to use a project. Subscription administrators can
+also view and manage registered projects in their subscriptions.
 
 Select **Sign in to FoundryX** on the completion page to use the tenant-specific
 sign-in link. **Share** shares that link, or copies it when browser sharing is not
 available. Share the sign-in link with employees, not the onboarding invitation.
-Next, an authorized subscription administrator must create or connect a project
-and grant access through the [project access walkthrough](register-project-permissions.md).
+Next, review [who can grant access and what each project role allows](admin-portal-permissions.md),
+then follow the [project access walkthrough](register-project-permissions.md).
 
 ## If onboarding does not complete
 

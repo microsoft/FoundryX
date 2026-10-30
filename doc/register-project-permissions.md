@@ -9,11 +9,15 @@ For role definitions, policy semantics, and administration options, see [Foundry
 
 ## Before you begin
 
+Review [Admin Center permissions by page](admin-portal-permissions.md) for the
+separate subscription, model-discovery, Toolbox data, and directory requirements.
+
 Confirm these prerequisites:
 
 - The target tenant is active in FoundryX. Complete [tenant onboarding](tenant-onboarding-requirements.md) first if needed.
 - You are Subscription Owner, or have both Contributor and User Access Administrator at subscription scope. Activate eligible roles before continuing. Project Owner membership alone does not permit registration.
 - You have an existing project under a Foundry account with resource kind `AIServices`, in a subscription in the target tenant.
+- Your signed-in identity can read deployments on the parent Foundry account and connection metadata on the native project. To load the tools list, it also needs native Foundry data access to that project's Toolboxes, for example through the Azure **Foundry User** role. Subscription Owner or Contributor alone does not supply that data access.
 - The project has a ready model deployment if employees must build or invoke agents. Required project connections and Toolboxes are already configured.
 - You know which users, groups, or tenant-wide audience need access and which roles they require.
 
@@ -50,6 +54,11 @@ Older `/t/<tenant-id>` links redirect to the tenant-query form. Switching tenant
 If a project is already registered, open its existing access entry instead of creating another. Use **Create new Foundry project** to create a native project in Foundry if needed, then reopen the form to discover it.
 
 Discovery uses your signed-in Azure identity. If it is denied, resolve that error; the service does not substitute its own identity.
+
+Seeing the subscription is not proof that model and tool discovery can succeed.
+For exact read scopes and the separate native Toolbox requirement, see
+[Allowed models](admin-portal-permissions.md#allowed-models) and
+[Allowed tools](admin-portal-permissions.md#allowed-tools).
 
 Disabled access actions show an explanation of the required Azure subscription
 roles. Signing in or seeing the list does not by itself permit registration.

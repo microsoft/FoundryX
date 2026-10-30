@@ -135,6 +135,7 @@ operate agents. For installation, see
 | Document | Audience | What it covers |
 | --- | --- | --- |
 | [Tenant onboarding requirements](tenant-onboarding-requirements.md) | Administrators | Required Microsoft Entra roles, administrator consent, and tenant activation. |
+| [Admin Center permissions by page](admin-portal-permissions.md) | Administrators | Who can sign in and grant access, model/tool list requirements, and the project permissions users receive through FoundryX ACLs. |
 | [Administration concepts and reference](enterprise-admin-agent-access.md) | Administrators | Access boundaries, project roles, model and tool policies, membership, and troubleshooting. |
 | [Walkthrough: Grant project access](register-project-permissions.md) | Administrators | Register an existing Foundry project, select allowed resources, assign roles, and verify employee access. |
 | [Builder concepts and reference](builder-guide.md) | Builders | Plugin-first setup, upgrades, access, CLI and Canvas capabilities, tools, evaluation, monitoring, publishing, and optional manual CLI setup. |

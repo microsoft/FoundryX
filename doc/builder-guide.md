@@ -314,12 +314,18 @@ foundryx toolbox version list <toolbox-name> --project <project-id>
 
 These are safe configuration summaries, not credential exports or live tool tests. Check `allowed`, authentication requirements, and Prompt/Hosted compatibility. Toolbox inspection selects the published default; use `--version <version>` with `toolbox show` when you need a pinned endpoint.
 
-For Hosted Toolbox agents, use the exact returned `endpoint` as `TOOLBOX_ENDPOINT` in the sample's `main.py`. Declare the resources used by the source under `agent.tool_resources`, such as `toolbox:<toolbox-name>` and its referenced `connection:<connection-name>` keys. These declarations support policy checks; they do not sandbox arbitrary source code.
+For Hosted Toolbox agents, use the exact returned `endpoint` as `TOOLBOX_ENDPOINT` in the sample's `main.py`. Declare `toolbox:<toolbox-name>` under `agent.tool_resources`. Do not separately declare its internal connections or built-in tools. Add `connection:<connection-name>` or `builtin:<type>` only for resources the source uses directly outside the Toolbox. These declarations support policy checks; they do not sandbox arbitrary source code.
+
+An allowed Toolbox permits its configured tools and same-project connections
+through that Toolbox, including changes to its owner-published default version.
+Separate connection grants control direct use, not use inside the Toolbox.
+Inspect internal connection metadata through `toolbox show`; a separate
+`connection show` requires direct connection access.
 
 Check every required resource before deployment:
 
 ```text
-foundryx access check --project <project-id> --action agent.deploy --model <deployment-name> --tool toolbox:<toolbox-name> connection:<connection-name>
+foundryx access check --project <project-id> --action agent.deploy --model <deployment-name> --tool toolbox:<toolbox-name>
 ```
 
 Do not add inline authentication headers, keys, or tokens. Creating or changing connections and Toolboxes requires Project Owner membership and is a separate administration task.
@@ -361,6 +367,11 @@ In a Canvas-capable Copilot host, ask:
 ```
 
 The skill normally opens Canvas after successful deployment. The personal list includes agents attributed to you in enabled projects where you have User, Manager, or Owner access. Agents with an unknown creator are excluded. Use `foundryx agent list --project <project-id>` for the project-wide CLI listing.
+
+For a text list limited to your own agents in one project, use
+`foundryx agent list --project <project-id> --owned-only` when the installed CLI's
+`agent list --help` includes that option. Omit `--owned-only` when checking whether
+a proposed agent name is already in use: another user's agent can have that name.
 
 Search the list, select a column heading to sort, and select an agent name for details. The list reloads on opening and when the Agents view regains focus.
 

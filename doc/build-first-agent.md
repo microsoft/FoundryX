@@ -136,6 +136,10 @@ foundryx agent list --project <project-id>
 foundryx agent show <agent-id> --project <project-id>
 ```
 
+For only your own agents in this project, add `--owned-only` to `agent list` if
+the installed CLI's `agent list --help` includes it. Keep the full project listing
+when checking that a new agent name is unique.
+
 Canvas shares the CLI account. After switching accounts or tenants, reload it before using it.
 
 ## 6. Add an approved tool when needed
@@ -148,7 +152,7 @@ Skip this step if your agent needs no external data. For an agent with tools, as
 
 1. Select a Toolbox that meets your task and project policy. For a prepared demo, use only a resource your administrator confirms is available.
 2. Review the selected Toolbox, published or pinned version, returned endpoint, required connections, and user-consent requirements.
-3. Have Copilot update the Hosted source using the `toolbox` sample pattern and declare the resource keys in `agent.tool_resources`.
+3. Have Copilot update the Hosted source using the `toolbox` sample pattern and declare `toolbox:<toolbox-name>` in `agent.tool_resources`. Do not separately declare the Toolbox's internal connections or built-in tools. Declare extra resources only if the source uses them directly outside the Toolbox.
 4. Review the change and redeploy. **Do not test Toolbox agents with `agent run` or `--local`.**
 5. Invoke remotely with a non-sensitive request that requires the tool. Complete per-user consent if challenged, then resume with the returned conversation ID and the same account.
 

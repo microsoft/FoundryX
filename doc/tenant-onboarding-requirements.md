@@ -20,7 +20,7 @@ The role must allow the administrator to grant tenant-wide admin consent for the
 
 Before opening the invitation, run the FoundryX role-check script with the customer tenant ID:
 
-1. Download [`Check-FoundryXAdminConsentRole.ps1`](https://github.com/8cd88b23-f986-4c2d-9acc-2d18d2217672).
+1. Download [`Check-FoundryXAdminConsentRole.ps1`](Check-FoundryXAdminConsentRole.ps1) from this repository.
 2. Open Windows PowerShell in the folder that contains the script.
 3. Unblock the downloaded file:
 
@@ -41,10 +41,17 @@ The preflight checks active built-in roles only. It cannot detect inactive PIM e
 
 ## Consent and tenant setup
 
+Open the invitation supplied by your FoundryX contact. The welcome page is
+titled **Connect your organization to FoundryX**. Use **Learn about onboarding**
+to review these requirements, then select **Start onboarding** with an eligible
+Microsoft Entra administrator account. An expired invitation needs a replacement;
+changing accounts does not extend it.
+
 The administrator completes these steps in order:
 
-1. **Create the FoundryX enterprise applications.** Microsoft Entra creates service principals for the FoundryX API, Portal, and CLI in the customer tenant.
-2. **Approve delegated permissions.** Approve the API permissions first, then approve the standard sign-in permissions for the Portal and CLI. The invitation page displays the current API scope names before onboarding begins.
+1. **Approve the FoundryX API permissions.** Review the permissions on the Microsoft Entra consent page. Microsoft Entra creates the FoundryX API enterprise application in the customer tenant.
+2. **Complete the Portal and CLI consent steps.** Follow the redirects and approve the standard sign-in permissions. The Portal and CLI are preauthorized clients of the API; FoundryX access does not require separate customer-tenant service principals for them.
+3. **Wait for activation to be verified.** Continue only when the result page says **Your organization is connected to FoundryX**. A success redirect alone is not proof of activation.
 
 The permissions support these operations:
 
@@ -64,7 +71,22 @@ Project registration is a separate step. An authorized subscription administrato
 
 After consent, FoundryX must:
 
-- Verify that API, Portal, and CLI consent completed for the same tenant.
+- Verify that API, Portal, and CLI consent completed for the same tenant and that the FoundryX API service principal is available.
 - Activate the tenant for the FoundryX private preview.
 
 After activation, users can sign in with work or school accounts. Access to registered FoundryX projects requires a matching project grant and remains subject to the project's model and tool policy. Subscription management operations still require the administrator's Azure authority.
+
+Select **Sign in to FoundryX** on the completion page to use the tenant-specific
+sign-in link. **Share** shares that link, or copies it when browser sharing is not
+available. Share the sign-in link with employees, not the onboarding invitation.
+Next, an authorized subscription administrator must create or connect a project
+and grant access through the [project access walkthrough](register-project-permissions.md).
+
+## If onboarding does not complete
+
+| Result | Action |
+| --- | --- |
+| **Administrator consent was not granted** | The organization is not activated. Reopen the invitation with an eligible administrator before it expires. Permissions approved in earlier steps can remain in Microsoft Entra. |
+| **Tenant onboarding could not be completed** | Try the original invitation again. If the error continues, contact FoundryX support with the displayed request ID. |
+| **Confirming tenant onboarding** cannot verify activation | Do not assume the tenant is active. Resolve the reported error with support before granting project access. |
+| Invitation expired | Ask your FoundryX contact for a replacement invitation. |

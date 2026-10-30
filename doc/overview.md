@@ -94,6 +94,10 @@ project, and registers it in FoundryX. The administrator chooses allowed models
 and tools, then assigns project roles to Microsoft Entra users or groups.
 Tenant-wide access is also available for the supported roles.
 
+In the Admin Center, select **Access** > **Grant access** to register a project.
+Use **Edit access** for later changes and **Remove access** to remove its FoundryX
+registration without deleting the native project.
+
 This gives creators a prepared environment rather than asking each employee to
 configure Azure resources. Follow the
 [project registration walkthrough](register-project-permissions.md) for the
@@ -132,7 +136,7 @@ operate agents. For installation, see
 | --- | --- | --- |
 | [Tenant onboarding requirements](tenant-onboarding-requirements.md) | Administrators | Required Microsoft Entra roles, administrator consent, and tenant activation. |
 | [Administration concepts and reference](enterprise-admin-agent-access.md) | Administrators | Access boundaries, project roles, model and tool policies, membership, and troubleshooting. |
-| [Walkthrough: Register project permissions](register-project-permissions.md) | Administrators | Register an existing Foundry project, select allowed resources, assign roles, and verify employee access. |
+| [Walkthrough: Grant project access](register-project-permissions.md) | Administrators | Register an existing Foundry project, select allowed resources, assign roles, and verify employee access. |
 | [Builder concepts and reference](builder-guide.md) | Builders | Plugin-first setup, upgrades, access, CLI and Canvas capabilities, tools, evaluation, monitoring, publishing, and optional manual CLI setup. |
 | [Walkthrough: Build and operate your first agent](build-first-agent.md) | Builders | Install the plugin, let Copilot guide setup and sign-in, then create, deploy, invoke, and inspect an agent. |
 

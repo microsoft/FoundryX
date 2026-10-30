@@ -5,7 +5,7 @@
 
 Use FoundryX to give employees access to customer-owned Microsoft Foundry projects without assigning Azure roles to each employee. Administrators register projects, select the models and tools that members can use, and assign access through Microsoft Entra users, groups, or the tenant.
 
-This page explains the access model, resource policies, and administration options in the FoundryX private preview. For the step-by-step portal task, follow [Walkthrough: Register project permissions](register-project-permissions.md).
+This page explains the access model, resource policies, and administration options in the FoundryX private preview. For the step-by-step portal task, follow [Walkthrough: Grant project access](register-project-permissions.md).
 
 Customer administration does not include deployment of the FoundryX service or provider-side tenant administration. Your organization retains ownership of its subscriptions, resources, quota, costs, and security policy.
 
@@ -25,7 +25,7 @@ Use your organization's sign-in process. This guide contains no shared test acco
 
 ## Understand the access model
 
-A **Permission** registers one native Foundry project in FoundryX. It contains project membership and a shared model and tool policy. It does not create a separate copy of the native project.
+A **Permission** registers one native Foundry project in FoundryX. It contains project membership and a shared model and tool policy. It does not create a separate copy of the native project. The Admin Center presents these records under **Access**, using **Grant access**, **Edit access**, and **Remove access**. CLI commands and error codes can still refer to permissions.
 
 There are three separate authorization boundaries:
 
@@ -101,7 +101,7 @@ Before creating a permission, confirm the following:
 
 Tenant consent alone does not assign Azure resource roles to the FoundryX service identity. Project registration performs that separate access-provisioning step.
 
-The Admin Center's **New permission** workflow imports an existing project. To create a native project first, use [Microsoft Foundry](https://ai.azure.com/) or the FoundryX CLI:
+The Admin Center's **Grant access** workflow imports an existing project. To create a native project first, use [Microsoft Foundry](https://ai.azure.com/) or the FoundryX CLI:
 
 ```text
 foundryx access project options
@@ -120,7 +120,7 @@ Commands use the **FoundryX project UUID**, returned by `foundryx access project
 
 Model deployments belong to the parent Foundry account. Each registered project has its own allowlist, even when projects share that account.
 
-To change model access, open the permission's **...** menu, select **Edit**, change **Allowed models**, and select **Save changes**. The edit form reads the current native deployment list, including deployments created outside FoundryX.
+To change model access, open the project's **...** menu, select **Edit access**, change **Allowed models (optional)**, and select **Save**. The edit form reads the current native deployment list, including deployments created outside FoundryX. **Deploy new models in Foundry portal** opens Foundry for separate deployment; it does not deploy a model from the access form.
 
 The policy applies to every member, including Owners. It is not a separate list for each user.
 
@@ -197,7 +197,14 @@ The Admin Center controls which tools project members can use. Resource creation
 | Project connection | `connection:<name>` | Create it in the selected native project and configure its authentication. |
 | Toolbox | `toolbox:<name>` | Create the Toolbox, review its tool sources and connections, and select its published default or a pinned version. |
 
-Allow a Toolbox **and every project connection it references**. Allowing only the Toolbox does not override connection restrictions. A public MCP server used directly is distinct from a project connection or Toolbox.
+Allowing a Toolbox permits its configured tools and same-project connections
+through that Toolbox, including changes to its owner-published default version.
+Separate connection grants control direct use outside the Toolbox. Removing a
+connection grant does not block its use through an allowed Toolbox. To revoke
+that path, remove the Toolbox grant or change its contents. Native authentication,
+resource validation, and project boundaries still apply.
+
+A public MCP server used directly is distinct from a project connection or Toolbox.
 
 The permission form automatically includes **Web search** when available and does not let you clear it in the picker. A later portal policy save can add it again. If your policy must exclude web search or deny all tools, use an explicit CLI policy and verify it after any portal edits.
 
@@ -238,17 +245,18 @@ Use reviewed source to create a new FoundryX hosted agent with explicit `tool_re
 
 ## Manage project membership
 
-Open **Permissions** and select the project name to view its Microsoft Entra assignments.
+Open **Access** and select the project name to view **Access details** and its **Users / Groups** assignments.
 
 | Task | Portal steps |
 | --- | --- |
-| Add access | In the Microsoft Entra identity section, select **Add**, search for a user or group, select its role, and confirm with **Add**. |
+| Add access | In **Users / Groups**, select **Add Users / Groups**, search for a user or group, select its role, and confirm with **Add**. |
 | Change a role | Open the assignment's **...** menu and select **Edit role**. Review and save the new role. |
 | Remove a grant | Open the assignment's **...** menu and select **Remove**. Review the affected identity and confirm removal. |
 | Inspect a group | Select the group's name to view its users. This does not edit Entra group membership. |
-| Edit several assignments | Open the permission's **...** menu, select **Edit**, and review the selected identities and roles before **Save changes**. |
+| Edit several assignments | Open the project's **...** menu, select **Edit access**, and review the selected identities and roles before **Save**. |
 
-Some preview deployments label the section **Microsoft Entra access**. **Microsoft Entra identity** is the identity picker.
+The **Foundry X role** information tip explains the project roles. It does not
+grant Azure subscription authority or change which assignments you can manage.
 
 Directory searches use the signed-in person's delegated Microsoft Graph access. Creating a group, inviting an external user, or changing group membership takes place in Microsoft Entra, not in the project permission form.
 
@@ -269,7 +277,7 @@ Choose the operation that matches your intent:
 | Remove one access path | Remove its direct, group, or tenant grant. | Other matching grants can still authorize the user. |
 | Temporarily block project use | A subscription manager runs `foundryx access project disable <project-id>`. | Blocks project use through FoundryX; keeps the registration, policy, memberships, and native resources. |
 | Restore a disabled project | A subscription manager runs `foundryx access project enable <project-id>`. | Restores access under the saved policy and grants. Does not complete a pending import or deletion. |
-| Remove the FoundryX registration | A subscription manager selects **Delete** from the permission's **...** menu and confirms **Delete project permissions?** | Removes the permission and its FoundryX access records after service-access cleanup. |
+| Remove the FoundryX registration | A subscription manager selects **Remove access** from the project's **...** menu and confirms **Remove project access?** with **Remove access**. | Removes the permission and its FoundryX access records after service-access cleanup. |
 
 For CLI deletion, provide the exact permission name:
 
@@ -277,34 +285,38 @@ For CLI deletion, provide the exact permission name:
 foundryx access project delete <project-id> --name <exact-permission-name>
 ```
 
-The portal supplies that name when you confirm its delete dialog; it does not require you to type it.
+The portal supplies that name when you confirm its removal dialog; it does not require you to type it. The button shows **Removing…** while the request runs, and the dialog cannot be closed during that operation.
 
 Permission deletion does **not** delete native projects, models, agents, tools, Bots, monitoring resources, or conversations. It does remove FoundryX membership, policy, and associated tracking metadata. Native resources can continue to incur costs, and direct Azure or external access remains separate.
 
 Cleanup revokes only verified FoundryX-managed role assignments. It preserves shared assignments needed by other registrations and customer-managed or inherited Azure access. Do not interpret permission deletion as removal of every Azure grant to the enterprise application.
 
-If deletion fails after cleanup starts, the permission remains disabled as **Deletion pending**. Resolve the reported error and retry **Delete**. Do not enable it or manually remove its registration to bypass cleanup. Wait for active model or agent operations to finish before deleting a permission.
+If deletion fails after cleanup starts, the permission remains disabled. The list
+shows **Deletion incomplete. Retry delete.** Resolve the reported error and retry
+**Remove access**. Do not enable it or manually remove its registration to bypass
+cleanup. Wait for active model or agent operations to finish before deleting a
+permission.
 
 ## Troubleshoot
 
 | Symptom or code | Check and action |
 | --- | --- |
 | Organization is not active | Verify the tenant in the sign-in link. Ask the service operator to complete onboarding or review suspension. Switching accounts does not activate a tenant. |
-| **New permission** is disabled, or `azure_role_required` | Verify Subscription Owner, or both Contributor and User Access Administrator at subscription scope, in the selected tenant. A project role is not sufficient. |
+| **Grant access** or an access action is disabled, or `azure_role_required` | Read the warning or action tooltip. Verify Subscription Owner, or both Contributor and User Access Administrator at subscription scope, in the selected tenant. A project role is not sufficient for registration. |
 | No subscriptions or projects appear | Confirm the tenant and delegated Azure read access. Only supported Foundry accounts and unregistered projects appear in the new-permission picker. A discovery error is not an empty inventory. |
 | Directory users or groups fail to load | Check delegated Graph consent and directory access. Resolve the error and retry; do not replace failed results with an assumed empty list. |
-| Additional sign-in verification is requested | Complete the Microsoft sign-in flow. The portal can retry reads after verification, but it does not automatically replay mutations. Inspect current state before retrying a save. |
-| **Save permissions** is disabled | Select an unregistered project and at least one identity. Wait for successful model discovery and either successful tool discovery or the explicit tools-disabled recovery option. |
+| Additional sign-in verification is requested | Complete the Microsoft sign-in flow. Sign-in checks delegated management access and existing Azure MFA write/delete requirements for subscription managers. It does not add roles or change tenant policy. Later verification can still occur. The portal can retry reads after verification, but it does not automatically replay mutations. Inspect current state before retrying a save. |
+| **Save access** is disabled | Select an unregistered project and at least one identity. Wait for successful model discovery and either successful tool discovery or the new-registration recovery path that saves no allowed tools. |
 | Save failed after some changes | Reload the permission and inspect its policy and assignments. Import, policy, and membership changes can have succeeded independently. |
 | **Import incomplete**, `project_import_access_pending`, or `project_import_incomplete` | Review the error. If Azure role propagation is pending, wait and use **Retry import**. The permission remains disabled until registration completes. |
 | Employee can invoke but cannot build | Check their effective role. Consumer does not grant development; assign User or higher as appropriate. |
-| `model_not_allowed`, `tool_not_allowed`, or no models allowed | Inspect the shared policy. `[]` denies all. Select the exact deployment or resource key, including a Toolbox's referenced connections. |
+| `model_not_allowed`, `tool_not_allowed`, or no models allowed | Inspect the shared policy. `[]` denies all. Select the exact deployment or directly used resource key. A Toolbox grant covers its internal connections; direct connection use needs its own grant. |
 | `model_not_ready` | Check the native model deployment state. Select a deployment whose provisioning state is `Succeeded`. |
 | `project_owner_required` for connection or Toolbox changes | Obtain Project Owner membership. Subscription authority and Manager membership do not substitute for it. |
 | `hosted_tool_declarations_unknown` | Deploy a new hosted agent from reviewed source with explicit resource declarations. An imported hosted agent cannot prove its tools satisfy a restricted policy. |
 | `oauth_consent_required` | Have the invoking employee complete the returned tool-consent flow, then resume with the same identity and conversation. Do not substitute administrator credentials. |
 | `subscription_access_unverified` | Reauthenticate or ask an Azure administrator to inspect delegated management access. An unverified check is not proof that the role is absent. |
-| **Deletion pending**, `permission_revocation_pending`, or `permission_assignment_changed` | Inspect the named access-cleanup error. An Azure administrator must review changed assignments; retry deletion after resolution. |
+| **Deletion incomplete. Retry delete.**, `permission_revocation_pending`, or `permission_assignment_changed` | Inspect the named access-cleanup error. An Azure administrator must review changed assignments; retry **Remove access** after resolution. |
 | Monitoring is absent or access is denied | A subscription manager can inspect monitoring with `foundryx access project monitoring show --project <project-id>`. Review changes before using `monitoring setup`, which can create or repair resources, connections, and monitoring grants. |
 
 Import can succeed even when monitoring setup needs attention. Inspect any returned monitoring error separately. The monitoring recovery commands are available through the CLI, not the permission form.

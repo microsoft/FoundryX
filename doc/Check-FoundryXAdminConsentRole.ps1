@@ -2,9 +2,12 @@ $ErrorActionPreference = 'Stop'
 $commandLineArgs = @($args)
 $TenantId = $null
 
+# Applies to the current delegated permissions, not Microsoft Graph application permissions.
+# https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent#prerequisites
 $eligibleRoles = [ordered]@{
-    'cf1c38e5-3621-4004-a7cb-879624dced7c' = 'Application Administrator'
+    '9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3' = 'Application Administrator'
     '158c047a-c907-4556-b7ef-446551a6b5f7' = 'Cloud Application Administrator'
+    'd2562ede-74db-457e-a7b6-544e236ebb61' = 'AI Administrator'
     'e8611ab8-c189-46e8-94e1-60213ab1f814' = 'Privileged Role Administrator'
     '62e90394-69f5-4237-9190-012177145e10' = 'Global Administrator'
 }
@@ -23,6 +26,13 @@ Options:
 
 Example:
   .\$scriptName -t 11111111-1111-4111-8111-111111111111
+
+This preflight reads token wids claims without Microsoft Graph calls.
+It covers the current FoundryX delegated permissions, not Microsoft Graph
+application permissions. eligible=true means a recognized active role was found;
+eligible=false means none was found, not proof that the user cannot grant consent.
+Custom roles, inactive PIM eligibility, consent policies, and role changes since
+token issuance are not evaluated. Entra remains authoritative.
 "@
 }
 
@@ -323,15 +333,13 @@ $matchedRoles = @(
     }
 )
 
+$roleDetected = $matchedRoles.Count -gt 0
 $result = [ordered]@{
-    verdict = if ($matchedRoles.Count -gt 0) { 'ELIGIBLE ROLE DETECTED' } else { 'NO ELIGIBLE ACTIVE BUILT-IN ROLE DETECTED' }
-    eligibleRoleDetected = $matchedRoles.Count -gt 0
+    eligible = $roleDetected
     tenantId = $targetTenantId
     account = [string]$account.user.name
     userObjectId = [string]$claims.oid
     matchedRoles = $matchedRoles
-    accessTokenPrintedOrStored = $false
-    caveat = 'This is a preflight based on active built-in roles in the token wids claim. It does not detect inactive PIM eligibility or custom roles, and the Microsoft Entra admin-consent endpoint remains authoritative.'
 }
 
 [pscustomobject]$result | ConvertTo-Json -Depth 5

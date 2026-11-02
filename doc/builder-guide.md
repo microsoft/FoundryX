@@ -358,7 +358,13 @@ The following examples require administrator-prepared resources in a project you
 | Contoso document search | `/foundry-agent Build an agent that searches the prepared Contoso documents. Inspect the project's existing search resources before configuring it.` |
 | Your email and meetings | `/foundry-agent Build a Hosted agent using the existing WorkIQToolbox to answer questions about my own email and meetings.` |
 
-`GitHubToolbox` uses its configured shared credential; it is not necessarily your GitHub account. OAuth Toolboxes use the invoking user's external account after consent. WorkIQ also requires a suitable Microsoft 365 member account and Copilot entitlement.
+A Toolbox name does not establish its authentication mode. Inspect the selected
+Toolbox and its connection summaries before use. Shared credentials use the
+configured account or identity. Per-user tools require the invoking user's
+external access and may require consent. Discovery does not prove that
+authentication or tool execution works; verify with a deployed agent.
+For Microsoft 365 tools, also check the required account, license, and Copilot
+entitlement.
 
 ### Complete per-user tool consent
 
@@ -397,7 +403,6 @@ Search the list, select a column heading to sort, and select an agent name for d
 | Enable agent / Disable agent | Available for Hosted Agents in the supported state. Changes their runtime availability. Disabling does not delete resources or guarantee that all costs stop. |
 | Get agent endpoint | Shows the configured protocol URLs. Copy the returned URL; do not construct one. An endpoint does not grant a caller permission to use it. |
 | Publish | Opens a metadata and confirmation form for the latest deployed, ready agent version. Submission still requires Microsoft 365 administrator review. |
-| Monitor agent | Opens Monitor with the selected agent in scope. |
 | Delete | Requires the exact agent name. Deletes the native agent and any FoundryX-owned publishing Bot/channel. It is not a reversible pause. |
 
 The Canvas delete dialog uses the phrase "published resources." It does **not** remove a Microsoft 365 or Teams catalog entry. Your administrator must handle catalog removal separately. Agent deletion also does not guarantee erasure of native conversation history.
@@ -456,7 +461,10 @@ Evaluation uses the backend application identity, not normal Hosted invocation's
 
 ## Monitor and troubleshoot an agent
 
-Open **Monitor**, or select **Actions** > **Monitor agent**. Choose the project, agents, and time range, then select **Refresh** when needed. Monitor loads on opening and filter changes; it does not refresh on a timer or when the window regains focus.
+Select the **Monitor** tab in FoundryX Canvas. Choose the subscriptions, projects,
+agents, and time range to inspect, then select **Refresh** when needed. Monitor
+loads on first opening and when filters change. It does not refresh on a timer
+or when the window regains focus.
 
 CLI equivalents:
 

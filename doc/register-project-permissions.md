@@ -82,7 +82,7 @@ If an error is shown, use **Retry project tools** to try discovery again. For a 
 registration, the form can still save with an empty tool allowlist when tool
 discovery fails. Resolve the error, then edit access to enable the intended tools.
 
-For details, see [model policy semantics](enterprise-admin-agent-access.md#control-model-access-and-deployment) and [tool requirements](enterprise-admin-agent-access.md#prepare-and-allow-tools).
+For details, see [model policy semantics](enterprise-admin-agent-access.md#control-model-access-and-deployment) and [tool requirements, current picker choices, and exclusions](enterprise-admin-agent-access.md#prepare-and-allow-tools).
 
 ## 4. Assign employee access
 

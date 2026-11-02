@@ -111,6 +111,9 @@ administrator can therefore see models but fail to load tools. If Toolbox
 discovery fails, the whole tools list fails, including built-in choices.
 FoundryX **Owner** and Azure **Foundry User** are different roles.
 
+For current picker choices and excluded infrastructure connections, see
+[Prepare and allow tools](enterprise-admin-agent-access.md#prepare-and-allow-tools).
+
 ### Save access
 
 Select an unregistered project, allowed resources, and at least one user, group,

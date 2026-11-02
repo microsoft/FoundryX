@@ -50,7 +50,7 @@
 
   <rect x="76" y="792" width="1288" height="436" rx="10" fill="#eef8f3" stroke="#247653" stroke-width="2"/>
   <text x="100" y="830" class="heading">Foundry - project data permissions</text>
-  <text x="100" y="866" class="body"><tspan font-weight="700">Permission: </tspan>list Toolboxes / <tspan font-weight="700">Role example: </tspan>Azure Foundry User</text>
+  <text x="100" y="866" class="body"><tspan font-weight="700">Permission: </tspan>list Tools and Toolboxes / <tspan font-weight="700">Role example: </tspan>Azure Foundry User</text>
 
   <rect x="100" y="894" width="1240" height="310" rx="10" fill="#f5f0ff" stroke="#7853b3" stroke-width="2" stroke-dasharray="8 5"/>
   <text x="124" y="932" class="heading">FoundryX - project roles (ACL, not Azure RBAC)</text>

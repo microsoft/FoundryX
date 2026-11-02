@@ -172,8 +172,6 @@ or tenant-wide audience. Model discovery must succeed before saving. If tool
 discovery fails, a new registration can be saved with no allowed tools; this
 disables tools rather than fixing the error.
 
-![Grant access checks the administrator's subscription Actions and discovery access, then saves separate Azure service-principal grants and FoundryX user project ACLs.](images/admin-access-grant-flow.svg)
-
 Saving a new access entry does two separate things:
 
 1. **Service access:** Register the project and assign Azure resource roles to

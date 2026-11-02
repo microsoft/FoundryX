@@ -17,8 +17,8 @@ grants, project state, model-management setting, resource policies and capabilit
 Any project member, including a Consumer, can inspect their own access and restrictions.
 Use the project UUID for `--project`; native resource IDs are used only for discovery/import.
 
-`null` in `allowed_models` or `allowed_tools` means unrestricted, `[]` means none,
-and an array allows only the listed resources. Model entries are deployment names;
+An array in `allowed_models` or `allowed_tools` allows only the listed resources.
+Empty, null, missing, or malformed lists allow none. Model entries are deployment names;
 tool keys are `builtin:<type>`, `connection:<name>` or `toolbox:<name>`.
 Allowing a Toolbox permits its configured tools and connections through that Toolbox,
 including owner-published default changes. Connection grants control direct use;
@@ -107,11 +107,11 @@ foundryx access project policy set --project <project-id> --file <policy.json>
 foundryx access project delete <project-id> --name <exact-permission-name>
 ```
 
-First import requires both policy fields. Policy updates preserve omitted fields;
-provide an explicit `null` or `[]` to change a field to all or none. Inspect the policy
+Import and retry require a policy file containing both policy fields. Policy updates preserve omitted fields;
+provide `[]` to clear a field's allowed resources. Inspect the policy
 after updating. A completed reimport preserves the saved policy and membership;
-use `policy set` to change its restrictions. Failed imports retain their saved policy;
-retry `project import <native-project-resource-id>` without a policy file to keep it.
+use `policy set` to change its restrictions. Retry failed imports with
+`project import <native-project-resource-id> --policy-file <policy.json>`.
 
 After import, use the returned project UUID to grant the intended users/groups a role.
 An administrator needs a project role for Agent work, even if they can manage the Permission.

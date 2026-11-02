@@ -197,9 +197,14 @@ The Admin Center controls which tools project members can use. Resource creation
 
 | Tool choice | Policy key | Preparation |
 | --- | --- | --- |
-| Built-in tool | `builtin:<type>` | Confirm native/runtime support. Built-in choices include web search, Code Interpreter, Azure AI Search, and public MCP. Some tools also need a connection or other configuration. |
+| Built-in tool | `builtin:<type>` | The access picker offers Web search, Code interpreter, and Azure AI Search. Confirm native and runtime support. Some tools also need a connection or other configuration. |
 | Project connection | `connection:<name>` | Create it in the selected native project and configure its authentication. |
 | Toolbox | `toolbox:<name>` | Create the Toolbox, review its tool sources and connections, and select its published default or a pinned version. |
+
+The access catalog excludes infrastructure connections for Application Insights,
+app configuration, container registries, Python feeds, and Git. These connections
+are also excluded from tool counts. Their absence from this catalog does not mean
+that the native connections were deleted.
 
 Allowing a Toolbox permits its configured tools and same-project connections
 through that Toolbox, including changes to its owner-published default version.
@@ -208,7 +213,13 @@ connection grant does not block its use through an allowed Toolbox. To revoke
 that path, remove the Toolbox grant or change its contents. Native authentication,
 resource validation, and project boundaries still apply.
 
-A public MCP server used directly is distinct from a project connection or Toolbox.
+A public MCP server used directly is distinct from a project connection or Toolbox
+and is not a built-in picker choice. To allow it explicitly, a Project Owner or
+subscription administrator can include `builtin:mcp` in the
+[tool policy through the CLI](#set-an-explicit-policy-through-the-cli).
+Preserve the other intended policy entries and read the policy back after changing
+it. Verify the saved policy again after portal edits. This permission does not
+create a connection or Toolbox or grant external service access.
 
 The permission form automatically includes **Web search** when available and does not let you clear it in the picker. A later portal policy save can add it again. If your policy must exclude web search or deny all tools, use an explicit CLI policy and verify it after any portal edits.
 

@@ -176,8 +176,8 @@ See the [evaluation workflow and CLI commands](builder-guide.md#evaluate-and-imp
 
 ## 8. Check operation and diagnose failures
 
-1. In Canvas, select **Actions** > **Monitor agent**.
-2. Check the selected project, agent, and time range. Select **Refresh** when needed.
+1. In FoundryX Canvas, select the **Monitor** tab.
+2. Choose the subscriptions, projects, agents, and time range to inspect. Select **Refresh** when needed.
 3. If a recent call is missing, verify the filters and allow a few minutes for telemetry ingestion. Do not treat unavailable data as zero.
 4. For a failed Hosted call, inspect your latest session:
 

@@ -26,7 +26,6 @@
   <text x="52" y="310" class="action">Azure Resource Manager: user_impersonation</text>
   <text x="52" y="340" class="action">Microsoft Foundry: user_impersonation</text>
   <text x="52" y="370" class="action">FoundryX API: access_as_user</text>
-  <text x="52" y="404" class="body">Tenant activation + sign-in allowed by Entra policy</text>
 
   <rect x="52" y="432" width="1336" height="950" rx="12" fill="#edf6fa" stroke="#1b7189" stroke-width="2"/>
   <text x="76" y="470" class="heading">Azure - subscription permissions (15 Access management Actions)</text>

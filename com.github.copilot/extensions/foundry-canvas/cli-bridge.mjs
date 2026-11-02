@@ -32,10 +32,26 @@ async function refreshPath() {
     }
 }
 
+export function requireCliVersion(version) {
+    const match = typeof version === "string" && /^(\d+)\.(\d+)\.(\d+)(?:[-+][0-9A-Za-z.+-]+)?$/.exec(version.trim());
+    const parts = match ? match.slice(1, 4).map(Number) : [];
+    if (parts.length !== 3 || !parts.every(Number.isSafeInteger)
+        || !(parts[0] > 0 || parts[1] > 7 || (parts[1] === 7 && parts[2] >= 5))) {
+        throw new Error("The canvas requires FoundryX CLI 0.7.5 or later on PATH. Upgrade the CLI and reopen the canvas.");
+    }
+}
+
 export async function startCliBridge() {
     await refreshPath();
     let metadata;
     try {
+        const { stdout: version } = process.platform === "win32"
+            ? await execute("powershell.exe", [
+                "-NoProfile", "-NonInteractive", "-Command",
+                "& foundryx --version; exit $LASTEXITCODE",
+            ], { timeout: 15_000, windowsHide: true })
+            : await execute("foundryx", ["--version"], { timeout: 15_000 });
+        requireCliVersion(version);
         const { stdout } = process.platform === "win32"
             ? await execute("powershell.exe", [
                 "-NoProfile", "-NonInteractive", "-Command",
@@ -44,7 +60,7 @@ export async function startCliBridge() {
             : await execute("foundryx", ["auth", "canvas", "--entrypoint"], { timeout: 15_000 });
         metadata = JSON.parse(stdout);
     } catch {
-        throw new Error("The canvas requires FoundryX CLI 0.4.1 or later on PATH. Finish installing the matching release and reopen the canvas.");
+        throw new Error("The canvas requires FoundryX CLI 0.7.5 or later on PATH. Finish installing the matching release and reopen the canvas.");
     }
     if (metadata.protocol !== 1 || typeof metadata.entrypoint !== "string" || !isAbsolute(metadata.entrypoint)
         || typeof metadata.node !== "string" || !isAbsolute(metadata.node)) {

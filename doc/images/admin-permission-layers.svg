@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1510" viewBox="0 0 1440 1510" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1474" viewBox="0 0 1440 1474" role="img" aria-labelledby="title description">
   <title id="title">FoundryX permissions by layer</title>
   <desc id="description">Four nested layers: Org (Tenant), Azure, Foundry, and FoundryX. Org distinguishes roles that can grant consent from the permissions they approve. Azure separates three high-privilege role-definition and role-assignment changes from twelve read permissions. Foundry shows only native project data permissions. FoundryX project roles control who can invoke or build agents and manage access for that Foundry project through FoundryX. The dashed ACL box is application access, not Azure RBAC.</desc>
   <style>
@@ -13,7 +13,7 @@
     .capability { font-size: 20px; }
     .permission-label { font-size: 16px; font-weight: 700; }
   </style>
-  <rect width="1440" height="1510" fill="#ffffff"/>
+  <rect width="1440" height="1474" fill="#ffffff"/>
   <text x="28" y="46" class="title">FoundryX permissions by layer</text>
 
   <rect x="28" y="76" width="1384" height="1330" rx="14" fill="#f3f7fd" stroke="#2864a5" stroke-width="2"/>
@@ -91,5 +91,4 @@
   <text x="580" y="1450" class="body">Foundry</text>
   <line x1="760" y1="1444" x2="808" y2="1444" stroke="#7853b3" stroke-width="3" stroke-dasharray="8 5"/>
   <text x="820" y="1450" class="body">FoundryX</text>
-  <text x="28" y="1486" class="body">Project policy applies to every FoundryX role.</text>
 </svg>

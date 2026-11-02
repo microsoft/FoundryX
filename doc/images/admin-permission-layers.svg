@@ -1,52 +1,77 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1030" viewBox="0 0 1200 1030" role="img" aria-labelledby="title description">
-  <title id="title">Four separate access layers</title>
-  <desc id="description">An Entra tenant contains an Azure subscription, resource group, Foundry account, and native project. Tenant consent permits organization sign-in. Fifteen Azure management Actions authorize subscription-wide FoundryX Access management. Native project data access is separately needed to read Toolboxes. A dashed box represents the FoundryX application ACL for that project, with Consumer, User, Manager, and Owner roles. It is not an Azure resource or an inherited Azure role.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1380" viewBox="0 0 1440 1380" role="img" aria-labelledby="title description">
+  <title id="title">FoundryX permissions by layer</title>
+  <desc id="description">Nested boxes list tenant consent roles and delegated permissions, all 15 subscription Access management Actions, Foundry account reads, native project reads and Toolbox data access, and the Consumer, User, Manager, and Owner project grants. The dashed FoundryX ACL box is application access, not an Azure resource or inherited Azure role.</desc>
   <style>
     text { font-family: "Segoe UI", Arial, sans-serif; fill: #172b4d; }
     .title { font-size: 32px; font-weight: 700; }
-    .heading { font-size: 25px; font-weight: 700; }
+    .heading { font-size: 26px; font-weight: 700; }
     .body { font-size: 21px; }
-    .small { font-size: 19px; }
-    .label { font-size: 17px; font-weight: 700; letter-spacing: 1px; }
-    .role { font-size: 22px; font-weight: 700; fill: #49308b; }
+    .action { font-family: Consolas, monospace; font-size: 17px; }
+    .role { font-size: 23px; font-weight: 700; fill: #49308b; }
+    .capability { font-size: 20px; }
   </style>
-  <rect width="1200" height="1030" fill="#ffffff"/>
-  <text x="32" y="52" class="title">One project. Four separate access layers.</text>
-  <text x="32" y="88" class="body">Resource scope does not make tenant consent, Azure roles, and FoundryX ACLs interchangeable.</text>
+  <rect width="1440" height="1380" fill="#ffffff"/>
+  <text x="28" y="46" class="title">FoundryX permissions by layer</text>
 
-  <rect x="28" y="128" width="1144" height="806" rx="14" fill="#f3f7fd" stroke="#2864a5" stroke-width="2"/>
-  <text x="54" y="163" class="label" fill="#2864a5">01 / ORGANIZATION</text>
-  <text x="54" y="198" class="heading">Microsoft Entra tenant</text>
-  <text x="54" y="231" class="body">Admin consent + tenant activation let users sign in. They do not grant project access.</text>
+  <rect x="28" y="76" width="1384" height="1244" rx="14" fill="#f3f7fd" stroke="#2864a5" stroke-width="2"/>
+  <text x="52" y="114" class="heading">Microsoft Entra tenant</text>
+  <text x="52" y="150" class="body">Consent role: Application Administrator / Cloud Application Administrator / AI Administrator</text>
+  <text x="52" y="180" class="body">or Privileged Role Administrator / Global Administrator / qualifying custom consent role</text>
+  <text x="52" y="214" class="body">Graph: User.ReadBasic.All + GroupMember.Read.All</text>
+  <text x="52" y="244" class="body">ARM + Foundry: user_impersonation / FoundryX API: access_as_user</text>
+  <text x="52" y="274" class="body">Tenant activation + sign-in allowed by Entra policy</text>
 
-  <rect x="54" y="258" width="1092" height="650" rx="12" fill="#edf6fa" stroke="#1b7189" stroke-width="2"/>
-  <text x="80" y="293" class="label" fill="#1b7189">02 / AZURE MANAGEMENT ACTIONS</text>
-  <text x="80" y="328" class="heading">Azure subscription</text>
-  <text x="80" y="361" class="body">Administrator needs all 15 Access management Actions at this scope.</text>
-  <text x="80" y="391" class="small">Owner, Contributor + User Access Administrator, or qualifying custom roles can supply them.</text>
+  <rect x="52" y="302" width="1336" height="994" rx="12" fill="#edf6fa" stroke="#1b7189" stroke-width="2"/>
+  <text x="76" y="340" class="heading">Azure subscription - all 15 Access management Actions</text>
+  <text x="76" y="374" class="body">Owner / Contributor + User Access Administrator / custom roles with these Actions</text>
+  <text x="76" y="414" class="action">Microsoft.Resources/subscriptions/read</text>
+  <text x="76" y="444" class="action">Microsoft.Authorization/permissions/read</text>
+  <text x="76" y="474" class="action">Microsoft.Authorization/roleDefinitions/read</text>
+  <text x="76" y="504" class="action">Microsoft.Authorization/roleDefinitions/write</text>
+  <text x="76" y="534" class="action">Microsoft.Authorization/roleAssignments/read</text>
+  <text x="76" y="564" class="action">Microsoft.Authorization/roleAssignments/write</text>
+  <text x="76" y="594" class="action">Microsoft.Authorization/roleAssignments/delete</text>
+  <text x="76" y="624" class="action">Microsoft.CognitiveServices/accounts/read</text>
+  <text x="730" y="414" class="action">Microsoft.CognitiveServices/accounts/projects/read</text>
+  <text x="730" y="444" class="action">Microsoft.CognitiveServices/accounts/deployments/read</text>
+  <text x="730" y="474" class="action">Microsoft.CognitiveServices/accounts/projects/connections/read</text>
+  <text x="730" y="504" class="action">Microsoft.Insights/components/read</text>
+  <text x="730" y="534" class="action">Microsoft.OperationalInsights/workspaces/read</text>
+  <text x="730" y="564" class="action">Microsoft.Authorization/policyAssignments/read</text>
+  <text x="730" y="594" class="action">Microsoft.Authorization/policyExemptions/read</text>
 
-  <rect x="80" y="418" width="1040" height="464" rx="12" fill="#ffffff" stroke="#66809d" stroke-width="2"/>
-  <text x="106" y="455" class="heading">Resource group / Foundry account</text>
-  <text x="106" y="488" class="body">Model deployments are read from the parent account through Azure management APIs.</text>
+  <rect x="76" y="650" width="1288" height="622" rx="12" fill="#ffffff" stroke="#66809d" stroke-width="2"/>
+  <text x="100" y="690" class="heading">Resource group / Foundry account</text>
+  <text x="100" y="730" class="action">Microsoft.CognitiveServices/accounts/read</text>
+  <text x="100" y="760" class="action">Microsoft.CognitiveServices/accounts/deployments/read</text>
 
-  <rect x="106" y="516" width="988" height="340" rx="10" fill="#eef8f3" stroke="#247653" stroke-width="2"/>
-  <text x="132" y="551" class="label" fill="#247653">03 / NATIVE FOUNDRY DATA ACCESS</text>
-  <text x="132" y="587" class="heading">Native Foundry project</text>
-  <text x="132" y="621" class="body">To discover Toolboxes, the administrator also needs native project data access.</text>
-  <text x="132" y="651" class="small">Azure Foundry User is one sufficient data role. Subscription Owner alone is not.</text>
+  <rect x="100" y="790" width="1240" height="458" rx="10" fill="#eef8f3" stroke="#247653" stroke-width="2"/>
+  <text x="124" y="830" class="heading">Native Foundry project</text>
+  <text x="124" y="870" class="action">Microsoft.CognitiveServices/accounts/projects/read</text>
+  <text x="124" y="900" class="action">Microsoft.CognitiveServices/accounts/projects/connections/read</text>
+  <text x="124" y="936" class="body">Toolboxes: native data read (Azure Foundry User is sufficient)</text>
 
-  <rect x="132" y="680" width="936" height="152" rx="10" fill="#f5f0ff" stroke="#7853b3" stroke-width="2" stroke-dasharray="8 5"/>
-  <text x="156" y="713" class="label" fill="#63419b">04 / FOUNDRYX PROJECT ACL - APPLICATION ACCESS, NOT AZURE RBAC</text>
-  <text x="156" y="744" class="small">Assigned during Grant access; controls recipients' access through FoundryX.</text>
-  <rect x="156" y="765" width="204" height="46" rx="8" fill="#e9ddfa"/>
-  <rect x="380" y="765" width="204" height="46" rx="8" fill="#e9ddfa"/>
-  <rect x="604" y="765" width="204" height="46" rx="8" fill="#e9ddfa"/>
-  <rect x="828" y="765" width="216" height="46" rx="8" fill="#e9ddfa"/>
-  <text x="258" y="795" text-anchor="middle" class="role">Consumer</text>
-  <text x="482" y="795" text-anchor="middle" class="role">User</text>
-  <text x="706" y="795" text-anchor="middle" class="role">Manager</text>
-  <text x="936" y="795" text-anchor="middle" class="role">Owner</text>
+  <rect x="124" y="964" width="1192" height="260" rx="10" fill="#f5f0ff" stroke="#7853b3" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="148" y="1002" class="heading">FoundryX project ACL - assigned in Grant access, not Azure RBAC</text>
+  <rect x="148" y="1024" width="266" height="176" rx="8" fill="#e9ddfa"/>
+  <rect x="432" y="1024" width="266" height="176" rx="8" fill="#e9ddfa"/>
+  <rect x="716" y="1024" width="266" height="176" rx="8" fill="#e9ddfa"/>
+  <rect x="1000" y="1024" width="292" height="176" rx="8" fill="#e9ddfa"/>
+  <text x="168" y="1058" class="role">Consumer</text>
+  <text x="168" y="1096" class="capability">Use allowed models</text>
+  <text x="168" y="1126" class="capability">Invoke deployed agents</text>
+  <text x="452" y="1058" class="role">User</text>
+  <text x="452" y="1096" class="capability">Consumer +</text>
+  <text x="452" y="1126" class="capability">Build / deploy / evaluate</text>
+  <text x="452" y="1156" class="capability">Publish / reuse tools</text>
+  <text x="736" y="1058" class="role">Manager</text>
+  <text x="736" y="1096" class="capability">User +</text>
+  <text x="736" y="1126" class="capability">Manage User grants</text>
+  <text x="736" y="1156" class="capability">Individuals/groups only</text>
+  <text x="1020" y="1058" class="role">Owner</text>
+  <text x="1020" y="1096" class="capability">User + manage all grants</text>
+  <text x="1020" y="1126" class="capability">Allowed models/tools</text>
+  <text x="1020" y="1156" class="capability">Connections / Toolboxes</text>
 
-  <text x="32" y="976" class="body">Solid boxes: Azure scopes. Dashed box: the registered project's separate FoundryX access list.</text>
-  <text x="32" y="1008" class="small">The permission-based subscription check must be deployed in your environment; see the guide's rollout note.</text>
+  <text x="28" y="1358" class="body">Solid: tenant/Azure scopes. Dashed: FoundryX ACL. Project policy applies to every FoundryX role.</text>
 </svg>

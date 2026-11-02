@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="690" viewBox="0 0 1200 690" role="img" aria-labelledby="title description">
+  <title id="title">Grant access produces two different kinds of access</title>
+  <desc id="description">Before saving, FoundryX checks the administrator's 15 subscription management Actions, ARM resource discovery permissions, and separate native Toolbox data access. Saving a new registration provisions Azure resource roles to the FoundryX service principal and separately saves project ACL entries for users, groups, or a tenant-wide audience. Employees receive FoundryX roles, not direct Azure RBAC grants.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#62748c"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: "Segoe UI", Arial, sans-serif; fill: #172b4d; }
+    .title { font-size: 32px; font-weight: 700; }
+    .heading { font-size: 25px; font-weight: 700; }
+    .body { font-size: 22px; }
+    .small { font-size: 20px; }
+    .label { font-size: 17px; font-weight: 700; letter-spacing: 1px; }
+    .line { fill: none; stroke: #62748c; stroke-width: 3; marker-end: url(#arrow); }
+  </style>
+  <rect width="1200" height="690" fill="#ffffff"/>
+  <text x="32" y="52" class="title">Grant access: administrator checks, then two separate grants</text>
+  <text x="32" y="89" class="body">The permissions needed to grant access are not the project roles users receive.</text>
+
+  <rect x="32" y="128" width="506" height="390" rx="14" fill="#edf6fa" stroke="#1b7189" stroke-width="2"/>
+  <text x="60" y="164" class="label">BEFORE SAVE / SIGNED-IN ADMINISTRATOR</text>
+  <text x="60" y="207" class="heading">Check existing authority</text>
+  <text x="60" y="251" class="body">All 15 subscription management Actions</text>
+  <text x="60" y="285" class="small">+ ARM model and connection reads</text>
+  <text x="60" y="319" class="small">+ native Foundry data access for Toolboxes</text>
+  <line x1="60" y1="350" x2="510" y2="350" stroke="#b3d3de" stroke-width="2"/>
+  <text x="60" y="387" class="body">These checks grant no new permissions.</text>
+  <text x="60" y="425" class="small">Choose project, models/tools, recipients,</text>
+  <text x="60" y="454" class="small">and their FoundryX roles, then save.</text>
+  <text x="60" y="492" class="small">See the guide for discovery failure recovery.</text>
+
+  <path d="M538 323 H580 V227 H630" class="line"/>
+  <path d="M580 323 V475 H630" class="line"/>
+
+  <rect x="636" y="128" width="532" height="205" rx="14" fill="#eef8f3" stroke="#247653" stroke-width="2"/>
+  <text x="664" y="164" class="label">1 / AZURE SERVICE ACCESS</text>
+  <text x="664" y="207" class="heading">FoundryX service principal</text>
+  <text x="664" y="249" class="body">Receives resource roles for the project,</text>
+  <text x="664" y="281" class="body">parent account, and related resources.</text>
+  <text x="664" y="312" class="small">Employees do not receive its credentials.</text>
+
+  <rect x="636" y="365" width="532" height="230" rx="14" fill="#f5f0ff" stroke="#7853b3" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="664" y="401" class="label">2 / FOUNDRYX USER ACCESS</text>
+  <text x="664" y="444" class="heading">Project ACL entries</text>
+  <text x="664" y="486" class="body">Selected users, groups, or tenant audience</text>
+  <text x="664" y="518" class="body">receive a FoundryX project role.</text>
+  <text x="664" y="554" class="small">Consumer / User / Manager / Owner</text>
+  <text x="664" y="582" class="small">Tenant-wide grants: Consumer or User only.</text>
+
+  <text x="32" y="644" class="body">FoundryX checks each employee's project role and allowed models/tools before using service access.</text>
+  <text x="32" y="676" class="small">An employee's FoundryX ACL does not grant direct native Foundry access or an Azure subscription role.</text>
+</svg>

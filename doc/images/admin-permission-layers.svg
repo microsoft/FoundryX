@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1380" viewBox="0 0 1440 1380" role="img" aria-labelledby="title description">
   <title id="title">FoundryX permissions by layer</title>
-  <desc id="description">Four nested layers: Org (Tenant), Azure, Foundry, and FoundryX. Org lists consent roles and permissions to consent to. Azure separates three high-privilege role-definition and role-assignment changes from twelve read permissions. Foundry shows only native project data permissions. FoundryX project roles control who can invoke or build agents and manage access for that Foundry project through FoundryX. The dashed ACL box is application access, not Azure RBAC.</desc>
+  <desc id="description">Four nested layers: Org (Tenant), Azure, Foundry, and FoundryX. Org distinguishes roles that can grant consent from the permissions they approve. Azure separates three high-privilege role-definition and role-assignment changes from twelve read permissions. Foundry shows only native project data permissions. FoundryX project roles control who can invoke or build agents and manage access for that Foundry project through FoundryX. The dashed ACL box is application access, not Azure RBAC.</desc>
   <style>
     text { font-family: "Segoe UI", Arial, sans-serif; fill: #172b4d; }
     .title { font-size: 32px; font-weight: 700; }
@@ -18,9 +18,9 @@
 
   <rect x="28" y="76" width="1384" height="1200" rx="14" fill="#f3f7fd" stroke="#2864a5" stroke-width="2"/>
   <text x="52" y="114" class="heading">Org (Tenant) - Microsoft Entra</text>
-  <text x="52" y="150" class="body"><tspan font-weight="700">Consent role (one): </tspan>Application Administrator / Cloud Application Administrator / AI Administrator</text>
+  <text x="52" y="150" class="body"><tspan font-weight="700">Roles that can grant consent (one): </tspan>Application Administrator / Cloud Application Administrator / AI Administrator</text>
   <text x="52" y="180" class="body">or Privileged Role Administrator / Global Administrator / qualifying custom consent role</text>
-  <text x="52" y="214" class="body"><tspan font-weight="700">Permissions to consent to: </tspan>Graph: User.ReadBasic.All + GroupMember.Read.All</text>
+  <text x="52" y="214" class="body"><tspan font-weight="700">Permissions to approve: </tspan>Graph: User.ReadBasic.All + GroupMember.Read.All</text>
   <text x="52" y="244" class="body">ARM + Foundry: user_impersonation / FoundryX API: access_as_user</text>
   <text x="52" y="274" class="body">Tenant activation + sign-in allowed by Entra policy</text>
 

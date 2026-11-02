@@ -190,9 +190,9 @@ already be applied.
 ## 4. What project access do users receive?
 
 In **Users / Groups**, the administrator selects who receives access and assigns
-Consumer, User, Manager, or Owner. This assignment is a **FoundryX project access
-grant (ACL entry)**: it defines what the recipient is authorized to do in that
-specific project through FoundryX.
+Consumer, User, Manager, or Owner. **FoundryX roles control who can invoke or
+build agents and manage access for a specific Foundry project through FoundryX.**
+Each assignment is a project access grant (ACL entry).
 
 These roles are assigned during **Grant access**, or added or changed later on
 the existing access entry. Recipients do not need these roles before the

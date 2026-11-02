@@ -1,83 +1,91 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1446" viewBox="0 0 1440 1446" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1380" viewBox="0 0 1440 1380" role="img" aria-labelledby="title description">
   <title id="title">FoundryX permissions by layer</title>
-  <desc id="description">Nested boxes label roles separately from permissions at tenant, subscription, account, and native project scope. FoundryX project roles control who can invoke or build agents and manage access for that Foundry project through FoundryX. The dashed ACL box is application access, not Azure RBAC.</desc>
+  <desc id="description">Four nested layers: Org (Tenant), Azure, Foundry, and FoundryX. Org lists consent roles and permissions to consent to. Azure separates three high-privilege role-definition and role-assignment changes from twelve read permissions. Foundry shows only native project data permissions. FoundryX project roles control who can invoke or build agents and manage access for that Foundry project through FoundryX. The dashed ACL box is application access, not Azure RBAC.</desc>
   <style>
     text { font-family: "Segoe UI", Arial, sans-serif; fill: #172b4d; }
     .title { font-size: 32px; font-weight: 700; }
     .heading { font-size: 26px; font-weight: 700; }
     .body { font-size: 21px; }
     .action { font-family: Consolas, monospace; font-size: 17px; }
+    .privileged { fill: #8a3500; font-weight: 700; }
+    .group-label { font-size: 23px; font-weight: 700; }
     .role { font-size: 23px; font-weight: 700; fill: #49308b; }
     .capability { font-size: 20px; }
     .permission-label { font-size: 16px; font-weight: 700; }
   </style>
-  <rect width="1440" height="1446" fill="#ffffff"/>
+  <rect width="1440" height="1380" fill="#ffffff"/>
   <text x="28" y="46" class="title">FoundryX permissions by layer</text>
 
-  <rect x="28" y="76" width="1384" height="1310" rx="14" fill="#f3f7fd" stroke="#2864a5" stroke-width="2"/>
-  <text x="52" y="114" class="heading">Microsoft Entra tenant</text>
-  <text x="52" y="150" class="body"><tspan font-weight="700">Role (one): </tspan>Application Administrator / Cloud Application Administrator / AI Administrator</text>
+  <rect x="28" y="76" width="1384" height="1200" rx="14" fill="#f3f7fd" stroke="#2864a5" stroke-width="2"/>
+  <text x="52" y="114" class="heading">Org (Tenant) - Microsoft Entra</text>
+  <text x="52" y="150" class="body"><tspan font-weight="700">Consent role (one): </tspan>Application Administrator / Cloud Application Administrator / AI Administrator</text>
   <text x="52" y="180" class="body">or Privileged Role Administrator / Global Administrator / qualifying custom consent role</text>
-  <text x="52" y="214" class="body"><tspan font-weight="700">Permissions: </tspan>Graph: User.ReadBasic.All + GroupMember.Read.All</text>
+  <text x="52" y="214" class="body"><tspan font-weight="700">Permissions to consent to: </tspan>Graph: User.ReadBasic.All + GroupMember.Read.All</text>
   <text x="52" y="244" class="body">ARM + Foundry: user_impersonation / FoundryX API: access_as_user</text>
   <text x="52" y="274" class="body">Tenant activation + sign-in allowed by Entra policy</text>
 
-  <rect x="52" y="302" width="1336" height="1060" rx="12" fill="#edf6fa" stroke="#1b7189" stroke-width="2"/>
-  <text x="76" y="340" class="heading">Azure subscription - permissions (15 Access management Actions)</text>
+  <rect x="52" y="302" width="1336" height="950" rx="12" fill="#edf6fa" stroke="#1b7189" stroke-width="2"/>
+  <text x="76" y="340" class="heading">Azure - subscription permissions (15 Access management Actions)</text>
   <text x="76" y="374" class="body"><tspan font-weight="700">Roles: </tspan>Owner / Contributor + User Access Administrator / qualifying custom roles</text>
-  <text x="76" y="414" class="action">Microsoft.Resources/subscriptions/read</text>
-  <text x="76" y="444" class="action">Microsoft.Authorization/permissions/read</text>
-  <text x="76" y="474" class="action">Microsoft.Authorization/roleDefinitions/read</text>
-  <text x="76" y="504" class="action">Microsoft.Authorization/roleDefinitions/write</text>
-  <text x="76" y="534" class="action">Microsoft.Authorization/roleAssignments/read</text>
-  <text x="76" y="564" class="action">Microsoft.Authorization/roleAssignments/write</text>
-  <text x="76" y="594" class="action">Microsoft.Authorization/roleAssignments/delete</text>
-  <text x="76" y="624" class="action">Microsoft.CognitiveServices/accounts/read</text>
-  <text x="730" y="414" class="action">Microsoft.CognitiveServices/accounts/projects/read</text>
-  <text x="730" y="444" class="action">Microsoft.CognitiveServices/accounts/deployments/read</text>
-  <text x="730" y="474" class="action">Microsoft.CognitiveServices/accounts/projects/connections/read</text>
-  <text x="730" y="504" class="action">Microsoft.Insights/components/read</text>
-  <text x="730" y="534" class="action">Microsoft.OperationalInsights/workspaces/read</text>
-  <text x="730" y="564" class="action">Microsoft.Authorization/policyAssignments/read</text>
-  <text x="730" y="594" class="action">Microsoft.Authorization/policyExemptions/read</text>
 
-  <rect x="76" y="650" width="1288" height="688" rx="12" fill="#ffffff" stroke="#66809d" stroke-width="2"/>
-  <text x="100" y="690" class="heading">Resource group / Foundry account - ARM permissions</text>
-  <text x="100" y="730" class="action">Microsoft.CognitiveServices/accounts/read</text>
-  <text x="100" y="760" class="action">Microsoft.CognitiveServices/accounts/deployments/read</text>
+  <rect x="76" y="396" width="1288" height="142" rx="8" fill="#fff3e0" stroke="#b86000" stroke-width="2"/>
+  <text x="96" y="430" class="group-label privileged">High-privilege permissions (3)</text>
+  <text x="96" y="462" class="action privileged">Microsoft.Authorization/roleDefinitions/write</text>
+  <text x="96" y="490" class="action privileged">Microsoft.Authorization/roleAssignments/write</text>
+  <text x="96" y="518" class="action privileged">Microsoft.Authorization/roleAssignments/delete</text>
 
-  <rect x="100" y="790" width="1240" height="524" rx="10" fill="#eef8f3" stroke="#247653" stroke-width="2"/>
-  <text x="124" y="830" class="heading">Native Foundry project - ARM permissions</text>
-  <text x="124" y="870" class="action">Microsoft.CognitiveServices/accounts/projects/read</text>
-  <text x="124" y="900" class="action">Microsoft.CognitiveServices/accounts/projects/connections/read</text>
-  <text x="124" y="936" class="body"><tspan font-weight="700">Data permission: </tspan>list Toolboxes / <tspan font-weight="700">Role example: </tspan>Azure Foundry User</text>
+  <text x="76" y="574" class="group-label">Read permissions (12)</text>
+  <text x="76" y="610" class="action">Microsoft.Resources/subscriptions/read</text>
+  <text x="76" y="640" class="action">Microsoft.Authorization/permissions/read</text>
+  <text x="76" y="670" class="action">Microsoft.Authorization/roleDefinitions/read</text>
+  <text x="76" y="700" class="action">Microsoft.Authorization/roleAssignments/read</text>
+  <text x="76" y="730" class="action">Microsoft.CognitiveServices/accounts/read</text>
+  <text x="76" y="760" class="action">Microsoft.CognitiveServices/accounts/projects/read</text>
+  <text x="730" y="610" class="action">Microsoft.CognitiveServices/accounts/deployments/read</text>
+  <text x="730" y="640" class="action">Microsoft.CognitiveServices/accounts/projects/connections/read</text>
+  <text x="730" y="670" class="action">Microsoft.Insights/components/read</text>
+  <text x="730" y="700" class="action">Microsoft.OperationalInsights/workspaces/read</text>
+  <text x="730" y="730" class="action">Microsoft.Authorization/policyAssignments/read</text>
+  <text x="730" y="760" class="action">Microsoft.Authorization/policyExemptions/read</text>
 
-  <rect x="124" y="964" width="1192" height="326" rx="10" fill="#f5f0ff" stroke="#7853b3" stroke-width="2" stroke-dasharray="8 5"/>
-  <text x="148" y="1002" class="heading">FoundryX project roles (ACL, not Azure RBAC)</text>
-  <text x="148" y="1036" class="body">Control who can invoke/build agents and manage access for this Foundry project through FoundryX.</text>
-  <rect x="148" y="1066" width="266" height="200" rx="8" fill="#e9ddfa"/>
-  <rect x="432" y="1066" width="266" height="200" rx="8" fill="#e9ddfa"/>
-  <rect x="716" y="1066" width="266" height="200" rx="8" fill="#e9ddfa"/>
-  <rect x="1000" y="1066" width="292" height="200" rx="8" fill="#e9ddfa"/>
-  <text x="168" y="1100" class="role">Role: Consumer</text>
-  <text x="168" y="1132" class="permission-label">Permissions</text>
-  <text x="168" y="1164" class="capability">Use allowed models</text>
-  <text x="168" y="1194" class="capability">Invoke deployed agents</text>
-  <text x="452" y="1100" class="role">Role: User</text>
-  <text x="452" y="1132" class="permission-label">Permissions</text>
-  <text x="452" y="1164" class="capability">Consumer +</text>
-  <text x="452" y="1194" class="capability">Build / deploy / evaluate</text>
-  <text x="452" y="1224" class="capability">Publish / reuse tools</text>
-  <text x="736" y="1100" class="role">Role: Manager</text>
-  <text x="736" y="1132" class="permission-label">Permissions</text>
-  <text x="736" y="1164" class="capability">User +</text>
-  <text x="736" y="1194" class="capability">Manage User grants</text>
-  <text x="736" y="1224" class="capability">Individuals/groups only</text>
-  <text x="1020" y="1100" class="role">Role: Owner</text>
-  <text x="1020" y="1132" class="permission-label">Permissions</text>
-  <text x="1020" y="1164" class="capability">User + manage all grants</text>
-  <text x="1020" y="1194" class="capability">Allowed models/tools</text>
-  <text x="1020" y="1224" class="capability">Connections / Toolboxes</text>
+  <rect x="76" y="792" width="1288" height="436" rx="10" fill="#eef8f3" stroke="#247653" stroke-width="2"/>
+  <text x="100" y="830" class="heading">Foundry - project data permissions</text>
+  <text x="100" y="866" class="body"><tspan font-weight="700">Permission: </tspan>list Toolboxes / <tspan font-weight="700">Role example: </tspan>Azure Foundry User</text>
 
-  <text x="28" y="1424" class="body">Solid: tenant/Azure scopes. Dashed: FoundryX ACL. Project policy applies to every FoundryX role.</text>
+  <rect x="100" y="894" width="1240" height="310" rx="10" fill="#f5f0ff" stroke="#7853b3" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="124" y="932" class="heading">FoundryX - project roles (ACL, not Azure RBAC)</text>
+  <text x="124" y="966" class="body">Control who can invoke/build agents and manage access for this Foundry project through FoundryX.</text>
+  <rect x="124" y="990" width="286" height="190" rx="8" fill="#e9ddfa"/>
+  <rect x="426" y="990" width="286" height="190" rx="8" fill="#e9ddfa"/>
+  <rect x="728" y="990" width="286" height="190" rx="8" fill="#e9ddfa"/>
+  <rect x="1030" y="990" width="286" height="190" rx="8" fill="#e9ddfa"/>
+  <text x="144" y="1024" class="role">Role: Consumer</text>
+  <text x="144" y="1056" class="permission-label">Permissions</text>
+  <text x="144" y="1088" class="capability">Use allowed models</text>
+  <text x="144" y="1118" class="capability">Invoke deployed agents</text>
+  <text x="446" y="1024" class="role">Role: User</text>
+  <text x="446" y="1056" class="permission-label">Permissions</text>
+  <text x="446" y="1088" class="capability">Consumer +</text>
+  <text x="446" y="1118" class="capability">Build / deploy / evaluate</text>
+  <text x="446" y="1148" class="capability">Publish / reuse tools</text>
+  <text x="748" y="1024" class="role">Role: Manager</text>
+  <text x="748" y="1056" class="permission-label">Permissions</text>
+  <text x="748" y="1088" class="capability">User +</text>
+  <text x="748" y="1118" class="capability">Manage User grants</text>
+  <text x="748" y="1148" class="capability">Individuals/groups only</text>
+  <text x="1050" y="1024" class="role">Role: Owner</text>
+  <text x="1050" y="1056" class="permission-label">Permissions</text>
+  <text x="1050" y="1088" class="capability">User + manage all grants</text>
+  <text x="1050" y="1118" class="capability">Allowed models/tools</text>
+  <text x="1050" y="1148" class="capability">Connections / Toolboxes</text>
+
+  <line x1="28" y1="1314" x2="76" y2="1314" stroke="#2864a5" stroke-width="3"/>
+  <text x="88" y="1320" class="body">Org (Tenant)</text>
+  <line x1="310" y1="1314" x2="358" y2="1314" stroke="#1b7189" stroke-width="3"/>
+  <text x="370" y="1320" class="body">Azure</text>
+  <line x1="520" y1="1314" x2="568" y2="1314" stroke="#247653" stroke-width="3"/>
+  <text x="580" y="1320" class="body">Foundry</text>
+  <line x1="760" y1="1314" x2="808" y2="1314" stroke="#7853b3" stroke-width="3" stroke-dasharray="8 5"/>
+  <text x="820" y="1320" class="body">FoundryX</text>
+  <text x="28" y="1356" class="body">Project policy applies to every FoundryX role.</text>
 </svg>

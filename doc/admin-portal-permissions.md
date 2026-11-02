@@ -17,12 +17,12 @@ the project permissions that users **receive from that grant**.
 
 ## How the access layers fit together
 
-![Nested boxes showing tenant consent, subscription management permissions, the native Foundry account and project, and the separate FoundryX project ACL.](images/admin-permission-layers.svg)
+![Four layers: Org (Tenant) consent; Azure high-privilege and read permissions; Foundry project data permissions; FoundryX project roles.](images/admin-permission-layers.svg)
 
-The solid boxes show Azure resource scopes. The dashed box shows the
-**FoundryX access list for the registered project**, not another Azure resource
-or an inherited Azure role. Tenant consent, subscription management Actions,
-native Foundry data permissions, and FoundryX roles are separate checks.
+The layers are **Org (Tenant)**, **Azure**, **Foundry**, and **FoundryX**.
+Azure separates high-privilege role changes from read permissions. Foundry
+shows native project data permissions. The dashed FoundryX box shows the
+project's access list (ACL), not an Azure role. These are separate checks.
 
 ## 1. What does tenant onboarding require?
 

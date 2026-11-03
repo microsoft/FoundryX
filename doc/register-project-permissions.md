@@ -15,7 +15,7 @@ separate subscription, model-discovery, Toolbox data, and directory requirements
 Confirm these prerequisites:
 
 - The target tenant is active in FoundryX. Complete [tenant onboarding](tenant-onboarding-requirements.md) first if needed.
-- You are Subscription Owner, or have both Contributor and User Access Administrator at subscription scope. Activate eligible roles before continuing. Project Owner membership alone does not permit registration.
+- You have the [required subscription Access management permissions](admin-portal-permissions.md#required-access-management-actions). Owner, Contributor plus User Access Administrator, or qualifying custom roles can provide them. See the guide's rollout note for older environments. Activate eligible roles before continuing. Project Owner membership alone does not permit registration.
 - You have an existing project under a Foundry account with resource kind `AIServices`, in a subscription in the target tenant.
 - Your signed-in identity can read deployments on the parent Foundry account and connection metadata on the native project. To load the tools list, it also needs native Foundry data access to that project's Toolboxes, for example through the Azure **Foundry User** role. Subscription Owner or Contributor alone does not supply that data access.
 - The project has a ready model deployment if employees must build or invoke agents. Required project connections and Toolboxes are already configured.

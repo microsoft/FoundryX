@@ -36,10 +36,10 @@ There are three separate authorization boundaries:
 | Boundary | Purpose | Who controls it |
 | --- | --- | --- |
 | Tenant onboarding | Admits the tenant and obtains consent for FoundryX sign-in and delegated directory and Azure management access. | A tenant administrator and the FoundryX service operator. |
-| Azure subscription management | Creates or imports projects, provisions service-principal access, and controls project lifecycle and model-management delegation. | Subscription Owner, or a person with both Contributor and User Access Administrator at subscription scope. |
+| Azure subscription management | Creates or imports projects, provisions service-principal access, and controls project lifecycle and model-management delegation. | A person with the required subscription permissions. See [Access management Actions and rollout note](admin-portal-permissions.md#register-a-project-through-grant-access); creating a new native project has a separate, larger check. |
 | FoundryX project membership | Controls agent development, invocation, membership, and connection or Toolbox administration within a registered project. | The project's assigned roles, subject to its resource policy. |
 
-An Entra administrator role does not replace the required Azure subscription roles. A subscription management role does not automatically make its holder a FoundryX Project Owner.
+An Entra administrator role does not replace the required Azure subscription permissions. Subscription management authority does not automatically make its holder a FoundryX Project Owner.
 
 ### Choose the correct project role
 
@@ -97,7 +97,7 @@ Before creating a permission, confirm the following:
 | --- | --- |
 | Active FoundryX tenant | Complete the invitation and consent process with the service operator. An invited or suspended tenant cannot use the normal project workflow. |
 | Tenant-consent authority | For onboarding, activate an eligible Entra administrator role. See [tenant onboarding requirements](tenant-onboarding-requirements.md) and its role-check script. |
-| Subscription authority | Use Subscription Owner, or both Contributor and User Access Administrator at subscription scope. Activate eligible roles before continuing. |
+| Subscription authority | Verify the [Access management Actions](admin-portal-permissions.md#required-access-management-actions) and rollout note. Owner, Contributor plus User Access Administrator, or qualifying custom roles can supply them. Activate eligible roles before continuing. |
 | Supported native project | Use a project under a Microsoft Foundry account with resource kind `AIServices`. Select a subscription in the signed-in tenant. |
 | Models | Have at least one ready model deployment for employees who must build or invoke agents. Verify quota and regional capacity before deploying additional models. |
 | Tools | Create the required native project connections and Toolboxes, and complete their external authentication or identity setup. |
@@ -112,7 +112,7 @@ foundryx access project options
 foundryx access project create <resource-name> --subscription <subscription-id> --region <region>
 ```
 
-The CLI creation path provisions native resources, including monitoring. It requires subscription management authority and can incur Azure costs. Review the returned project and any setup errors before granting employee access.
+The CLI creation path provisions native resources, including monitoring. With permission-based authorization, it requires the separate 27-Action project-creation check, not just the 15 Access management Actions. It can incur Azure costs. Review the returned project and any setup errors before granting employee access.
 
 For portal sign-in and registration, follow the [registration walkthrough](register-project-permissions.md). Only a subscription manager can create a new permission; Project Owner membership alone is not sufficient.
 
@@ -317,7 +317,7 @@ permission.
 | Symptom or code | Check and action |
 | --- | --- |
 | Organization is not active | Verify the tenant in the sign-in link. Ask the service operator to complete onboarding or review suspension. Switching accounts does not activate a tenant. |
-| **Grant access** or an access action is disabled, or `azure_role_required` | Read the warning or action tooltip. Verify Subscription Owner, or both Contributor and User Access Administrator at subscription scope, in the selected tenant. A project role is not sufficient for registration. |
+| **Grant access** or an access action is disabled, or `azure_role_required` | Read the warning or action tooltip. Verify the [required subscription Actions](admin-portal-permissions.md#required-access-management-actions) in the selected tenant and check the rollout note for older environments. A project role is not sufficient for registration. |
 | No subscriptions or projects appear | Confirm the tenant and delegated Azure read access. Only supported Foundry accounts and unregistered projects appear in the new-permission picker. A discovery error is not an empty inventory. |
 | Models or tools fail to load in **Grant access** | Check [model management-plane reads](admin-portal-permissions.md#allowed-models) and [tool discovery permissions](admin-portal-permissions.md#allowed-tools). Native Toolbox listing uses the signed-in administrator's Foundry data access; subscription Owner alone does not grant it. Existing registrations use the service identity for resource reads instead. |
 | Directory users or groups fail to load | Check delegated Graph consent and directory access. Resolve the error and retry; do not replace failed results with an assumed empty list. |

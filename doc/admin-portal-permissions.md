@@ -10,10 +10,19 @@ the project permissions that users **receive from that grant**.
 | --- | --- | --- |
 | **Tenant onboarding** | The Entra administrator who connects the organization. | Requires an eligible [Entra administrator role](tenant-onboarding-requirements.md#administrator-requirements) to approve application permissions. It does not grant employee project access. |
 | **Admin Center sign-in** | Users in the active tenant. | Requires sign-in allowed by the tenant's Entra policies. It does not grant project access or authority to grant access. |
-| **Authority to grant access** | The administrator registering a project. | Requires Azure Owner, or Contributor plus User Access Administrator, on the target subscription. Reading Toolboxes also requires native Foundry data access. |
+| **Authority to grant access** | The administrator registering a project. | Requires all 15 Access management Actions at subscription scope. Owner, Contributor plus User Access Administrator, or custom roles can supply them. Reading Toolboxes also requires native Foundry data access. |
 | **Project access granted to users (FoundryX ACLs)** | The selected users, groups, or tenant-wide audience. | Assigns Consumer, User, Manager, or Owner access to a specific project through FoundryX. These are the permissions users receive, not prerequisites for registering the project. |
 
 **FoundryX project access is not a direct Azure role assignment to the user.**
+
+## How the access layers fit together
+
+![Four layers: Org (Tenant) consent; Azure high-privilege and read permissions; Foundry project data permissions; FoundryX project roles.](images/admin-permission-layers.svg)
+
+The layers are **Org (Tenant)**, **Azure**, **Foundry**, and **FoundryX**.
+Azure separates high-privilege role changes from read permissions. Foundry
+shows native project data permissions. The dashed FoundryX box shows the
+project's access list (ACL), not an Azure role. These are separate checks.
 
 ## 1. What does tenant onboarding require?
 
@@ -48,21 +57,63 @@ After sign-in:
 
 ### Register a project through Grant access
 
-For the **target subscription**, the signed-in person must have either:
+> [!NOTE]
+> The permission-based check below applies after the authorization update is
+> deployed to your environment. Older environments still require built-in
+> subscription Owner, or Contributor plus User Access Administrator. Custom-role
+> support is not available in those older environments.
 
-- Azure **Owner**, or
-- Azure **Contributor** and **User Access Administrator** together.
+FoundryX checks the signed-in person's **actual Azure permissions on the target
+subscription**, rather than requiring particular role names. All 15
+[Access management Actions](#required-access-management-actions) must be present.
+Azure **Owner**, **Contributor plus User Access Administrator**, or custom roles
+with the required Actions can provide this access.
 
-These roles must be effective at subscription scope. Inherited roles and group
-assignments can qualify. Activate eligible PIM roles before continuing.
+Permissions can come from more than one role, group assignments, or inherited
+assignments. They must apply at **subscription scope**; Owner on only a resource
+group or project is not enough. Activate eligible PIM assignments before
+continuing. An Entra administrator role or FoundryX Owner role is not a
+substitute.
 
-Reader, Contributor alone, or Owner on only a resource group or project is not
-enough. FoundryX checks these built-in roles; an equivalent custom role is not
-accepted. An Entra administrator role or FoundryX Owner role is not a substitute.
+This is a check of existing permissions. It does **not** assign Azure roles to
+the person. When they save a new registration, their Azure authority is used to
+provision the FoundryX service principal's access. Azure deny assignments,
+policy, and role assignment conditions can still block an operation.
 
-These roles let the administrator register the project and assign Azure resource
-roles to the customer tenant's FoundryX service principal. Azure policy and role
-assignment conditions can still block this step.
+### Required Access management Actions
+
+All of these Actions are required at subscription scope for subscription-wide
+Access management, including registering/importing projects and **Remove
+access**. They are the full management check, not a minimum permission list for
+each individual button.
+
+| Purpose | Required Azure Action |
+| --- | --- |
+| Read the subscription | `Microsoft.Resources/subscriptions/read` |
+| Check the caller's permissions | `Microsoft.Authorization/permissions/read` |
+| Read role definitions | `Microsoft.Authorization/roleDefinitions/read` |
+| Create or update service role definitions | `Microsoft.Authorization/roleDefinitions/write` |
+| Read role assignments | `Microsoft.Authorization/roleAssignments/read` |
+| Assign service access | `Microsoft.Authorization/roleAssignments/write` |
+| Remove service access | `Microsoft.Authorization/roleAssignments/delete` |
+| Read Foundry accounts | `Microsoft.CognitiveServices/accounts/read` |
+| Read native projects | `Microsoft.CognitiveServices/accounts/projects/read` |
+| Read model deployments | `Microsoft.CognitiveServices/accounts/deployments/read` |
+| Read project connections | `Microsoft.CognitiveServices/accounts/projects/connections/read` |
+| Read Application Insights resources | `Microsoft.Insights/components/read` |
+| Read Log Analytics workspaces | `Microsoft.OperationalInsights/workspaces/read` |
+| Read policy assignments | `Microsoft.Authorization/policyAssignments/read` |
+| Read policy exemptions | `Microsoft.Authorization/policyExemptions/read` |
+
+FoundryX reads these through the ARM Permissions API using the signed-in user's
+delegated token. Action matching supports wildcards and ignores letter case.
+Each permission block's `NotActions` exclusions apply to that block; another
+block can still grant the Action.
+
+**Creating a new native project is a different check.** The CLI creation
+workflow requires 27 Actions: these 15 plus 12 resource-creation and discovery
+Actions. Passing Access management alone does not authorize project creation.
+The Admin Center's **Grant access** dialog registers an existing project.
 
 ### Permissions in the Grant access dialog
 
@@ -72,7 +123,7 @@ will load.
 
 | Field | What the administrator needs |
 | --- | --- |
-| Azure subscription | Read subscriptions in the signed-in tenant and read effective role assignments. |
+| Azure subscription | Read subscriptions in the signed-in tenant and check the caller's permissions with `Microsoft.Authorization/permissions/read`. |
 | Foundry project | Read the parent Foundry account and its projects. The account must have kind `AIServices`. Already registered projects do not appear here. |
 | Users / Groups | The delegated Graph permissions approved during [onboarding](tenant-onboarding-requirements.md#application-permissions-to-approve). The user's directory permissions and guest restrictions still apply. |
 
@@ -89,9 +140,9 @@ read permissions:
 - `Microsoft.CognitiveServices/accounts/read`
 - `Microsoft.CognitiveServices/accounts/deployments/read`
 
-The subscription roles above normally provide these reads. Project-only access
-may not cover the parent account. A native Foundry data role is not used for
-this list.
+These reads are also included in the Access management check. Project-only
+access may not cover the parent account. A native Foundry data role is not used
+for this list.
 
 ### Allowed tools
 
@@ -137,9 +188,9 @@ already be applied.
 ## 4. What project access do users receive?
 
 In **Users / Groups**, the administrator selects who receives access and assigns
-Consumer, User, Manager, or Owner. This assignment is a **FoundryX project access
-grant (ACL entry)**: it defines what the recipient is authorized to do in that
-specific project through FoundryX.
+Consumer, User, Manager, or Owner. **FoundryX roles control who can invoke or
+build agents and manage access for a specific Foundry project through FoundryX.**
+Each assignment is a project access grant (ACL entry).
 
 These roles are assigned during **Grant access**, or added or changed later on
 the existing access entry. Recipients do not need these roles before the
@@ -172,7 +223,7 @@ requirements. An empty list means no access to that resource type.
 | View access details | A project member or an administrator of its subscription. |
 | Add, edit, or remove user/group access | Owner or subscription administrator. Manager can manage only User grants for individuals/groups. |
 | Change tenant-wide access or allowed models/tools | Owner or subscription administrator. |
-| Remove access or retry an incomplete import | Subscription administrator with the required Azure roles and delegated ARM access. FoundryX Owner alone is not enough. |
+| Remove access or retry an incomplete import | Subscription administrator with all required Access management Actions and delegated ARM access. FoundryX Owner alone is not enough. |
 
 Subscription authority does **not** make someone a FoundryX Owner. A subscription
 administrator still needs a project role for agent work, and **FoundryX Owner

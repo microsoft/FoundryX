@@ -167,23 +167,36 @@ For current picker choices and excluded infrastructure connections, see
 
 ### Save access
 
-Select an unregistered project, allowed resources, and at least one user, group,
-or tenant-wide audience. Model discovery must succeed before saving. If tool
-discovery fails, a new registration can be saved with no allowed tools; this
-disables tools rather than fixing the error.
+Select an unregistered project. Initial user, group, and tenant-wide assignments
+and model/tool selections are optional. New registrations start with no models
+or tools selected; choose each approved resource explicitly. Web search is
+optional and can be cleared in the picker.
+
+Loading or failed model/tool pickers do not block **Save access** after a project
+is selected. Unselected resources remain disallowed. Resolve discovery errors and
+configure the intended resources before employees use the project. Submitting
+the form does not guarantee success: service-access setup or resource reads can
+still fail and leave **Import incomplete**.
 
 Saving a new access entry does two separate things:
 
 1. **Service access:** Register the project and assign Azure resource roles to
    the customer tenant's FoundryX service principal.
-2. **User access:** Save the selected users, groups, or tenant-wide audience and
-   their FoundryX project roles. These grants form the project's access control
-   list (ACL).
+2. **User access, when selected:** Save the selected users, groups, or tenant-wide
+   audience and their FoundryX project roles. These grants form the project's
+   access control list (ACL). You can leave it empty and assign access later.
 
 The employee receives project access through FoundryX, not an individual Azure
-role assignment. Follow the [Grant access walkthrough](register-project-permissions.md).
-If a save fails, inspect the saved state before retrying; some changes may
-already be applied.
+role assignment. Registration does not automatically grant the administrator a
+FoundryX project role. Before employees build agents, grant User or higher access
+and allow the resources they need. Follow the
+[Grant access walkthrough](register-project-permissions.md).
+
+Membership changes are submitted together in one atomic batch of at most 500
+changes, after registration or the policy update. A rejected batch leaves its
+membership changes unchanged, but an earlier registration or policy update can
+remain saved. Inspect the saved state before retrying, especially if the response
+outcome is unknown.
 
 ## 4. What project access do users receive?
 
@@ -235,6 +248,8 @@ For existing registrations, model and tool lists use the **FoundryX service
 principal's resource access**, not the administrator's personal discovery
 access. If these lists fail, check the service principal's roles. The
 **Add Users / Groups** dialog does not load model or tool choices.
+Membership-only edits do not require model or tool discovery and leave the
+saved resource policy unchanged.
 
 See [Administration concepts and reference](enterprise-admin-agent-access.md)
 for registration grants, resource policy details, and troubleshooting.

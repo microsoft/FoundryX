@@ -47,14 +47,15 @@ The requested operation always rechecks current access.
 
 ## Required authority
 
-An administrator here has Subscription Owner, or both Contributor and User Access
-Administrator at subscription scope. This is separate from a FoundryX project role.
+An administrator here has the FoundryX Access management permission package at
+subscription scope. This is separate from a FoundryX project role.
 The effective project role is the highest matching user, group or tenant grant.
 
 | CLI operation | Required authority |
 |---|---|
 | `access show`, `project policy show/resources`, `member group users` | Any project member for their own project; subscription administrators can inspect managed projects |
-| `project create`, first `project import`, `project delete` | Subscription administrator; import/delete use delegated management access |
+| `project options/models/create` | FoundryX project creation permission package at subscription scope; includes Access management and Azure resource provisioning permissions |
+| First `project import`, `project delete` | Subscription administrator; use delegated management access |
 | `project policy set` | Project Owner or subscription administrator |
 | `project enable/disable`, `project model-management enable/disable`, monitoring show/setup | Subscription administrator |
 | `member list/candidates`, group search | Project Manager, Owner or subscription administrator |
@@ -63,7 +64,7 @@ The effective project role is the highest matching user, group or tenant grant.
 | `model list/show/call`, deployed `agent invoke` | Project Consumer or higher, plus resource policy |
 | `agent conversation show/delete`, `agent response show` | The caller's own conversation and current project membership |
 | `model catalog`; Agent develop/deploy/list/show/delete/evaluate/publish/metrics/tracing/Hosted operations; connection/Toolbox discovery | Project User or higher; resource policies and operation-specific checks still apply |
-| `model quota` | Subscription administrator |
+| `model quota` | Subscription administrator, plus quota-read permission at subscription scope; uses delegated user access |
 | `model deploy/scale/delete` | Subscription administrator, or Project User or higher when project model management is enabled; scale/delete must also satisfy the model policy |
 | Connection configuration/credentials/delete; Toolbox create/version/publish/delete | Project Owner; subscription authority alone does not grant this role |
 

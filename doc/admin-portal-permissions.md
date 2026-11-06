@@ -10,7 +10,7 @@ the project permissions that users **receive from that grant**.
 | --- | --- | --- |
 | **Tenant onboarding** | The Entra administrator who connects the organization. | Requires an eligible [Entra administrator role](tenant-onboarding-requirements.md#administrator-requirements) to approve application permissions. It does not grant employee project access. |
 | **Admin Center sign-in** | Users in the active tenant. | Requires sign-in allowed by the tenant's Entra policies. It does not grant project access or authority to grant access. |
-| **Authority to grant access** | The administrator registering a project. | Requires all 15 Access management Actions at subscription scope. Owner, Contributor plus User Access Administrator, or custom roles can supply them. Reading Toolboxes also requires native Foundry data access. |
+| **Authority to grant access** | The administrator registering a project. | Requires all 15 Access management Actions at subscription scope. Owner, Contributor plus User Access Administrator, or custom roles can supply them. The Grant access form does not read the native Toolbox catalog as this administrator. |
 | **Project access granted to users (FoundryX ACLs)** | The selected users, groups, or tenant-wide audience. | Assigns Consumer, User, Manager, or Owner access to a specific project through FoundryX. These are the permissions users receive, not prerequisites for registering the project. |
 
 **FoundryX project access is not a direct Azure role assignment to the user.**
@@ -23,6 +23,10 @@ The layers are **Org (Tenant)**, **Azure**, **Foundry**, and **FoundryX**.
 Azure separates high-privilege role changes from read permissions. Foundry
 shows native project data permissions. The dashed FoundryX box shows the
 project's access list (ACL), not an Azure role. These are separate checks.
+For resource discovery after registration completes, native Foundry permissions
+apply to the FoundryX service principal. They are not an extra employee Azure-role
+requirement. Direct native access and delegated discovery require the caller's
+own resource permissions.
 
 ## 1. What does tenant onboarding require?
 
@@ -130,53 +134,78 @@ will load.
 Azure role and sign-in checks also read subscription policy assignments and,
 when needed, policy exemptions. Complete any Microsoft sign-in or MFA request.
 
+The subscription picker can show subscriptions that you can read but cannot
+manage. Those choices are disabled. Hover over one, or select **View missing
+permissions**, to inspect missing Actions at subscription scope. Use **Copy**
+to share the list with your Azure administrator. If exactly one subscription
+has the required management permissions, the form selects it automatically.
+Seeing a subscription does not grant registration authority.
+
+The Grant access form has no model or tool pickers. Register the project first,
+then select its allowed resources through **Edit access** > **Models & Tools**.
+The edit dialog opens on that tab. Use **Access** to change membership.
+Switching tabs keeps draft changes; it does not save them.
+
 ### Allowed models
 
-The model list reads deployments from the **parent Foundry account**, not just
-the selected project. The administrator needs these Azure Resource Manager (ARM)
-read permissions:
+After registration completes, **Edit access** > **Models & Tools** reads model
+deployments from the **parent Foundry account**, not just the selected project.
+It uses the **FoundryX service principal's resource access**, not the
+administrator's personal Azure access. The service identity needs the relevant
+Azure Resource Manager (ARM) read permissions:
 
-- `Microsoft.Resources/subscriptions/read`
 - `Microsoft.CognitiveServices/accounts/read`
 - `Microsoft.CognitiveServices/accounts/deployments/read`
 
-These reads are also included in the Access management check. Project-only
-access may not cover the parent account. A native Foundry data role is not used
-for this list.
+These permissions apply to the parent account, not the subscription.
+Project-only access may not cover the parent account. A native Foundry data
+role is not used for this list. Selecting a model does not deploy one.
 
 ### Allowed tools
 
-The tools list needs **both** Azure resource reads and native Foundry data access:
+After registration completes, **Edit access** > **Models & Tools** reads tools
+as the **FoundryX service principal**, which needs **both** Azure resource reads
+and native Foundry data access:
 
 | Access | Where it is needed |
 | --- | --- |
-| ARM reads of the subscription, account, project, and connections | Includes `Microsoft.CognitiveServices/accounts/projects/read` and `Microsoft.CognitiveServices/accounts/projects/connections/read` on the selected resources. |
-| Native Foundry permission to list Toolboxes | On the selected native project, assigned to the administrator's user or group. |
+| ARM read of project connections | `Microsoft.CognitiveServices/accounts/projects/connections/read` on the selected native project. No subscription-scope read is required. |
+| Native Foundry permission to list Toolboxes | On the selected native project, assigned to the FoundryX service principal. |
 
 The Azure **[Foundry User](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/ai-machine-learning#foundry-user)**
 role on the native project is one sufficient data role. It grants more than
 read-only access; use an approved role and scope.
 
-**Azure subscription Owner alone does not grant Foundry data access.** An
-administrator can therefore see models but fail to load tools. If Toolbox
-discovery fails, the whole tools list fails, including built-in choices.
-FoundryX **Owner** and Azure **Foundry User** are different roles.
+Completed registrations load models, project connections, and Toolboxes in one
+combined resource request. If any of these reads fails, both the model and tool
+lists fail to load, including built-in tool choices. Check the service
+principal's roles, not the editor's personal Azure roles. FoundryX **Owner**
+and Azure **Foundry User** are different roles.
+
+**Delegated discovery is a separate path.** CLI discovery of an unregistered
+project and the portal's **Retry import** resource pickers use the signed-in
+administrator and load models and tools in separate requests. This path also
+reads the subscription with `Microsoft.Resources/subscriptions/read`. That
+subscription read, the other ARM reads, and native Toolbox permissions must
+apply to the administrator, not the service principal. Azure subscription
+Owner alone does not grant native Foundry data access. These personal data
+permissions are not a prerequisite for the initial Grant access form.
 
 For current picker choices and excluded infrastructure connections, see
 [Prepare and allow tools](enterprise-admin-agent-access.md#prepare-and-allow-tools).
 
-### Save access
+### Register access and select resources
 
-Select an unregistered project. Initial user, group, and tenant-wide assignments
-and model/tool selections are optional. New registrations start with no models
-or tools selected; choose each approved resource explicitly. Web search is
-optional and can be cleared in the picker.
+Select an unregistered project and review **Users / Groups**. The form preselects
+your signed-in account as **Owner**. Change or remove that draft assignment if
+needed. Initial user, group, and tenant-wide assignments are optional; remove all
+selected assignments to register without initial employee access.
 
-Loading or failed model/tool pickers do not block **Save access** after a project
-is selected. Unselected resources remain disallowed. Resolve discovery errors and
-configure the intended resources before employees use the project. Submitting
-the form does not guarantee success: service-access setup or resource reads can
-still fail and leave **Import incomplete**.
+Select **Grant access** to submit. Opening the form grants nothing. New
+registrations start with empty model and tool allowlists, which deny all
+resources of those types. There is no model or tool discovery in this form.
+Service-access setup or resource reads during registration can still fail and
+leave **Import incomplete**.
 
 Saving a new access entry does two separate things:
 
@@ -187,9 +216,12 @@ Saving a new access entry does two separate things:
    access control list (ACL). You can leave it empty and assign access later.
 
 The employee receives project access through FoundryX, not an individual Azure
-role assignment. Registration does not automatically grant the administrator a
-FoundryX project role. Before employees build agents, grant User or higher access
-and allow the resources they need. Follow the
+role assignment. The administrator receives a project role only if a selected
+assignment is saved; subscription authority itself does not grant that role.
+After registration, use **Edit access** > **Models & Tools** to select each
+approved resource, then select **Save**. Web search is optional and can be
+cleared in the picker. Before employees build agents, confirm User or higher
+access and allow the resources they need. Follow the
 [Grant access walkthrough](register-project-permissions.md).
 
 Membership changes are submitted together in one atomic batch of at most 500
@@ -244,10 +276,11 @@ is required for every connection or Toolbox write**. Deploying or changing model
 deployments also needs subscription authority, unless project model management
 has been enabled for User, Manager, and Owner.
 
-For existing registrations, model and tool lists use the **FoundryX service
+For completed registrations, model and tool lists use the **FoundryX service
 principal's resource access**, not the administrator's personal discovery
-access. If these lists fail, check the service principal's roles. The
-**Add Users / Groups** dialog does not load model or tool choices.
+access. **Retry import** uses delegated discovery instead. If lists fail, check
+the identity used for that operation. The **Add Users / Groups** dialog does
+not load model or tool choices.
 Membership-only edits do not require model or tool discovery and leave the
 saved resource policy unchanged.
 

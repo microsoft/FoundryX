@@ -36,8 +36,10 @@ check CLI setup, guide sign-in, discover your accessible projects/models, and
 run the requested workflow.
 
 No manual CLI installation or terminal preflight is required for this path.
-The CLI remains a separate runtime dependency: the skill installs it if missing
-or updates it when a compatibility issue requires one, keeping a working installation.
+The CLI remains a separate runtime dependency: the skill checks
+`foundryx --version`, installs it if missing, and updates it if it is older than
+the required version. The current plugin requires **CLI 0.7.5 or later**;
+matching `-dev` and `-staging` variants are supported.
 If the intended service environment or tenant is unclear, supply your organization's
 choice when asked. You complete Microsoft sign-in and approve requested operations.
 Never put passwords, tokens, or connection keys into chat.
@@ -195,9 +197,11 @@ Update `foundry-agent` through the same client used to install it.
 
 Start a new Copilot session and reopen Canvas after updating. Plugin updates
 distribute the skill and Canvas together; the CLI remains a separate dependency.
-The skill checks the CLI and installs it if missing or updates it when needed
-for compatibility. Keep a working installation and preserve your service
-environment, configuration, and sign-in.
+The skill checks the CLI and installs it if missing. Update an installation
+older than **0.7.5** before using the current skill or Canvas, even if older
+commands still work. Keep an installation that meets the requirement unless a
+compatibility problem requires an update. Preserve your service environment,
+configuration, and sign-in.
 
 ## Understand Builder access
 
@@ -529,7 +533,7 @@ Use a higher explicit semantic package version for each new upload attempt. If s
 Use this reference if you prefer the CLI directly or need to troubleshoot setup.
 It is not a prerequisite for the plugin-first workflow.
 
-1. If a working CLI is already installed, keep it and skip the download.
+1. Check `foundryx --version` if a CLI is installed. Keep it and skip the download if it meets the current plugin's minimum of **0.7.5** and no compatibility problem requires an update. Matching `-dev` and `-staging` variants are supported. Update older installations before using the skill or Canvas.
 2. Otherwise, open [FoundryX CLI releases](https://github.com/microsoft/FoundryX/releases?q=FoundryX&expanded=true), including prereleases.
 3. Select the release for your intended **service environment**, operating system, and architecture. Use the full release version, not GitHub's latest-release endpoint.
 4. Put the executable in a user-owned binary directory on PATH: `foundryx.exe` on Windows or `foundryx` on macOS/Linux. On macOS/Linux, make it executable with `chmod +x`.

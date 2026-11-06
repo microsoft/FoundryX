@@ -69,7 +69,7 @@ Project registration provisions access at these scopes:
 | Resource group | Custom roles for Bot publishing operations, monitoring resource reads, and telemetry queries. |
 | Existing imported monitoring resources, when configured | Read and query access to the relevant Application Insights and Log Analytics resources. |
 
-Review these scopes against your organization's Azure policy before registration. Monitoring query access can include captured messages and tool payloads in accessible workspace tables. This is separate from the model and tool selections in the permission form.
+Review these scopes against your organization's Azure policy before registration. Monitoring query access can include captured messages and tool payloads in accessible workspace tables. This is separate from the model and tool allowlists.
 
 Project users receive no backend credential or individual Azure role through this process. FoundryX checks their access before using the customer-tenant service identity.
 
@@ -77,13 +77,25 @@ Project users receive no backend credential or individual Azure role through thi
 
 FoundryX verifies the subscription and tenant, saves the selected policy in a disabled import record, provisions Azure resource access for the FoundryX service principal, and reads native model deployments. It enables the permission after registration succeeds.
 
+The Admin Center's **Grant access** form starts with empty model and tool
+allowlists and has no resource pickers. After registration, open **Edit access**.
+Its default **Models & Tools** tab selects the allowed resources; its **Access**
+tab changes membership. Switching tabs keeps draft changes but does not save
+them. Resource discovery after registration completes uses the service principal's access.
+The CLI import path separately requires an explicit policy file.
+
 Registration does not import pre-existing native agents or their versions into FoundryX agent lists or Canvas. Re-registering a completed project preserves agent records that FoundryX already holds. Existing native agents are not deleted. Registration does not copy agent prompts, source code, connection credentials, or conversation content into its metadata.
 
-Initial user, group, and tenant-wide assignments are optional. Registering a project does not automatically give the registering administrator a FoundryX project role. Before employees build agents, grant them User or higher access and allow the resources they need.
+Initial user, group, and tenant-wide assignments are optional. The Grant access
+form preselects the signed-in account as **Owner**. Review, change, or remove
+that draft assignment before submitting; opening the form grants nothing.
+Subscription authority does not itself grant a project role. The portal submits
+the selected assignments after registration. Before employees build agents,
+confirm their saved User-or-higher access and allow the resources they need.
 
 The portal completes registration or the resource-policy update **before** saving membership changes. It then submits membership changes together in one atomic batch of at most 500 changes. A rejected batch leaves those membership changes unchanged, but an earlier registration or policy update can remain saved. The whole form is not one atomic transaction. For larger membership updates, use smaller batches or approved Entra groups.
 
-An incomplete import remains visible as **Import incomplete** and stays disabled. When retrying, review and select the intended models and tools before saving. The retry saves the selections in that form, including empty lists; do not assume the previous policy will be retained. CLI retries require a policy file with both fields. Reimporting a completed permission does not reset membership or its existing policy. See [Troubleshoot](#troubleshoot) for recovery actions.
+An incomplete import remains visible as **Import incomplete** and stays disabled. When retrying, review and select the intended models and tools before saving. The portal's Retry import resource pickers use the signed-in administrator's delegated access, including native Toolbox permissions. The retry saves the selections in that form, including empty lists; do not assume the previous policy will be retained. CLI retries require a policy file with both fields. Reimporting a completed permission does not reset membership or its existing policy. See [Troubleshoot](#troubleshoot) for recovery actions.
 
 ### Authorization and runtime verification
 
@@ -126,7 +138,12 @@ Commands use the **FoundryX project UUID**, returned by `foundryx access project
 
 Model deployments belong to the parent Foundry account. Each registered project has its own allowlist, even when projects share that account.
 
-To change model access, open the project's **...** menu, select **Edit access**, change **Allowed models (optional)**, and select **Save**. The edit form reads the current native deployment list, including deployments created outside FoundryX. **Deploy new models in Foundry portal** opens Foundry for separate deployment; it does not deploy a model from the access form.
+To change model access, open the project's **...** menu, select **Edit access**,
+and use **Allowed models** on the default **Models & Tools** tab. Select **Save**
+to apply the changes. The edit form reads the current native deployment list,
+including deployments created outside FoundryX. **Deploy new models in Foundry
+portal** opens Foundry for separate deployment; it does not deploy a model from
+the access form.
 
 The policy applies to every member, including Owners. It is not a separate list for each user.
 
@@ -225,7 +242,11 @@ Preserve the other intended policy entries and read the policy back after changi
 it. Verify the saved policy again after portal edits. This permission does not
 create a connection or Toolbox or grant external service access.
 
-New registrations start with no models or tools selected. Select each approved resource explicitly. **Web search** is optional and can be cleared in the picker. An empty tool selection denies all tools; you do not need a CLI policy update to exclude web search.
+New Admin Center registrations start with no models or tools allowed. After
+registration, select each approved resource through **Edit access** >
+**Models & Tools**. **Web search** is optional and can be cleared in **Allowed
+tools**. An empty tool selection denies all tools; you do not need a CLI policy
+update to exclude web search.
 
 ### Create or maintain shared resources
 
@@ -272,7 +293,7 @@ Open **Access** and select the project name to view **Access details** and its *
 | Change a role | Open the assignment's **...** menu and select **Edit role**. Review and save the new role. |
 | Remove a grant | Open the assignment's **...** menu and select **Remove**. Review the affected identity and confirm removal. |
 | Inspect a group | Select the group's name to view its users. This does not edit Entra group membership. |
-| Edit several assignments | Open the project's **...** menu, select **Edit access**, and review the selected identities and roles before **Save**. |
+| Edit several assignments | Open the project's **...** menu, select **Edit access** > **Access**, and review the selected identities and roles before **Save**. |
 
 The **Foundry X role** information tip explains the project roles. It does not
 grant Azure subscription authority or change which assignments you can manage.
@@ -321,12 +342,12 @@ permission.
 | Symptom or code | Check and action |
 | --- | --- |
 | Organization is not active | Verify the tenant in the sign-in link. Ask the service operator to complete onboarding or review suspension. Switching accounts does not activate a tenant. |
-| **Grant access** or an access action is disabled, or `azure_role_required` | Read the warning or action tooltip. Verify the [required subscription Actions](admin-portal-permissions.md#required-access-management-actions) in the selected tenant and check the rollout note for older environments. A project role is not sufficient for registration. |
+| **Grant access** or an access action is disabled, or `azure_role_required` | Read the action tooltip. For a disabled subscription choice, hover over it or select **View missing permissions**, then use **Copy** to share the missing Actions with your Azure administrator. Verify the [required subscription Actions](admin-portal-permissions.md#required-access-management-actions) and rollout note. A project role is not sufficient for registration. |
 | No subscriptions or projects appear | Confirm the tenant and delegated Azure read access. Only supported Foundry accounts and unregistered projects appear in the new-permission picker. A discovery error is not an empty inventory. |
-| Models or tools fail to load in **Grant access** | Check [model management-plane reads](admin-portal-permissions.md#allowed-models) and [tool discovery permissions](admin-portal-permissions.md#allowed-tools). Native Toolbox listing uses the signed-in administrator's Foundry data access; subscription Owner alone does not grant it. Existing registrations use the service identity for resource reads instead. |
+| Models or tools fail to load in **Edit access** | For completed registrations, check the FoundryX service principal's [model reads](admin-portal-permissions.md#allowed-models) and [tool discovery permissions](admin-portal-permissions.md#allowed-tools). **Retry import** uses the signed-in administrator's delegated resource access instead. The initial Grant access form has no resource pickers. |
 | Directory users or groups fail to load | Check delegated Graph consent and directory access. Resolve the error and retry; do not replace failed results with an assumed empty list. |
 | Additional sign-in verification is requested | Complete the Microsoft sign-in flow. Sign-in checks delegated management access and existing Azure MFA write/delete requirements for subscription managers. It does not add roles or change tenant policy. Later verification can still occur. The portal can retry reads after verification, but it does not automatically replay mutations. Inspect current state before retrying a save. |
-| **Save access** is disabled | Select an unregistered project and wait for any active save to finish. Initial employee grants and model/tool selections are optional; loading or failed model/tool pickers do not block submission. Resolve any displayed error, including the 500-membership-change limit. |
+| The **Grant access** submit button is disabled | Select an unregistered project in a manageable subscription and wait for any active save to finish. Initial employee grants are optional; this form has no model or tool pickers. Resolve any displayed error, including the 500-membership-change limit. |
 | Save failed after some changes | Reload the permission and inspect its policy and assignments. Registration or a policy update can remain saved even if the later membership batch is rejected; a rejected batch leaves its membership changes unchanged. If the response outcome is unknown, check the saved state before retrying. |
 | **Import incomplete**, `project_import_access_pending`, or `project_import_incomplete` | Review the error. If Azure role propagation is pending, wait and use **Retry import**. Review and select the intended resources before saving the retry; empty selections deny access. The permission remains disabled until registration completes. |
 | Employee can invoke but cannot build | Check their effective role. Consumer does not grant development; assign User or higher as appropriate. |

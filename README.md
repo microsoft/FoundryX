@@ -45,6 +45,11 @@ Follow the [tenant administrator walkthrough: Grant project access](doc/register
 to register an existing Foundry project, select allowed models and tools, and
 assign project access to users or groups.
 
+Register the project with **Grant access**, then use **Edit access** >
+**Models & Tools** to allow resources. Registration starts with empty model and
+tool allowlists. Review the signed-in account's preselected **Owner** assignment;
+you can change or remove it before submitting.
+
 [Admin Center permissions by page](doc/admin-portal-permissions.md) explains who
 can grant access, why model or tool lists may not load, and what Consumer, User,
 Manager, and Owner access grants let recipients do in a project.

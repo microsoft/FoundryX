@@ -47,14 +47,20 @@ The requested operation always rechecks current access.
 
 ## Required authority
 
-An administrator here has Subscription Owner, or both Contributor and User Access
-Administrator at subscription scope. This is separate from a FoundryX project role.
+Subscription administration requires all
+[Access management Actions](https://github.com/microsoft/FoundryX/blob/main/doc/admin-portal-permissions.md#required-access-management-actions)
+at subscription scope. Owner, Contributor plus User Access Administrator, or
+qualifying custom roles can provide them. FoundryX checks actual permissions,
+not role names. See the [rollout note](https://github.com/microsoft/FoundryX/blob/main/doc/admin-portal-permissions.md#register-a-project-through-grant-access)
+for older environments. This authority is separate from employee project ACLs
+and the service principal's Azure resource access.
 The effective project role is the highest matching user, group or tenant grant.
 
 | CLI operation | Required authority |
 |---|---|
 | `access show`, `project policy show/resources`, `member group users` | Any project member for their own project; subscription administrators can inspect managed projects |
-| `project create`, first `project import`, `project delete` | Subscription administrator; import/delete use delegated management access |
+| `project options/models/create` | The separate project-creation permission set at subscription scope: the 15 Access management Actions plus 12 resource-creation and discovery Actions |
+| First `project import`, `project delete` | Subscription administrator; use delegated Azure management access |
 | `project policy set` | Project Owner or subscription administrator |
 | `project enable/disable`, `project model-management enable/disable`, monitoring show/setup | Subscription administrator |
 | `member list/candidates`, group search | Project Manager, Owner or subscription administrator |
@@ -63,7 +69,7 @@ The effective project role is the highest matching user, group or tenant grant.
 | `model list/show/call`, deployed `agent invoke` | Project Consumer or higher, plus resource policy |
 | `agent conversation show/delete`, `agent response show` | The caller's own conversation and current project membership |
 | `model catalog`; Agent develop/deploy/list/show/delete/evaluate/publish/metrics/tracing/Hosted operations; connection/Toolbox discovery | Project User or higher; resource policies and operation-specific checks still apply |
-| `model quota` | Subscription administrator |
+| `model quota` | Subscription administrator plus `Microsoft.CognitiveServices/locations/usages/read` at subscription scope; checked with the signed-in user's delegated access |
 | `model deploy/scale/delete` | Subscription administrator, or Project User or higher when project model management is enabled; scale/delete must also satisfy the model policy |
 | Connection configuration/credentials/delete; Toolbox create/version/publish/delete | Project Owner; subscription authority alone does not grant this role |
 
@@ -121,10 +127,16 @@ Agent and requires the exact Agent display name through `--name`.
 
 ## Manage members
 
-Inspect `access member list --project <project-id>` before making changes. When a
-user is unknown to FoundryX, `access user find <name-or-upn>` searches Entra and registers
-matching users. Directory lookup and group creation require delegated Graph access;
-updating an existing group grant does not repeat directory discovery.
+Inspect `access member list --project <project-id>` before making changes.
+`access user find <name-or-upn>` searches Entra without registering matching
+users or granting access. Resolve the intended user's object ID, then review and
+submit the separate membership change. A selected user can be resolved from Entra
+when access is granted; prior FoundryX registration is not required. The same
+applies when selecting an initial project Owner.
+
+Directory lookup and creation of a project group grant require delegated Graph
+access; updating an existing group grant does not repeat directory discovery.
+These commands do not create or change Entra groups.
 
 ```text
 foundryx access user find <name-or-upn>
@@ -138,6 +150,22 @@ foundryx access member group remove <group-id> --project <project-id>
 foundryx access member tenant set --role consumer|user --project <project-id>
 foundryx access member tenant remove --project <project-id>
 ```
+
+`access user list` and `access member candidates` return one directory page,
+not the complete inventory or only users previously known to FoundryX. The default
+page size is 100; `--limit` accepts 1 through 100. If `next_cursor` is present,
+pass it unchanged with `--cursor` to continue. The cursor retains the original
+page size. Do not treat the first page as the complete directory or candidate list.
+
+```text
+foundryx access user list --limit 20
+foundryx access user list --cursor "<next_cursor>"
+foundryx access member candidates --project <project-id> --limit 20
+foundryx access member candidates --project <project-id> --cursor "<next_cursor>"
+```
+
+A candidate-list result does not prove that the user has project access.
+Use `access member list` to inspect existing project grants.
 
 ## Diagnose a refusal
 

@@ -10,14 +10,14 @@ For role definitions, policy semantics, and administration options, see [Foundry
 ## Before you begin
 
 Review [Admin Center permissions by page](admin-portal-permissions.md) for the
-separate subscription, model-discovery, Toolbox data, and directory requirements.
+separate subscription, service-principal resource access, and directory requirements.
 
 Confirm these prerequisites:
 
 - The target tenant is active in FoundryX. Complete [tenant onboarding](tenant-onboarding-requirements.md) first if needed.
 - You have the [required subscription Access management permissions](admin-portal-permissions.md#required-access-management-actions). Owner, Contributor plus User Access Administrator, or qualifying custom roles can provide them. See the guide's rollout note for older environments. Activate eligible roles before continuing. Project Owner membership alone does not permit registration.
 - You have an existing project under a Foundry account with resource kind `AIServices`, in a subscription in the target tenant.
-- Your signed-in identity can read deployments on the parent Foundry account and connection metadata on the native project. To load the tools list, it also needs native Foundry data access to that project's Toolboxes, for example through the Azure **Foundry User** role. Subscription Owner or Contributor alone does not supply that data access.
+- Your signed-in identity can discover the subscription, parent Foundry account, and native project. The Grant access form does not read the native Toolbox catalog as you. After registration, model and tool discovery uses the FoundryX service principal's resource access.
 - The project has a ready model deployment if employees must build or invoke agents. Required project connections and Toolboxes are already configured.
 - If granting employee access now, you know which users, groups, or tenant-wide audience need access and which roles they require. Initial assignments are optional; you can add them later.
 
@@ -48,73 +48,86 @@ Older `/t/<tenant-id>` links redirect to the tenant-query form. Switching tenant
 
 1. On **Overview**, select **Manage project access** or **Access** in the left navigation. The list is titled **Access to Foundry project**.
 2. Select **Grant access**. The same action appears in the empty state, **No access granted to any Foundry projects yet**.
-3. Select **Azure subscription**. If only one subscription is available, the form selects it automatically.
+3. Select **Azure subscription**. If exactly one subscription has the required access-management permissions, the form selects it automatically.
 4. Select **Foundry project**. The picker lists existing projects that are not already registered.
 
 If a project is already registered, open its existing access entry instead of creating another. Use **Create new Foundry project** to create a native project in Foundry if needed, then reopen the form to discover it.
 
 Discovery uses your signed-in Azure identity. If it is denied, resolve that error; the service does not substitute its own identity.
 
-Seeing the subscription is not proof that model and tool discovery can succeed.
-For exact read scopes and the separate native Toolbox requirement, see
-[Allowed models](admin-portal-permissions.md#allowed-models) and
-[Allowed tools](admin-portal-permissions.md#allowed-tools).
+The subscription picker can show subscriptions that you can read but cannot
+manage. Those choices are disabled. Hover over one, or select **View missing
+permissions**, to inspect missing Actions at subscription scope. Use **Copy**
+to share the list with your Azure administrator.
 
-Disabled access actions show an explanation of the required Azure subscription
-roles. Signing in or seeing the list does not by itself permit registration.
+Disabled access actions explain the required subscription permissions in their
+tooltips. Signing in or seeing a subscription does not permit registration.
 
-![Grant access dialog with Azure subscription, Foundry project, optional model and tool selections, and Users / Groups.](images/admin-new-permission.png)
+## 3. Review employee access
 
-*The current staging Grant access form. The subscription name is redacted. No project or identity is selected, and nothing was saved.*
-
-## 3. Choose allowed models and tools
-
-1. In **Allowed models (optional)**, select the required model deployment names. No models are preselected, including GPT-5 deployments. Selecting a model does not deploy one. **Deploy new models in Foundry portal** opens Foundry for separate setup.
-2. In **Allowed tools (optional)**, select the required built-in tools, project connections, and Toolboxes. An allowed Toolbox permits its configured tools and same-project connections through that Toolbox; separate connection grants are needed only for direct use outside it. **Deploy new tools in Foundry portal** opens Foundry for separate setup.
-3. Review both selections before continuing. An empty model list blocks model use and agents that require a model; it does not mean all models.
-
-No tools are preselected. **Web search** is optional and can be selected or cleared in the picker. An empty tool selection denies all tools; it does not mean all tools.
-
-The pickers show loading while discovery runs. **No additional models** means
-discovery found no model deployments; it is not a discovery error. The tools
-picker can show **No available tools** when none are found or tool discovery fails.
-If an error is shown, use the relevant retry action, such as **Retry project
-tools**. Loading or failed model/tool pickers do not block **Save access** after
-you select a project. Unselected resources remain disallowed. Resolve the error,
-then edit access to enable the intended resources before employees use them.
-
-For details, see [model policy semantics](enterprise-admin-agent-access.md#control-model-access-and-deployment) and [tool requirements, current picker choices, and exclusions](enterprise-admin-agent-access.md#prepare-and-allow-tools).
-
-## 4. Assign employee access
-
-This step is optional during registration. You can leave **Users / Groups**
-empty and assign access later. Registration does not automatically give you a
-FoundryX project role.
+The form preselects your signed-in account as **Owner** under **Users / Groups**.
+Review that draft assignment and change or remove it if needed. Opening the form
+grants nothing. Initial assignments are optional; remove all selected assignments
+to register without employee access and add it later.
 
 1. Under **Users / Groups**, search for and select the intended Microsoft Entra users or groups. Select **All users in \<tenant name\>** only if access is intended for all tenant users.
-2. Review each **Foundry X role**. Newly selected identities default to **Consumer** in this registration workflow. Change employees who must build agents to **User**.
+2. Review each **Foundry X role**, including your preselected Owner assignment. Other newly selected identities default to **Consumer** in this registration workflow. Change employees who must build agents to **User**.
 3. Assign **Owner** to the individual or group responsible for connection and Toolbox administration. Subscription authority does not supply that project role.
 
 Tenant-wide grants support Consumer or User, not Manager or Owner. **Manage Entra groups** opens Microsoft Entra guidance; this form does not create or change directory groups. Before employees build agents, grant them User or higher access and allow the required resources.
 
 For the full role definitions and overlapping-grant behavior, see [Choose the correct project role](enterprise-admin-agent-access.md#choose-the-correct-project-role).
 
-## 5. Save and review access
+## 4. Register the project and review access
 
-1. Select **Save access** and wait for the operation to finish.
+1. Select **Grant access** and wait for the operation to finish.
 2. Open the access entry by its project name.
-3. Review **Access details** and **Users / Groups**. Confirm the selected models, allowed tools, Microsoft Entra identities, and roles.
-4. If required resources were left unselected during registration, resolve any discovery problem and use **...** > **Edit access** to select the intended models and tools, then **Save**. Use **Add Users / Groups** to grant employee access if you deferred employee assignments.
+3. Review **Access details** and **Users / Groups**. Confirm the saved Microsoft Entra identities and roles, including your own assignment if you kept it.
+4. Use **Add Users / Groups** to grant employee access if you deferred assignments. To edit several assignments, use **...** > **Edit access** > **Access**, then **Save**.
 
-Submitting **Save access** requires a selected project, not initial employee grants or successful model/tool picker discovery. A picker error is not proof that no resources exist. Registration can still fail while setting up service access or reading native model deployments.
+The Grant access form has no model or tool pickers. Registration starts with
+empty model and tool allowlists, which deny all resources of those types.
+Submitting requires a selected project, not initial employee grants. Registration
+can still fail while setting up service access or reading native model deployments.
+Subscription authority itself does not grant a FoundryX project role; the portal
+submits the selected assignments after registration.
 
-If the permission shows **Import incomplete**, it remains disabled. Open **...** > **Retry import** after resolving the error. If Azure access is still propagating, wait before retrying. Review and select the intended models and tools in the retry form: saving it replaces the incomplete registration's policy with those selections, including empty lists.
+If the permission shows **Import incomplete**, it remains disabled. Open **...** > **Retry import** after resolving the error. If Azure access is still propagating, wait before retrying. The retry form's resource pickers use your delegated Azure and native Toolbox permissions, not the service principal. Review and select the intended models and tools before saving: the retry replaces the incomplete registration's policy with those selections, including empty lists.
 
 The portal completes registration or the policy update before saving membership changes together in one atomic batch of at most 500 changes. A rejected batch leaves those membership changes unchanged, but the earlier registration or policy update can remain saved. Reopen the access entry and inspect the current state before retrying, especially if the response outcome is unknown. Do not assume the whole form was rolled back. After additional sign-in verification, the portal does not automatically repeat a save.
 
 Registration does not import pre-existing native agents into FoundryX agent lists or Canvas, and does not delete them.
 
 See [Registration lifecycle](enterprise-admin-agent-access.md#registration-lifecycle) for what saving does and [Troubleshoot](enterprise-admin-agent-access.md#troubleshoot) for recovery options.
+
+## 5. Choose allowed models and tools
+
+1. Open the project's **...** menu and select **Edit access**. The dialog opens on **Models & Tools**.
+2. In **Allowed models**, select the required model deployment names. Selecting a model does not deploy one. **Deploy new models in Foundry portal** opens Foundry for separate setup.
+3. In **Allowed tools**, select the required built-in tools, project connections, and Toolboxes. An allowed Toolbox permits its configured tools and same-project connections through that Toolbox; separate connection grants are needed only for direct use outside it. **Deploy new tools in Foundry portal** opens Foundry for separate setup.
+4. Select **Save**, reopen the access entry, and confirm the saved resource selections before employees use the project.
+
+No models or tools are preselected for a newly registered project. **Web search**
+is optional and can be selected or cleared. An empty model list blocks model use
+and agents that require a model; an empty tool list denies all tools.
+
+The **Access** tab changes membership. Switching tabs keeps draft changes; it
+does not save them. Membership-only edits can be saved without model or tool
+discovery and leave the resource policy unchanged. If you have changed a resource
+selection and its discovery becomes unavailable, resolve the error before saving.
+
+After registration completes, resource discovery uses the **FoundryX service
+principal**, not your personal Azure access. If discovery fails, check its
+[model reads](admin-portal-permissions.md#allowed-models) and
+[native tool permissions](admin-portal-permissions.md#allowed-tools).
+The pickers show loading while discovery runs. **No additional models** means
+discovery found no model deployments; it is not a discovery error. The tools
+picker can show **No available tools** when none are found or discovery fails.
+Use the relevant retry action, such as **Retry project tools**. An error is not
+proof that no resources exist. Selecting a tool does not complete its external
+authentication.
+
+For details, see [model policy semantics](enterprise-admin-agent-access.md#control-model-access-and-deployment) and [tool requirements, current picker choices, and exclusions](enterprise-admin-agent-access.md#prepare-and-allow-tools).
 
 ## 6. Verify employee access
 

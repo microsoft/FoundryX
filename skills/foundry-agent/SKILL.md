@@ -58,7 +58,7 @@ When creating a Foundry project with an initial model deployment, list token-rat
 foundryx access project models --subscription <subscription-id> --region <region>
 ```
 
-Pick `--model-name`, `--model-version`, `--model-format`, and `--sku` from `project models`, with integer `--capacity` (thousands of TPM) `<= max_deployable_capacity`. If assigning an initial project Owner (`--owner <object-id>`), resolve a registered tenant user first via `foundryx access user list` or `foundryx access user find <name-or-upn>`.
+Pick `--model-name`, `--model-version`, `--model-format`, and `--sku` from `project models`, with integer `--capacity` (thousands of TPM) `<= max_deployable_capacity`. If assigning an initial project Owner (`--owner <object-id>`), resolve the intended Entra user via `foundryx access user find <name-or-upn>` and use the returned object ID. Prior FoundryX registration is not required; directory lookup does not grant access.
 
 ### Step 3: Create the Foundry project (`foundryx access project create`)
 

@@ -120,12 +120,18 @@ After registration completes, resource discovery uses the **FoundryX service
 principal**, not your personal Azure access. If discovery fails, check its
 [model reads](admin-portal-permissions.md#allowed-models) and
 [native tool permissions](admin-portal-permissions.md#allowed-tools).
-The pickers show loading while discovery runs. **No additional models** means
-discovery found no model deployments; it is not a discovery error. The tools
-picker can show **No available tools** when none are found or discovery fails.
-Use the relevant retry action, such as **Retry project tools**. An error is not
-proof that no resources exist. Selecting a tool does not complete its external
-authentication.
+Models and tools load in one shared resource request. The pickers show loading
+while that request runs. If it fails, both fields show errors below their
+dropdowns. Select **Retry model deployments** or **Retry project tools** to
+repeat the shared request. After successful discovery, **No additional models**
+means no model deployments were found, and **No available tools** means no
+tools were found.
+
+During **Retry import**, models and tools load in separate delegated requests.
+A failed tool request shows **No available tools** and an error banner inside
+the tools dropdown. Select **Retry project tools** after resolving the error.
+An error is not proof that no resources exist. Selecting a tool does not
+complete its external authentication.
 
 For details, see [model policy semantics](enterprise-admin-agent-access.md#control-model-access-and-deployment) and [tool requirements, current picker choices, and exclusions](enterprise-admin-agent-access.md#prepare-and-allow-tools).
 

@@ -154,12 +154,12 @@ It uses the **FoundryX service principal's resource access**, not the
 administrator's personal Azure access. The service identity needs the relevant
 Azure Resource Manager (ARM) read permissions:
 
-- `Microsoft.Resources/subscriptions/read`
 - `Microsoft.CognitiveServices/accounts/read`
 - `Microsoft.CognitiveServices/accounts/deployments/read`
 
-Project-only access may not cover the parent account. A native Foundry data role
-is not used for this list. Selecting a model does not deploy one.
+These permissions apply to the parent account, not the subscription.
+Project-only access may not cover the parent account. A native Foundry data
+role is not used for this list. Selecting a model does not deploy one.
 
 ### Allowed tools
 
@@ -169,23 +169,27 @@ and native Foundry data access:
 
 | Access | Where it is needed |
 | --- | --- |
-| ARM reads of the subscription, account, project, and connections | Includes `Microsoft.CognitiveServices/accounts/projects/read` and `Microsoft.CognitiveServices/accounts/projects/connections/read` on the selected resources. |
+| ARM read of project connections | `Microsoft.CognitiveServices/accounts/projects/connections/read` on the selected native project. No subscription-scope read is required. |
 | Native Foundry permission to list Toolboxes | On the selected native project, assigned to the FoundryX service principal. |
 
 The Azure **[Foundry User](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/ai-machine-learning#foundry-user)**
 role on the native project is one sufficient data role. It grants more than
 read-only access; use an approved role and scope.
 
-If Toolbox discovery fails, the whole tools list fails, including built-in
-choices. Check the service principal's roles, not the editor's personal Azure
-roles. FoundryX **Owner** and Azure **Foundry User** are different roles.
+Completed registrations load models, project connections, and Toolboxes in one
+combined resource request. If any of these reads fails, both the model and tool
+lists fail to load, including built-in tool choices. Check the service
+principal's roles, not the editor's personal Azure roles. FoundryX **Owner**
+and Azure **Foundry User** are different roles.
 
 **Delegated discovery is a separate path.** CLI discovery of an unregistered
 project and the portal's **Retry import** resource pickers use the signed-in
-administrator. The ARM reads and native Toolbox permissions must apply to that
-administrator. Azure subscription Owner alone does not grant native Foundry
-data access. These personal data permissions are not a prerequisite for the
-initial Grant access form.
+administrator and load models and tools in separate requests. This path also
+reads the subscription with `Microsoft.Resources/subscriptions/read`. That
+subscription read, the other ARM reads, and native Toolbox permissions must
+apply to the administrator, not the service principal. Azure subscription
+Owner alone does not grant native Foundry data access. These personal data
+permissions are not a prerequisite for the initial Grant access form.
 
 For current picker choices and excluded infrastructure connections, see
 [Prepare and allow tools](enterprise-admin-agent-access.md#prepare-and-allow-tools).

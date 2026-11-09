@@ -3,17 +3,13 @@
 > [!IMPORTANT]
 > FoundryX is an experimental project. It is currently available only by invitation to selected customers.
 
-To connect a tenant to FoundryX, an eligible Microsoft Entra administrator must
-approve the application permissions and complete tenant activation.
+To connect your organization to FoundryX, you need an eligible Microsoft Entra administrator role to approve the application permissions and complete tenant activation.
 
-For permissions needed **after onboarding**, see
-[Admin Center permissions by page](admin-portal-permissions.md). Successful
-onboarding does not grant subscription management or native Foundry data access
-to the person who signs in to the Admin Center.
+Onboarding connects your Microsoft Entra tenant to FoundryX so users can sign in. To register projects and grant access after onboarding, see [Admin Center permissions by page](admin-portal-permissions.md).
 
 ## Administrator requirements
 
-For the current FoundryX delegated permissions, these active Microsoft Entra built-in roles support tenant-wide admin consent:
+You need one of these active Microsoft Entra built-in roles (or a custom role with permissions to grant tenant-wide admin consent for the delegated permissions below):
 
 - Application Administrator
 - Cloud Application Administrator
@@ -21,119 +17,76 @@ For the current FoundryX delegated permissions, these active Microsoft Entra bui
 - Privileged Role Administrator
 - Global Administrator
 
-The role must allow the administrator to grant tenant-wide admin consent for
-the delegated permissions shown during onboarding. A custom role with the
-necessary consent permissions can also qualify. If the role is eligible through
-Privileged Identity Management (PIM), activate it before starting.
+If your role is assigned through Privileged Identity Management (PIM), activate it before you begin.
 
-These are **Microsoft Entra roles**, not Azure subscription roles. Subscription
-Owner is not required for tenant onboarding. Employees do not need an Entra
-administrator role to sign in after onboarding.
-
-Application Developer is not a qualifying administrator role. This role list
-applies to the current delegated permission set; it must be reviewed if Microsoft
-Graph application permissions are added. See Microsoft's
-[tenant-wide consent prerequisites](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent#prerequisites).
+These are **Microsoft Entra roles**, not Azure subscription roles. You don't need Azure subscription Owner to onboard a tenant, and Application Developer cannot grant tenant-wide consent. For background on consent roles, see [Grant tenant-wide admin consent to an application](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent#prerequisites).
 
 ## Preflight role check
 
-Before opening the invitation, run the FoundryX role-check script with the customer tenant ID:
+Before you open your onboarding invitation, you can run the preflight PowerShell script to check whether your signed-in account has one of the built-in roles above:
 
-1. Download [`Check-FoundryXAdminConsentRole.ps1`](https://github.com/microsoft/FoundryX/releases/download/Check-FoundryXAdminConsentRole-v1/Check-FoundryXAdminConsentRole.ps1) from this repository.
-2. Open Windows PowerShell in the folder that contains the script.
-3. Unblock the downloaded file:
+1. Download [`Check-FoundryXAdminConsentRole.ps1`](https://github.com/microsoft/FoundryX/releases/download/Check-FoundryXAdminConsentRole-v1/Check-FoundryXAdminConsentRole.ps1).
+2. Open Windows PowerShell in the download folder and unblock the file:
 
    ```powershell
    Unblock-File .\Check-FoundryXAdminConsentRole.ps1
    ```
 
-4. Run the script with the customer tenant ID:
+3. Run the script with your tenant ID:
 
    ```powershell
    .\Check-FoundryXAdminConsentRole.ps1 -t <customer-tenant-id>
    ```
 
-5. Sign in with the account that will approve consent. The script uses Azure CLI and installs it with Windows Package Manager if it is not already available.
-6. An `"eligible": true` result means the script recognized an active built-in role from the list above. An `"eligible": false` result means no recognized role was found, not that Microsoft Entra will necessarily deny consent. If applicable, activate an eligible PIM role and sign in again to obtain an updated token, or ask an administrator with one of the roles above to complete onboarding.
+4. Sign in with the administrator account you plan to use for onboarding. If Azure command-line interface (CLI) isn't installed, the script installs it with Windows Package Manager.
+5. Check the output:
+   - `"eligible": true` means the script found an active built-in role from the list above.
+   - `"eligible": false` means none of those active built-in roles appeared in your token. If you use PIM, activate your role and sign in again. If you use a qualifying custom role, you can still continue to the Microsoft Entra consent page.
 
-The JSON output contains only `eligible`, `tenantId`, `account`, `userObjectId`, and `matchedRoles`. When no role is recognized, `matchedRoles` is an empty array.
+## Complete consent and tenant setup
 
-The preflight reads active tenant-wide built-in roles from the token's `wids` claim without requesting Microsoft Graph read permissions or changing role assignments or consent grants. It does not evaluate inactive PIM eligibility, custom roles, consent policies, or role changes since token issuance. Do not use a negative preflight result to block an attempt to consent. The Microsoft Entra admin-consent page is the final authority on whether the account can grant consent.
+Open the onboarding invitation link from your FoundryX contact. On **Connect your organization to FoundryX**, select **Start onboarding** and complete these steps:
 
-## Consent and tenant setup
-
-Open the invitation supplied by your FoundryX contact. The welcome page is
-titled **Connect your organization to FoundryX**. Use **Learn about onboarding**
-to review these requirements, then select **Start onboarding** with an eligible
-Microsoft Entra administrator account. An expired invitation needs a replacement;
-changing accounts does not extend it.
-
-The administrator completes these steps in order:
-
-1. **Approve the FoundryX API permissions.** Review the permissions on the Microsoft Entra consent page. Microsoft Entra creates the FoundryX API enterprise application in the customer tenant.
-2. **Complete the Portal and CLI consent steps.** Follow the redirects and approve the standard sign-in permissions. The Portal and CLI are preauthorized clients of the API; FoundryX access does not require separate customer-tenant service principals for them.
-3. **Wait for activation to be verified.** Continue only when the result page says **Your organization is connected to FoundryX**. A success redirect alone is not proof of activation.
+1. **Approve the FoundryX application programming interface (API) permissions** on the Microsoft Entra consent page. This step creates the FoundryX API enterprise application in your tenant.
+2. **Approve the Admin Center and CLI sign-in permissions** when redirected. Both clients are preauthorized to call the FoundryX API.
+3. **Confirm activation.** Wait until the page displays **Your organization is connected to FoundryX**.
 
 ### Application permissions to approve
 
-| Service | Delegated permission | Why FoundryX needs it |
+All approved permissions are **delegated** permissions, which means FoundryX acts on behalf of the signed-in user:
+
+| Service | Delegated permission | Purpose |
 | --- | --- | --- |
-| Microsoft Graph | `User.ReadBasic.All` | Find users and read their basic profiles. |
-| Microsoft Graph | `GroupMember.Read.All`, together with `User.ReadBasic.All` | Find groups, read group membership, and check group-based access. |
-| Azure Resource Manager (ARM) | `user_impersonation` | Check subscription roles and read or manage Azure resources as the signed-in user. |
-| Microsoft Foundry | `user_impersonation` | List native Toolboxes as the signed-in user. |
-| FoundryX API, through the Portal and CLI | `access_as_user`, plus the sign-in permissions shown during consent | Sign users in and let the clients call the API for them. |
+| Microsoft Graph | `User.ReadBasic.All` | Search for users and read basic profile details. |
+| Microsoft Graph | `GroupMember.Read.All` (with `User.ReadBasic.All`) | Search for groups and check group membership for project access. |
+| Azure Resource Manager (ARM) | `user_impersonation` | Check subscription permissions and manage Azure resources as the signed-in administrator. |
+| Microsoft Foundry | `user_impersonation` | Read native project tools and Toolboxes as the signed-in user when delegated discovery is used. |
+| FoundryX API | `access_as_user` (plus standard sign-in scopes) | Sign users in and allow the Admin Center and CLI to call the FoundryX API. |
 
-"Delegated" means FoundryX acts on behalf of the signed-in user. The API obtains
-the Graph, ARM, and Foundry tokens; users do not supply these tokens themselves.
-Application consent does not remove directory or guest restrictions.
+## What onboarding does and does not grant
 
-## Permission boundary
+Onboarding activates your tenant and approves delegated app permissions. It does **not**:
 
-**Consent is not project access.** Onboarding does not assign Azure resource
-roles to employees or to the FoundryX service principal. It also does not assign
-FoundryX project roles to employees.
+- Give the FoundryX service principal access to your Azure subscriptions or Foundry projects.
+- Give employees access to any Foundry project.
 
-When FoundryX reads Azure or native Foundry resources as the signed-in user,
-that user still needs the required resource permissions. For example, Azure
-subscription Owner alone does not permit native Toolbox reads.
-
-After onboarding, an authorized subscription administrator registers a project
-and grants access. Registration gives the customer tenant's FoundryX service
-principal access to the selected Azure resources. The administrator separately
-assigns employees Consumer, User, Manager, or Owner access to that project
-through FoundryX. These project access grants (ACL entries) do not assign Azure
-roles to employees and are not prerequisites for tenant onboarding.
-
-## Completion criteria
-
-After consent, FoundryX must:
-
-- Verify that API, Portal, and CLI consent completed for the same tenant and that the FoundryX API service principal is available.
-- Activate the tenant for the FoundryX private preview.
+After onboarding, an Azure subscription administrator registers each project and assigns users **Consumer**, **User**, **Manager**, or **Owner** access in the Admin Center.
 
 ## Who can sign in after onboarding?
 
-**Any user in the active tenant can sign in to the Admin Center**, subject to the
-organization's Microsoft Entra sign-in policies. No Entra administrator, Azure
-subscription, or FoundryX project role is required just to sign in. Guests must
-use their identity in the onboarded tenant.
+**Any user in your active tenant can sign in to the Admin Center**, as long as your organization's Microsoft Entra sign-in policies allow it. Users don't need an Entra administrator role, an Azure role, or a FoundryX role just to sign in. Guests must sign in using your tenant's sign-in link.
 
-Signing in does not grant project access. Users need an individual, group, or
-tenant-wide FoundryX grant to use a project. Subscription administrators can
-also view and manage registered projects in their subscriptions.
+On the completion page, select **Sign in to FoundryX**, or select **Share** to copy the tenant-specific sign-in link for your team (share the sign-in link, not your onboarding invitation).
 
-Select **Sign in to FoundryX** on the completion page to use the tenant-specific
-sign-in link. **Share** shares that link, or copies it when browser sharing is not
-available. Share the sign-in link with employees, not the onboarding invitation.
-Next, review [who can grant access and what each project role allows](admin-portal-permissions.md),
-then follow the [project access walkthrough](register-project-permissions.md).
+Next:
 
-## If onboarding does not complete
+1. Review [Admin Center permissions by page](admin-portal-permissions.md).
+2. Follow the [Walkthrough: Grant project access](register-project-permissions.md) to register your first project.
 
-| Result | Action |
+## Troubleshoot onboarding
+
+| Issue | What to do |
 | --- | --- |
-| **Administrator consent was not granted** | The organization is not activated. Reopen the invitation with an eligible administrator before it expires. Permissions approved in earlier steps can remain in Microsoft Entra. |
-| **Tenant onboarding could not be completed** | Try the original invitation again. If the error continues, contact FoundryX support with the displayed request ID. |
-| **Confirming tenant onboarding** cannot verify activation | Do not assume the tenant is active. Resolve the reported error with support before granting project access. |
-| Invitation expired | Ask your FoundryX contact for a replacement invitation. |
+| **Administrator consent was not granted** | Activate an eligible role in PIM or sign in with an eligible administrator account, then reopen the invitation before it expires. |
+| **Tenant onboarding could not be completed** or activation cannot be verified | Try the invitation link again. If the error continues, contact FoundryX support with the displayed request ID before registering projects. |
+| **Invitation expired** | Request a new invitation link from your FoundryX contact. |

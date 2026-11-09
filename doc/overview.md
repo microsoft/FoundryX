@@ -1,47 +1,32 @@
 # FoundryX overview
 
-**From employee intent to a governed Foundry agent.**
+**Turn your ideas into governed Microsoft Foundry agents.**
 
 > [!IMPORTANT]
 > FoundryX is an experimental project. It is currently available only by invitation to selected customers.
 
-FoundryX adds a SaaS-like control plane and a Copilot plugin to Microsoft Foundry.
-Employees describe a business outcome, and a coding agent helps turn that intent
-into inspectable source, configuration, and a deployed Foundry agent. Employees
-use projects, models, and tools approved by their organization without needing
-their own Azure subscription or individual Azure roles for normal agent work.
+FoundryX adds an access control plane and a GitHub Copilot plugin to Microsoft Foundry. You describe what you want to build, and Copilot helps you create, deploy, and run a Foundry agent using models and tools that your organization approves. You don't need your own Azure subscription or individual Azure role-based access control (RBAC) assignments for everyday agent work.
 
-Microsoft Foundry remains the underlying platform for models, agents, tools,
-knowledge, observability, evaluation, and optimization. FoundryX separates the
-creator experience from Azure administration; it does not replace Foundry or move
-the customer's Foundry resources into a separate platform.
+Microsoft Foundry remains your platform for models, agents, tools, knowledge, evaluation, and monitoring. Your organization keeps its resources in its own Azure subscription.
 
-## Who it is for
+## Who uses FoundryX
 
-FoundryX is for organizations that administer Azure and want more employees to
-build agents under central governance. Creators include
-application developers, automation engineers, data developers, and technically
-capable domain experts.
+FoundryX helps central IT and AI teams share prepared Azure resources with builders across the organization.
 
-Central teams prepare projects, model deployments, quota, networking, and
-dependencies, then give employees controlled access to those resources.
-
-| Audience | Responsibility |
+| Role | What you do |
 | --- | --- |
-| Creators, called Builders in the guides | Describe the task, review generated artifacts, build and test agents, and operate them within project policy. |
-| Central AI and IT teams | Prepare projects, approve models and tools, assign access, and manage security and production readiness. |
-| FinOps teams | Retain oversight of the organization's Azure resources, quota, and spending. |
+| **Builders** (developers, engineers, domain experts) | Describe the task, review generated code and settings, and build, test, and run agents within your project's policy. |
+| **Central AI and IT administrators** | Onboard the tenant, register Foundry projects, approve models and tools, and assign project access. |
+| **FinOps teams** | Track Azure subscriptions, quota, and spending. |
 
-## How it works
+## How FoundryX works
 
-Employees sign in with Microsoft Entra ID. FoundryX resolves their project
-membership and resource policy before brokering supported operations to Microsoft
-Foundry in the customer's Azure subscription.
+You sign in with Microsoft Entra ID. The FoundryX application programming interface (API) checks your project role and resource allowlist before running operations in your organization's Azure subscription through a tenant-local service principal.
 
 ```mermaid
 flowchart LR
     subgraph Client["Client"]
-        Creator["Creator in Copilot"]
+        Creator["Builder in Copilot"]
         Plugin["FoundryX skill and Canvas"]
         CLI["FoundryX CLI"]
         Admin["Administrator in browser"]
@@ -49,7 +34,7 @@ flowchart LR
     end
     subgraph Control["FoundryX control plane"]
         Portal["Admin Center"]
-        API["API: project access, resource policy, and request broker"]
+        API["API: project access and resource policy"]
         Portal --> API
     end
     subgraph Customer["Customer Azure subscription"]
@@ -62,89 +47,47 @@ flowchart LR
     API -->|Customer-tenant service identity| SP
 ```
 
-The diagram shows the main service path. Administrative Azure management
-operations also use the administrator's delegated authority. The FoundryX API
-checks employee access before using the customer-tenant service identity;
-employees do not receive that identity's credentials.
+### Three access layers
 
-### Three separate access boundaries
+FoundryX separates organization onboarding, Azure administration, and project access:
 
-| Boundary | What it controls |
+| Layer | What it controls |
 | --- | --- |
-| Tenant onboarding | Admits the organization to FoundryX and obtains the required administrator consent. Consent alone does not grant access to Azure resources. |
-| Azure resource administration | Uses an authorized administrator's Azure access to create or register projects and provision service access. |
-| FoundryX project membership and policy | Determines who can use or build agents and which models and tools they can use in a registered project. |
+| **Tenant onboarding** | Connects your Microsoft Entra tenant and approves application permissions. |
+| **Azure subscription administration** | Lets an Azure administrator register projects and set up access for the FoundryX service principal. |
+| **FoundryX project access** | Controls who can invoke or build agents and which models and tools they can use in a registered project. |
 
-A FoundryX project role is not an Azure subscription role. Subscription
-administration does not automatically grant Project Owner membership.
-Project policy applies to all project members, including Owners.
+For details on how these layers work together, see [Admin Center permissions by page](admin-portal-permissions.md).
 
-The organization retains ownership of its subscriptions, resources, quota, costs,
-and security policy. Removing the need for individual Azure roles does not remove
-Azure charges, external tool consent, or production review requirements.
-See [administration concepts and reference](enterprise-admin-agent-access.md)
-for the access model and its limits.
+## Workflow summary
 
-## The experience
+### 1. Administrators prepare the project
 
-### Administrators prepare the environment
+1. Complete [tenant onboarding](tenant-onboarding-requirements.md) with an eligible Microsoft Entra administrator account.
+2. In the Admin Center, select **Access** > **Grant access** to register an existing Microsoft Foundry project and assign project roles to users or groups.
+3. Select **Edit access** > **Models & Tools** to choose the models and tools that project members can use.
 
-An administrator completes tenant onboarding, creates or selects a native Foundry
-project, and registers it in FoundryX. The administrator chooses allowed models
-and tools, then assigns project roles to Microsoft Entra users or groups.
-Tenant-wide access is also available for the supported roles.
+Follow the [Walkthrough: Grant project access](register-project-permissions.md) for step-by-step instructions.
 
-In the Admin Center, select **Access** > **Grant access** to register a project.
-Use **Edit access** to configure allowed models, tools, and membership, and
-**Remove access** to remove the FoundryX registration without deleting the
-native project.
+### 2. Builders create and run agents
 
-This gives creators a prepared environment rather than asking each employee to
-configure Azure resources. Follow the
-[project registration walkthrough](register-project-permissions.md) for the
-current Admin Center workflow.
+1. [Install the Copilot plugin](builder-guide.md#get-started-with-the-plugin) (`foundry-agent`) in VS Code, the GitHub Copilot app, or GitHub Copilot command-line interface (CLI).
+2. Run `/foundry-agent` to sign in, choose an approved project and model, and build a Prompt or Hosted agent.
+3. Deploy, test, evaluate, monitor, and optionally publish your agent using Copilot, the `foundryx` CLI, or FoundryX Canvas.
 
-### Creators build and operate agents
-
-Creators use Copilot with the FoundryX skill to describe an outcome, discover
-approved resources, and produce source and configuration they can inspect.
-They review important choices, deploy, invoke the agent, and use evaluation and
-monitoring to guide improvements.
-
-| Surface | Current purpose |
-| --- | --- |
-| Copilot plugin, `foundry-agent` | Provides the `/foundry-agent` skill and FoundryX Canvas. The coding agent uses the skill and CLI to develop and operate agents. |
-| FoundryX CLI, `foundryx` | Provides sign-in, resource discovery, access checks, agent deployment and invocation, evaluation, diagnostics, and publishing workflows. It is separate from the plugin; the skill handles its setup when needed. |
-| FoundryX Canvas, `foundryx-canvas` | Provides a graphical view of deployed agents, details, lifecycle actions, monitoring, and publishing. It is not a source editor or an interactive agent chat. |
-
-The plugin supports Prompt and Hosted agent workflows. Canvas requires a
-Copilot host with Canvas extension support; the CLI remains usable without it.
-This plugin is separate from the native `microsoft-foundry` plugin and its
-`azd ai` workflow.
-
-Deployment and publishing are separate operations. Publishing to Microsoft 365
-or Teams requires additional setup and tenant administrator review; a successful
-deployment does not make an agent available in an organization catalog.
-See the [Builder guide](builder-guide.md) for current capabilities and limits.
+Follow the [Walkthrough: Build and operate your first agent](build-first-agent.md) to get started.
 
 ## Table of contents
 
-Use these guides to prepare your organization's environment and build and
-operate agents. For installation, see
-[Install the Copilot plugin](builder-guide.md#get-started-with-the-plugin); the skill guides CLI setup and sign-in.
-
-| Document | Audience | What it covers |
+| Guide | Audience | What you'll learn |
 | --- | --- | --- |
-| [Tenant onboarding requirements](tenant-onboarding-requirements.md) | Administrators | Required Microsoft Entra roles, administrator consent, and tenant activation. |
-| [Admin Center permissions by page](admin-portal-permissions.md) | Administrators | Who can sign in and grant access, model/tool list requirements, and the project permissions users receive through FoundryX ACLs. |
-| [Administration concepts and reference](enterprise-admin-agent-access.md) | Administrators | Access boundaries, project roles, model and tool policies, membership, and troubleshooting. |
-| [Walkthrough: Grant project access](register-project-permissions.md) | Administrators | Register an existing Foundry project, select allowed resources, assign roles, and verify employee access. |
-| [Builder concepts and reference](builder-guide.md) | Builders | Plugin-first setup, upgrades, access, CLI and Canvas capabilities, tools, evaluation, monitoring, publishing, and optional manual CLI setup. |
-| [Walkthrough: Build and operate your first agent](build-first-agent.md) | Builders | Install the plugin, let Copilot guide setup and sign-in, then create, deploy, invoke, and inspect an agent. |
+| [Tenant onboarding requirements](tenant-onboarding-requirements.md) | Administrators | Required Microsoft Entra roles, preflight role check, consent permissions, and tenant activation. |
+| [Admin Center permissions by page](admin-portal-permissions.md) | Administrators | Permissions needed to sign in, register projects, load models and tools, and assign FoundryX project roles. |
+| [Administration concepts and reference](enterprise-admin-agent-access.md) | Administrators | Project registration details, model and tool policies, membership management, and troubleshooting. |
+| [Walkthrough: Grant project access](register-project-permissions.md) | Administrators | Step-by-step guide to registering a project, allowing models and tools, and verifying user access. |
+| [Builder concepts and reference](builder-guide.md) | Builders | Plugin installation and upgrades, CLI and Canvas usage, tools, evaluation, monitoring, and publishing. |
+| [Walkthrough: Build and operate your first agent](build-first-agent.md) | Builders | Step-by-step guide to building, deploying, invoking, and inspecting your first agent. |
 
 ### Supporting script
 
-[Check-FoundryXAdminConsentRole.ps1](Check-FoundryXAdminConsentRole.ps1) checks
-active Microsoft Entra administrator roles before tenant onboarding. Follow the
-[preflight role check](tenant-onboarding-requirements.md#preflight-role-check)
-instructions before running it.
+Download [`Check-FoundryXAdminConsentRole.ps1`](https://github.com/microsoft/FoundryX/releases/download/Check-FoundryXAdminConsentRole-v1/Check-FoundryXAdminConsentRole.ps1) and follow the [preflight role check](tenant-onboarding-requirements.md#preflight-role-check) instructions to verify your Microsoft Entra administrator role before onboarding.

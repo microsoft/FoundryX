@@ -3,115 +3,88 @@
 > [!IMPORTANT]
 > FoundryX is an experimental project. It is currently available only by invitation to selected customers.
 
-Build an agent in a project prepared by your organization, invoke it, and find it in FoundryX Canvas. This walkthrough uses Copilot for development and shows the equivalent CLI steps. You do not need your own Azure subscription or individual Azure roles.
+Use this walkthrough to build, deploy, invoke, and inspect your first Microsoft Foundry agent using GitHub Copilot and FoundryX. You don't need your own Azure subscription or individual Azure roles.
 
-For role definitions, tools, evaluation, monitoring, and publishing, see [FoundryX Builder concepts and reference](builder-guide.md).
+For detailed options and troubleshooting, see [FoundryX builder concepts and reference](builder-guide.md).
 
 ## Before you begin
 
-Confirm these prerequisites:
+Make sure you have:
 
-- Your tenant is active in FoundryX, and your administrator has registered and enabled a Foundry project.
-- You have **User**, **Manager**, or **Owner** access to that project. Consumer access permits invocation, not development.
-- Know your organization's intended service environment and tenant if they specify one. Copilot can discover accessible projects/models and help you choose.
-- The project has a ready, allowed model deployment. Required tools or Toolboxes are already configured and allowed if your agent needs them.
-- You have a workspace and a compatible coding-agent client that can execute commands and install user-owned tools when needed.
-- Local Hosted Agent testing needs Python and access to its dependencies; Copilot checks those if used. Canvas requires a host with canvas extension support.
+- An active FoundryX tenant and **User**, **Manager**, or **Owner** access to an enabled project (**Consumer** access allows invoking agents only).
+- At least one ready, allowed model deployment in that project (plus any approved tools or Toolboxes you plan to use).
+- A local workspace folder in a GitHub Copilot client that can run commands (and Python if you want to test Hosted agents locally).
 
-Use your own work or school account and approved, non-sensitive sample inputs. This guide contains no shared test accounts or credentials. Deployment, invocation, tools, and later evaluation or publishing can incur charges.
+Deploying, invoking, evaluating, and publishing agents can incur Azure charges. Use non-sensitive sample inputs when testing.
 
 ## 1. Install the Copilot plugin
 
-Follow [Install the plugin](builder-guide.md#get-started-with-the-plugin) for your client, then start a
-new conversation in your workspace. Confirm that `foundry-agent` is enabled.
-You do not need to install the CLI manually before continuing.
-
-For an existing installation, see [Upgrade the plugin and CLI](builder-guide.md#upgrade-the-plugin-and-cli).
+Follow [Get started with the plugin](builder-guide.md#get-started-with-the-plugin) to install `foundry-agent` in VS Code, the GitHub Copilot app, or GitHub Copilot command-line interface (CLI), and then start a new chat session in your workspace. (To update an existing install, see [Upgrade the plugin and CLI](builder-guide.md#upgrade-the-plugin-and-cli).)
 
 ## 2. Sign in and verify your access
 
-Ask Copilot to handle setup and access discovery:
+In Copilot chat, run:
 
 ```text
 /foundry-agent Help me get started with FoundryX. Check CLI setup and sign-in, then help me choose an accessible project and a ready, allowed model.
 ```
 
-Copilot checks the existing CLI, installs it only when needed, and guides
-Microsoft sign-in. Complete the sign-in flow yourself and answer any environment,
-tenant, project, or model questions. Copilot resolves project IDs and checks
-deployment authorization; no terminal commands or copied UUIDs are needed.
+Copilot checks or installs the `foundryx` CLI, guides you through Microsoft sign-in, lists your accessible projects and allowed models, and verifies deployment permission. If no project or model appears, ask your administrator to grant you **User** access and allow a model deployment.
 
-Continue only when access is allowed. A successful authorization check does not prove that the agent or tools work. If no suitable project or model appears, ask your administrator; do not create a personal Azure subscription as a workaround.
+## 3. Create and deploy the agent
 
-## 3. Create the agent in Copilot
-
-1. Continue in the same workspace and conversation.
-2. Describe the Agent you want using the project and model you selected:
+1. In the same chat session, describe the agent you want to build:
 
    ```text
    /foundry-agent Build a Hosted agent named supply-chain-assistant using the project and model we selected. It should summarize inventory information I provide and identify supplier risks. Start without external tools and do not invent business data. Show the plan and ask before deploying.
    ```
 
-3. Answer Copilot's configuration questions, then review the selected project, model, source, and `foundryx.yaml`. For a Hosted agent, check `.agentignore` so that credentials and unrelated files are not uploaded.
-4. Let Copilot complete the requested build and deployment after any required approval. If another agent already has the name, choose a new name unless you intend to update it.
+2. Review the generated code, `foundryx.yaml`, and `.agentignore`, and approve the deployment when prompted.
 
-**Expected result:** deployment succeeds, and Copilot reports the agent name, kind, ID, project, model deployment, and version. `foundryx.yaml` records the deployment ID, version, and endpoint. Record whether remote invocation was actually completed; deployment alone is not a runtime test.
+**Expected result:** Deployment succeeds and writes the agent ID, version, and endpoint to `foundryx.yaml`.
 
 ### CLI alternative
 
-If you prefer to work directly, follow [Manual CLI setup (optional)](builder-guide.md#manual-cli-setup-optional), then scaffold the basic Hosted sample:
+If you prefer to run the commands yourself, complete [Manual CLI setup (optional)](builder-guide.md#manual-cli-setup-optional) and scaffold the sample:
 
 ```powershell
 foundryx agent init .\supply-chain-assistant --sample basic
 Set-Location .\supply-chain-assistant
 ```
 
-Set these values in the generated `foundryx.yaml`, preserving the other sample settings:
-
-| Setting | Value |
-| --- | --- |
-| `project` | The selected FoundryX project UUID. |
-| `agent.name` | A unique name, such as `supply-chain-assistant`. |
-| `agent.model` | The approved deployment name from `model list`. |
-| `agent.tool_resources` | `[]` for this tool-free agent. |
-
-Edit the sample instructions in `main.py` to describe the inventory and supplier-risk task. To test locally, run `foundryx agent run`, wait for readiness, and invoke with `foundryx agent invoke "Hello" --local` from another terminal in the same directory. Stop the local server when finished.
-
-Deploy from the agent directory:
+Update `foundryx.yaml` with your `project` universally unique identifier (UUID), `agent.name`, `agent.model`, and `agent.tool_resources: []`, edit the instructions in `main.py`, and deploy:
 
 ```text
 foundryx agent deploy
 ```
 
-For a source-free alternative, use the [Prompt agent configuration](builder-guide.md#prompt-agent). Prompt agents are deployed and tested remotely.
+(To create a configuration-only agent without Python code, see [Prompt agent](builder-guide.md#prompt-agent).)
 
 ## 4. Invoke the deployed agent
 
-In the same Copilot session:
+Ask Copilot to test your deployed agent:
 
 ```text
 Invoke the deployed agent with: We have 20 units left and expect 35 orders before the next delivery. Identify the inventory risk and state what other supplier information you need.
 ```
 
-Or use the CLI with the returned IDs; this works outside the source directory:
+Or run the CLI command directly:
 
 ```text
 foundryx agent invoke "We have 20 units left and expect 35 orders before the next delivery. Identify the inventory risk and state what other supplier information you need." --project <project-id> --agent-id <agent-id>
 ```
 
-**Expected result:** the remote agent returns an answer based on your input, without claiming to have queried an inventory system. Inspect the content, not only whether the command completed.
-
-For a follow-up in the same conversation, use its returned ID:
+To continue the same conversation, pass `--conversation-id <conversation-id>`:
 
 ```text
 foundryx agent invoke "The next delivery could be three days late. Update the risk summary." --project <project-id> --agent-id <agent-id> --conversation-id <conversation-id>
 ```
 
-Without `--conversation-id`, invocation starts a new conversation. If a previous call has an unknown outcome, inspect it before repeating any operation with side effects.
+**Expected result:** The deployed agent returns a risk summary based on your prompt.
 
-## 5. Find and inspect the agent in Canvas
+## 5. Inspect the agent in Canvas
 
-In a Canvas-capable Copilot host, the skill normally opens FoundryX Canvas after successful deployment. To open it explicitly:
+In a Copilot host that supports Canvas, open FoundryX Canvas:
 
 ```text
 /foundry-agent List all my agents in the FoundryX Canvas.
@@ -119,73 +92,54 @@ In a Canvas-capable Copilot host, the skill normally opens FoundryX Canvas after
 
 ![FoundryX Canvas Agents page with sample Hosted and Prompt agents, their versions, status, project, owner, and an open Actions menu.](images/builder-agents.png)
 
-*The packaged Canvas rendered locally with synthetic example data. No live customer resources or accounts are shown. Preview deployments can differ.*
+*Example FoundryX Canvas Agents view.*
 
-1. On **Agents**, search for your agent.
-2. Check its **Version**, **Type**, **Status**, **Foundry project**, and **Owner**. A ready agent is shown as **Running**.
-3. Select the agent name to inspect its details.
-4. Open **Actions** > **Get agent endpoint** to inspect and copy a configured protocol URL. Copying an endpoint does not grant access to it.
-5. For a Hosted Agent, use **Disable agent** only when you intend to change availability. Use **Enable agent** to restore a disabled agent. Do not select **Delete** as a pause action.
+1. On **Agents**, find your agent and check its **Version**, **Type**, **Status** (**Running**), and **Foundry project**.
+2. Select the agent name to view its details, or open **Actions** > **Get agent endpoint** to copy its URL.
+3. For a Hosted agent, you can select **Actions** > **Disable agent** or **Enable agent** to start or stop it.
 
-See the [Canvas action reference and CLI equivalents](builder-guide.md#manage-deployed-agents-in-canvas).
-
-The personal list shows agents attributed to you in enabled projects where you have developer access. Agents with unknown creators do not appear. For a host without Canvas, ask Copilot to list your Agents as text. For a project-wide text listing, the direct CLI equivalent is:
+From the CLI, you can run:
 
 ```text
 foundryx agent list --project <project-id>
 foundryx agent show <agent-id> --project <project-id>
 ```
 
-For only your own agents in this project, add `--owned-only` to `agent list` if
-the installed CLI's `agent list --help` includes it. Keep the full project listing
-when checking that a new agent name is unique.
+See [Manage deployed agents in Canvas](builder-guide.md#manage-deployed-agents-in-canvas) for all Canvas actions.
 
-Canvas shares the CLI account. After switching accounts or tenants, reload it before using it.
+## 6. Add an approved tool (optional)
 
-## 6. Add an approved tool when needed
-
-Skip this step if your agent needs no external data. For an agent with tools, ask Copilot to discover and reuse existing approved resources:
+If your agent needs external tools, ask Copilot to find and configure an approved Toolbox in your project:
 
 ```text
 /foundry-agent Update this agent to use an existing approved Toolbox in my project. List the available Toolboxes and explain their authentication before changing source. Do not create or replace connections or Toolboxes.
 ```
 
-1. Select a Toolbox that meets your task and project policy. For a prepared demo, use only a resource your administrator confirms is available.
-2. Review the selected Toolbox, published or pinned version, returned endpoint, required connections, and user-consent requirements.
-3. Have Copilot update the Hosted source using the `toolbox` sample pattern and declare `toolbox:<toolbox-name>` in `agent.tool_resources`. Do not separately declare the Toolbox's internal connections or built-in tools. Declare extra resources only if the source uses them directly outside the Toolbox.
-4. Review the change and redeploy. **Do not test Toolbox agents with `agent run` or `--local`.**
-5. Invoke remotely with a non-sensitive request that requires the tool. Complete per-user consent if challenged, then resume with the returned conversation ID and the same account.
+1. Choose an approved Toolbox, let Copilot update `main.py` and `agent.tool_resources` (`toolbox:<toolbox-name>`), and redeploy with `foundryx agent deploy` (do not use `agent run` or `--local` for Toolbox agents).
+2. Invoke the deployed agent remotely. If prompted with a per-user OAuth consent link, open the link, sign in with the same account, and resume the conversation.
 
-**Expected result:** an actual tool result supports the answer. Configuration discovery, consent, or a plausible text response alone is not proof of tool execution.
+See [Reuse approved tools](builder-guide.md#reuse-approved-tools) for details.
 
-See [approved tools, prepared examples, and consent](builder-guide.md#reuse-approved-tools). Missing resources or expired shared credentials require administrator action.
+## 7. Evaluate and improve (optional)
 
-## 7. Evaluate and improve
-
-Evaluation is optional and billable. Start with:
+To run a billable evaluation on your agent, ask Copilot:
 
 ```text
 /foundry-agent Set up an evaluation for this agent. Show me the dataset, evaluators, judge deployment, and tool side effects before running it.
 ```
 
-After review, authorize the run. Ask Copilot to inspect item-level results, explain failures, and propose improvements. Review source or instruction changes before redeploying. Rerun with the same dataset, evaluators, and judge to compare versions.
+Review the proposed `eval.yaml`, run the evaluation, and inspect item-level scores before redeploying improvements. See [Evaluate and improve an agent](builder-guide.md#evaluate-and-improve-an-agent).
 
-**Expected result:** a native evaluation/run ID and evidence for the reported results. Missing scores are not passes. Per-user OAuth tools can behave differently because evaluation uses the backend application identity.
+## 8. Monitor and troubleshoot (optional)
 
-See the [evaluation workflow and CLI commands](builder-guide.md#evaluate-and-improve-an-agent).
-
-## 8. Check operation and diagnose failures
-
-1. In FoundryX Canvas, select the **Monitor** tab.
-2. Choose the subscriptions, projects, agents, and time range to inspect. Select **Refresh** when needed.
-3. If a recent call is missing, verify the filters and allow a few minutes for telemetry ingestion. Do not treat unavailable data as zero.
-4. For a failed Hosted call, inspect your latest session:
+1. In FoundryX Canvas, select the **Monitor** tab, choose your project and agent filters, and select **Refresh**.
+2. To inspect Hosted agent logs from the CLI, run:
 
    ```text
    foundryx agent hosted logs <agent-id> --type console --tail 50 --project <project-id>
    ```
 
-5. For a deeper investigation, ask:
+3. To analyze conversation traces in Copilot, ask:
 
    ```text
    /foundry-agent Analyze my recent calls to this agent for failures and latency. Use my conversation traces and distinguish missing telemetry from zero activity.
@@ -193,36 +147,25 @@ See the [evaluation workflow and CLI commands](builder-guide.md#evaluate-and-imp
 
 ![FoundryX Canvas Monitor page with project, agent and time filters, summary metrics, and charts.](images/builder-monitor.png)
 
-*The packaged Monitor view rendered locally with synthetic telemetry. These values demonstrate the interface, not service performance.*
+*Example FoundryX Canvas Monitor view.*
 
-See [monitoring, traces, and CLI equivalents](builder-guide.md#monitor-and-troubleshoot-an-agent). If monitoring is not configured or access is denied, send the error code and request ID to your administrator without private conversation content.
+See [Monitor and troubleshoot an agent](builder-guide.md#monitor-and-troubleshoot-an-agent).
 
-## 9. Publish only when the agent is ready
+## 9. Publish to your organization (optional)
 
-Publishing is optional. It can create a chargeable S1 Bot and expose the agent through a tenant channel whose users are not limited to FoundryX project members.
+Publishing creates a billable Azure Bot channel and submits your agent package for Microsoft 365 or Teams administrator approval.
 
-1. Verify the deployed agent and its tool behavior.
-2. Open **Actions** > **Publish** in Canvas, or ask `/foundry-agent Prepare a publishing plan for this agent for organization review. Do not submit yet.`
-3. Review the package version, descriptions, developer name, real publisher/privacy/terms URLs, costs, and tenant audience.
-4. Only when ready to submit, confirm publishing. Complete the separate publishing sign-in with the same tenant and user if requested.
-5. Inspect upload status:
+1. In FoundryX Canvas, select **Actions** > **Publish** (or ask `/foundry-agent Prepare a publishing plan for this agent for organization review. Do not submit yet.`).
+2. Enter your package version, descriptions, developer name, and your organization's developer, privacy, and terms URLs.
+3. Select **Confirm tenant publishing**, select **Publish**, and complete the publishing sign-in prompt.
+4. Check submission status and ask your Microsoft 365 administrator to approve the request:
 
    ```text
    foundryx agent publish-status <agent-id> --project <project-id>
    ```
 
-6. Ask your Microsoft 365 tenant administrator to review the submitted request. Verify store availability and end-user chat after approval.
-
 ![FoundryX Canvas Publish form with package metadata, Publisher URLs, and the tenant-publishing confirmation.](images/builder-publish.png)
 
-*The packaged Publish form rendered locally with synthetic example data. The confirmation is not selected and nothing was submitted.*
+*Example FoundryX Canvas Publish form.*
 
-**Expected result:** a submitted request, not automatic tenant approval. If status is uncertain, reconcile it before another attempt. Use a higher explicit package version for a new upload.
-
-See [publishing prerequisites, Canvas fields, and CLI review/confirm steps](builder-guide.md#publish-to-your-organization).
-
-## Completion criteria
-
-The first-agent walkthrough is complete when your own account can access the intended project, deployment succeeds, remote invocation returns the expected answer, and you can inspect the agent in Canvas or the CLI.
-
-Tools, evaluation, monitoring, and publishing are separate checks. Record any step you skipped or could not verify; do not report those features as complete based only on deployment.
+See [Publish to your organization](builder-guide.md#publish-to-your-organization) for CLI options and status codes.

@@ -62,19 +62,19 @@ Use this comparison when choosing access for an individual or group. It describe
 
 | Capability | Consumer | User | Manager | Owner |
 | --- | :---: | :---: | :---: | :---: |
-| Use allowed models | Yes | Yes | Yes | Yes |
-| Invoke deployed agents | Yes | Yes | Yes | Yes |
-| Build, deploy, evaluate, monitor, and publish agents | No | Yes | Yes | Yes |
-| Discover and reuse existing connections and Toolboxes for agent development | No | Yes | Yes | Yes |
-| Assign or remove User grants for individuals and groups | No | No | Yes | Yes |
-| Manage Consumer, Manager, and Owner grants | No | No | No | Yes |
-| Manage tenant-wide grants (Consumer or User only) | No | No | No | Yes |
-| Configure allowed models and tools | No | No | No | Yes |
-| Create, edit, or delete connections and Toolboxes | No | No | No | Yes |
-| Deploy models, or scale or delete allowed model deployments | No | Conditional | Conditional | Conditional |
-| Register or remove project access using the project role alone | No | No | No | No |
+| Use allowed models | ✓ | ✓ | ✓ | ✓ |
+| Invoke deployed agents | ✓ | ✓ | ✓ | ✓ |
+| Build, deploy, evaluate, monitor, and publish agents | ✗ | ✓ | ✓ | ✓ |
+| Discover and reuse existing connections and Toolboxes for agent development | ✗ | ✓ | ✓ | ✓ |
+| Assign or remove User grants for individuals and groups | ✗ | ✗ | ✓ | ✓ |
+| Manage Consumer, Manager, and Owner grants | ✗ | ✗ | ✗ | ✓ |
+| Manage tenant-wide grants (Consumer or User only) | ✗ | ✗ | ✗ | ✓ |
+| Configure allowed models and tools | ✗ | ✗ | ✗ | ✓ |
+| Create, edit, or delete connections and Toolboxes | ✗ | ✗ | ✗ | ✓ |
+| Deploy models, or scale or delete allowed model deployments | ✗ | Conditional | Conditional | Conditional |
+| Register or remove project access using the project role alone | ✗ | ✗ | ✗ | ✗ |
 
-- **Yes** remains subject to project resource policy and any required setup, consent, or approvals. **No** means the project role does not grant that capability.
+- **✓ Granted** remains subject to project resource policy and any required setup, consent, or approvals. **✗ Not granted** means the project role does not grant that capability.
 - **Manager** can manage User grants for individuals and groups only, not other project roles or tenant-wide grants.
 - Consumers can invoke permitted agents that use approved resources; lack of agent-development access does not prevent those agents from using connections or Toolboxes.
 - **Conditional model management:** a subscription manager must enable [project model management](#control-model-access-and-deployment) before Users, Managers, or Owners can deploy models, or scale or delete allowed deployments. It is disabled by default; Consumers cannot use it.

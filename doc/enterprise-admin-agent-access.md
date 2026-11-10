@@ -67,8 +67,6 @@ Subscription managers can administer permissions and models without project memb
 | Manage all project roles, including tenant-wide grants | ✗ | ✗ | ✗ | ✓ |
 | Manage resource policy, connections, and Toolboxes | ✗ | ✗ | ✗ | ✓ |
 
-**✓** Granted by the project role, subject to resource policy and required setup. **✗** Not granted by the project role.
-
 ### Know what project registration grants
 
 Saving a new permission is not a read-only operation. FoundryX uses the administrator's delegated Azure authority to provision access for the FoundryX API enterprise application in the customer tenant.

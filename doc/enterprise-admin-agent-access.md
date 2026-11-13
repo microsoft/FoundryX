@@ -59,6 +59,17 @@ FoundryX uses the highest role from all matching direct, group, and tenant grant
 
 Subscription managers can administer permissions and models without project membership. They still need a project role for agent work, and **Project Owner membership is required for every connection or Toolbox write**.
 
+#### Compare project role capabilities
+
+| Capability | Consumer | User | Manager | Owner |
+| --- | :---: | :---: | :---: | :---: |
+| Use allowed models and invoke deployed agents | ✓ | ✓ | ✓ | ✓ |
+| Build, deploy, evaluate, monitor, and publish agents | ✗ | ✓ | ✓ | ✓ |
+| Discover and reuse existing connections and Toolboxes for agent development | ✗ | ✓ | ✓ | ✓ |
+| Assign or remove User grants for individuals and groups | ✗ | ✗ | ✓ | ✓ |
+| Manage all project roles, including tenant-wide grants | ✗ | ✗ | ✗ | ✓ |
+| Manage resource policy, connections, and Toolboxes | ✗ | ✗ | ✗ | ✓ |
+
 ### Know what project registration grants
 
 Saving a new permission is not a read-only operation. FoundryX uses the administrator's delegated Azure authority to provision access for the FoundryX API enterprise application in the customer tenant.

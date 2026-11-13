@@ -55,7 +55,7 @@ shell wrappers aren't supported.
 The provider also accepts a delegated FoundryX API token through
 `FOUNDRYX_ACCESS_TOKEN`, but it doesn't refresh that token. Don't put tokens
 in Terraform configuration. Workload identity isn't supported. For details,
-see the [provider authentication reference](https://github.com/SmallBlackHole/terraform-provider-foundryx/blob/v0.0.5/docs/index.md).
+see the [provider configuration reference](terraform-provider-reference.md#provider-configuration).
 
 ## Register a project and grant access
 
@@ -197,11 +197,8 @@ Do not use a one-step destroy. Removing the registration removes **all**
 FoundryX access to that project, including grants managed outside Terraform.
 It leaves the native Azure project, deployments, and tools intact.
 
-## Provider references
+## References
 
-- [Provider configuration and authentication](https://github.com/SmallBlackHole/terraform-provider-foundryx/blob/v0.0.5/docs/index.md)
-- [Registration resource](https://github.com/SmallBlackHole/terraform-provider-foundryx/blob/v0.0.5/docs/resources/project_registration.md)
-- [Policy resource](https://github.com/SmallBlackHole/terraform-provider-foundryx/blob/v0.0.5/docs/resources/project_policy.md)
-- [Member resource](https://github.com/SmallBlackHole/terraform-provider-foundryx/blob/v0.0.5/docs/resources/project_member.md)
+- [Provider configuration and resource reference](terraform-provider-reference.md)
 - [Existing project access example](https://github.com/SmallBlackHole/terraform-provider-foundryx/tree/v0.0.5/examples/existing-project-access)
 - [Terraform Registry](https://registry.terraform.io/providers/SmallBlackHole/foundryx/latest)

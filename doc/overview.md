@@ -143,6 +143,7 @@ operate agents. For installation, see
 | [Administration concepts and reference](enterprise-admin-agent-access.md) | Administrators | Access boundaries, project roles, model and tool policies, membership, and troubleshooting. |
 | [Walkthrough: Grant project access](register-project-permissions.md) | Administrators | Register an existing Foundry project, select allowed resources, assign roles, and verify employee access. |
 | [Manage project access with Terraform](terraform.md) | Administrators | Register an existing project and manage policy and direct grants as code. |
+| [Terraform provider reference](terraform-provider-reference.md) | Administrators | Provider configuration and resource arguments, attributes, and lifecycle behavior. |
 | [Builder concepts and reference](builder-guide.md) | Builders | Plugin-first setup, upgrades, access, CLI and Canvas capabilities, tools, evaluation, monitoring, publishing, and optional manual CLI setup. |
 | [Walkthrough: Build and operate your first agent](build-first-agent.md) | Builders | Install the plugin, let Copilot guide setup and sign-in, then create, deploy, invoke, and inspect an agent. |
 

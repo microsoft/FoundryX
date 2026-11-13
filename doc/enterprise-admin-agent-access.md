@@ -7,6 +7,9 @@ Use FoundryX to give employees access to customer-owned Microsoft Foundry projec
 
 This page explains the access model, resource policies, and administration options in the FoundryX private preview. For the step-by-step portal task, follow [Walkthrough: Grant project access](register-project-permissions.md).
 
+To manage registration, policy, and direct grants as code, see
+[Manage project access with Terraform](terraform.md).
+
 For the permissions required on each portal page, including why subscription
 access is not sufficient to load Toolboxes, see
 [Admin Center permissions by page](admin-portal-permissions.md).

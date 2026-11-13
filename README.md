@@ -45,6 +45,8 @@ Follow the [tenant administrator walkthrough: Grant project access](doc/register
 to register an existing Foundry project, select allowed models and tools, and
 assign project access to users or groups.
 
+You can also [manage project access with Terraform](doc/terraform.md).
+
 [Admin Center permissions by page](doc/admin-portal-permissions.md) explains who
 can grant access, why model or tool lists may not load, and what Consumer, User,
 Manager, and Owner access grants let recipients do in a project.
@@ -124,6 +126,7 @@ Any use of third-party trademarks or logos are subject to those third-party's po
 - [Documentation contents](doc/overview.md#table-of-contents) and [architecture overview](doc/overview.md).
 - [Builder concepts and reference](doc/builder-guide.md).
 - [Administration concepts and reference](doc/enterprise-admin-agent-access.md).
+- [Manage project access with Terraform](doc/terraform.md).
 - [CLI releases and installation notes](https://github.com/microsoft/FoundryX/releases).
 - [Issues and feedback](https://github.com/microsoft/FoundryX/issues).
 

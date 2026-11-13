@@ -104,6 +104,9 @@ configure Azure resources. Follow the
 [project registration walkthrough](register-project-permissions.md) for the
 current Admin Center workflow.
 
+You can also use the [Terraform provider](terraform.md) to manage project
+registration, policy, and direct grants.
+
 ### Creators build and operate agents
 
 Creators use Copilot with the FoundryX skill to describe an outcome, discover
@@ -139,6 +142,7 @@ operate agents. For installation, see
 | [Admin Center permissions by page](admin-portal-permissions.md) | Administrators | Who can sign in and grant access, model/tool list requirements, and the project permissions users receive through FoundryX ACLs. |
 | [Administration concepts and reference](enterprise-admin-agent-access.md) | Administrators | Access boundaries, project roles, model and tool policies, membership, and troubleshooting. |
 | [Walkthrough: Grant project access](register-project-permissions.md) | Administrators | Register an existing Foundry project, select allowed resources, assign roles, and verify employee access. |
+| [Manage project access with Terraform](terraform.md) | Administrators | Register an existing project and manage policy and direct grants as code. |
 | [Builder concepts and reference](builder-guide.md) | Builders | Plugin-first setup, upgrades, access, CLI and Canvas capabilities, tools, evaluation, monitoring, publishing, and optional manual CLI setup. |
 | [Walkthrough: Build and operate your first agent](build-first-agent.md) | Builders | Install the plugin, let Copilot guide setup and sign-in, then create, deploy, invoke, and inspect an agent. |
 

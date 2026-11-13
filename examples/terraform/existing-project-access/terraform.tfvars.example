@@ -1,0 +1,5 @@
+tenant_id      = "<tenant-uuid>"
+project_arm_id = "<existing-foundry-project-arm-id>"
+allowed_models = ["<model-deployment-name>"]
+allowed_tools  = []
+user_object_id = "<user-object-uuid>"

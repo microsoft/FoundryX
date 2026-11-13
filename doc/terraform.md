@@ -63,6 +63,9 @@ This example registers an existing project, sets its policy, and grants one
 user the Consumer role. Use it for a new FoundryX registration. If any of
 these records already exist, [import them first](#manage-existing-access).
 
+You can also use the [complete Terraform examples in this repository](../examples/terraform/README.md),
+including an example with user, group, and tenant-wide grants.
+
 Save the following as `main.tf`:
 
 ```hcl
@@ -200,5 +203,5 @@ It leaves the native Azure project, deployments, and tools intact.
 ## References
 
 - [Provider configuration and resource reference](terraform-provider-reference.md)
-- [Existing project access example](https://github.com/SmallBlackHole/terraform-provider-foundryx/tree/v0.0.5/examples/existing-project-access)
+- [Complete Terraform examples](../examples/terraform/README.md)
 - [Terraform Registry](https://registry.terraform.io/providers/SmallBlackHole/foundryx/latest)

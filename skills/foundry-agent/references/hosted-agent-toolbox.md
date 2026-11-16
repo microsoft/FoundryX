@@ -4,6 +4,7 @@ Wire a Python Hosted Agent (`--sample toolbox`) to a Foundry Toolbox via Microso
 
 - **Runtime contract**: Hosted deployments inject `FOUNDRY_PROJECT_ENDPOINT` and `AZURE_AI_MODEL_DEPLOYMENT_NAME`. The `toolbox` sample defines a non-secret `TOOLBOX_ENDPOINT` constant in `main.py` and copies it into `os.environ` at startup; `FoundryToolbox` shares `DefaultAzureCredential` with `FoundryChatClient`.
 - **Schema boundary**: Hosted `foundryx.yaml` supports `kind`, `name`, `description`, `model`, `tool_resources`, `source`, `runtime`, `resources`, `local`, and `deployment` (`agent.tools` is for Prompt Agents; custom env var fields are not supported). Keep `toolbox.yaml` and credentials out of the deployed package.
+- **Native skills**: The sample retains ordinary tools and adds the SDK's Toolbox skills provider. It discovers skills as MCP resources and loads their bodies on demand. Read-only skill loading does not require an approval round-trip; this does not disable actual tool approvals or grant tool/data permissions. Use the sample's compatible SDK versions. No direct `agent.skills` field or local skill download is needed.
 
 ## Step 1: Discover an existing Toolbox
 

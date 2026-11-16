@@ -22,6 +22,14 @@ No plans, dry-run or definitions/credentials persisted by FoundryX are involved.
 
 Write a complete snapshot to a YAML or JSON file (`description`, optional `metadata`, `tools`, optional `policies`). Foundry validates tool schemas; assign explicit `name` fields when combining multiple tools:
 
+Optional `skills` contains same-project native skill references (`name`, optional
+`version`). A pinned version is immutable; omitting it follows the skill default.
+Skills-only Toolboxes use `tools: []`. See [Native skills](native-skills.md) for
+Owner-only skill administration. If any retained Toolbox version contains skills,
+including staged versions or history after rollback, explicitly
+include its complete `skills` list or `skills: []` to remove attachments; omission
+is rejected rather than silently erasing them.
+
 Native OpenAPI `spec` and tool `parameters` schemas are passed through as schema
 data, not interpreted as credentials or connection references. Keep actual
 authentication material in project connections.

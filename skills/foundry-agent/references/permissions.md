@@ -20,6 +20,12 @@ Use the project UUID for `--project`; native resource IDs are used only for disc
 An array in `allowed_models` or `allowed_tools` allows only the listed resources.
 Empty, null, missing, or malformed lists allow none. Model entries are deployment names;
 tool keys are `builtin:<type>`, `connection:<name>` or `toolbox:<name>`.
+On a `microsoft_copilot_preview` Prompt Agent, omitting `microsoft_copilot_toolset_preview`
+still requires `builtin:microsoft_copilot_toolset_preview` because Foundry enables the 5
+harness tools (`filesystem_read`, `filesystem_write`, `shell`, `web`, `subagents`) by default;
+keep `microsoft_copilot_toolset_preview` with all 5 harness tools resolved to `enabled: false`
+after overrides (for example, `default_config.enabled: false` with no `configs` entry set to `enabled: true`)
+when `builtin:microsoft_copilot_toolset_preview` is not allowed.
 Allowing a Toolbox permits its configured tools and connections through that Toolbox,
 including owner-published default changes. Connection grants control direct use;
 removing one does not block the connection inside an allowed Toolbox.
@@ -54,7 +60,6 @@ The effective project role is the highest matching user, group or tenant grant.
 | CLI operation | Required authority |
 |---|---|
 | `access show`, `project policy show/resources`, `member group users` | Any project member for their own project; subscription administrators can inspect managed projects |
-| `project options/models/create` | FoundryX project creation permission package at subscription scope; includes Access management and Azure resource provisioning permissions |
 | First `project import`, `project delete` | Subscription administrator; use delegated management access |
 | `project policy set` | Project Owner or subscription administrator |
 | `project enable/disable`, `project model-management enable/disable`, monitoring show/setup | Subscription administrator |
@@ -81,7 +86,6 @@ accepts registered imported Agents as well as new Agents.
 Discover native projects and resource choices using the signed-in administrator:
 
 ```text
-foundryx access project options
 foundryx access project discover --subscription <subscription-id>
 foundryx access project resources <native-project-resource-id>
 ```

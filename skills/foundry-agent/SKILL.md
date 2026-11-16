@@ -1,17 +1,22 @@
 ---
 name: foundry-agent
-description: Use the FoundryX CLI to manage Microsoft Foundry access, projects, models, Toolboxes, agents, agent publishing, conversations, agent evaluation, operational metrics, and Hosted Agent diagnostics. When you are manually invoked by "/foundry-agent", never use your "microsoft-foundry" skill or "microsoft-foundry" canvas plugin.
+description: Use the FoundryX CLI to manage Microsoft Foundry access, projects, models, Toolboxes, agents, agent publishing, conversations, agent evaluation, operational metrics, and Hosted Agent diagnostics; author FoundryX Terraform access configurations using the provider schema. When you are manually invoked by "/foundry-agent", never use your "microsoft-foundry" skill or "microsoft-foundry" canvas plugin.
 metadata:
-  version: "0.7.5"
+  version: "0.7.7"
 ---
 
 IMPORTANT: When manually invoked by `/foundry-agent`, use the installed `foundryx` CLI. Do not run the requested operation through `az`, `azd`, the `microsoft-foundry` skill, or the `microsoft-foundry` canvas plugin.
 
 # FoundryX
 
-After a customer tenant is onboarded to FoundryX via Entra admin consent, users in that tenant use the `foundryx` CLI to create Foundry projects, manage project access, and build, deploy, and operate Agents. Parse structured CLI stdout directly, pass optional formatting flags only when supported by a command's `--help`, and do not bypass the CLI with direct HTTP scripts or Azure/toolkit commands.
+After a customer tenant is onboarded to FoundryX via Entra admin consent, users in that tenant use the `foundryx` CLI to manage project access, and build, deploy, and operate Agents. Parse structured CLI stdout directly, pass optional formatting flags only when supported by a command's `--help`, and do not bypass the CLI with direct HTTP scripts or Azure/toolkit commands.
 
-**CLI prerequisite**: Require FoundryX CLI 0.7.5 (-dev, -staging are allowed) or later. Check `foundryx --version` before using the skill or canvas. Install the CLI if missing and upgrade older versions before continuing.
+**Terraform authoring**: For FoundryX `.tf` configuration requests, read
+[Terraform authoring](references/terraform.md) first. Authoring from an installed
+provider's schema does not require CLI installation or sign-in. Do not run project
+or Agent commands, install the CLI, or initiate login just to write HCL.
+
+**CLI prerequisite**: Require FoundryX CLI 0.7.6 (-dev, -staging are allowed) or later. Check `foundryx --version` before executing CLI workflows or using the canvas. Install the CLI if missing and upgrade older versions before continuing.
 
 When installation or a version-related update is needed, use [FoundryX GitHub releases](https://github.com/microsoft/FoundryX/releases?q=FoundryX&expanded=true):
 
@@ -26,53 +31,14 @@ Match the user's request against **Capability** and **When to use** in the routi
 
 | Capability | When to use | CLI Commands | Guide / Reference |
 |---|---|---|---|
-| Create a Foundry project | Checking permission to create a Foundry project, selecting a subscription/region, inspecting initial deployable models/quota, or creating a Foundry project | `foundryx access project *` | [Create a Foundry project](#create-a-foundry-project) |
+| Author FoundryX Terraform | Writing or reviewing `.tf` configurations for FoundryX project registration, policy allowlists, or direct membership grants | `terraform providers schema -json`, `terraform fmt`, `terraform validate` | [Terraform authoring](references/terraform.md) |
 | Manage permissions & access | Inspecting personal access, managing project Permissions, model/tool policies or members, or diagnosing authorization failures | `foundryx access show\|check`, `foundryx access project *`, `foundryx access member *` | [Permissions & access](references/permissions.md) |
 | Manage Foundry models | Listing, viewing, or calling project models, inspecting model catalog/quota, or deploying, scaling, and deleting project model deployments | `foundryx model *` | [Foundry models](#foundry-models) |
 | Build, deploy & operate Agents | Discovering and reusing existing project tools/Toolboxes, scaffolding, locally testing, deploying, invoking, or debugging Prompt and Hosted Agents | `foundryx access project list`, `foundryx connection list\|show`, `foundryx toolbox list\|show`, `foundryx agent *` | [Foundry Agents](#foundry-agents)<br>[Discover and reuse tools](references/tool-discovery.md)<br>[Prompt Agent tools](references/prompt-agent-tools.md)<br>[Hosted Agent Toolbox](references/hosted-agent-toolbox.md) |
-| Administer tool resources | Explicitly requested connection configuration/credential lifecycle or Toolbox version/default/deletion administration; never an automatic builder fallback | `foundryx connection create\|update\|credentials set\|delete`, `foundryx toolbox create\|version create\|publish\|delete\|version delete` | [RemoteTool MCP connections](references/connection-create.md)<br>[Toolboxes & versions](references/toolbox.md) |
+| Administer tool resources | Explicitly requested connection, Toolbox, or native skill administration; never an automatic builder fallback | `foundryx connection create\|update\|credentials set\|delete`, `foundryx toolbox create\|version create\|publish\|delete\|version delete`, `foundryx skill *` | [RemoteTool MCP connections](references/connection-create.md)<br>[Toolboxes & versions](references/toolbox.md)<br>[Native skills](references/native-skills.md) |
 | Trace and diagnose Agents | Searching conversations, reconstructing traces, diagnosing failures or latency, or correlating response-level evaluation events | `foundryx agent trace query` | [Agent tracing](references/tracing.md) |
 | Evaluate, monitor & publish Agents | Running Agent evaluations (`eval.yaml`), querying Application Insights operational metrics, or publishing a deployed Agent to M365/Teams | `foundryx agent eval *`, `foundryx agent metrics`, `foundryx auth publish *`, `foundryx agent publish\|publish-status` | [Inspect, diagnose, evaluate, monitor & publish](#step-6-inspect-diagnose-evaluate-monitor-and-publish)<br>[Agent evaluation](references/evaluation.md)<br>[Operational metrics](references/metrics.md)<br>[M365 / Teams publishing](references/publishing.md) |
 | Open FoundryX canvas | User explicitly asks to list or view deployed Agents | `foundryx-canvas` canvas | [FoundryX Canvas](references/canvas.md) |
-
----
-
-## Create a Foundry project
-
-### Step 1: Check project creation permission & select subscription/region (`foundryx access project options`)
-
-Run `foundryx access project options` first to check whether the signed-in user has permission to create a Foundry project and list eligible subscriptions and regions:
-
-```text
-foundryx access project options
-```
-
-- If `project options` fails (for example, `subscription_not_accessible`), stop and report the CLI permission error and hint directly.
-- If multiple subscriptions are returned, ask the user to select a `--subscription <subscription-id>` and a `--region <region>` from that subscription's supported `regions`.
-
-### Step 2: Inspect initial deployable models & quota (`foundryx access project models`)
-
-When creating a Foundry project with an initial model deployment, list token-rate language models that have remaining regional quota in the selected subscription and region:
-
-```text
-foundryx access project models --subscription <subscription-id> --region <region>
-```
-
-Pick `--model-name`, `--model-version`, `--model-format`, and `--sku` from `project models`, with integer `--capacity` (thousands of TPM) `<= max_deployable_capacity`. If assigning an initial project Owner (`--owner <object-id>`), resolve a registered tenant user first via `foundryx access user list` or `foundryx access user find <name-or-upn>`.
-
-### Step 3: Create the Foundry project (`foundryx access project create`)
-
-- **Create a Foundry project**:
-  ```text
-  foundryx access project create <project-name> --subscription <subscription-id> --region <region> [--display-name <name>] [--description <text>] [--owner <object-id>] [--model-name <model> --model-version <version> --model-format <format> --sku <sku> --capacity <capacity> [--deployment-name <deployment>]]
-  ```
-  When including an initial model, pass all five model flags (`--model-name`, `--model-version`, `--model-format`, `--sku`, `--capacity`). Surface `model_error` (Foundry project created, initial model deployment failed) or `monitoring_error` (Foundry project created, Application Insights setup failed; recover with `observability setup`) if returned.
-- **Enable/disable a Foundry project or recover Application Insights observability**:
-  ```text
-  foundryx access project list --manageable
-  foundryx access project enable|disable <project-id>
-  foundryx access project observability show|setup --project <project-id>
-  ```
 
 ---
 
@@ -136,16 +102,17 @@ authorization check fails, follow [Permissions & access](references/permissions.
 
 Run `foundryx access project list` to resolve `<project-id>` (pass the UUID via `--project <project-id>`, or omit it when `foundryx.yaml` sets top-level `project`; if `project list` is empty, inspect `foundryx access show` and follow [Permissions & access](references/permissions.md); ask the user to choose when multiple valid targets remain).
 
-Choose the simplest path that satisfies the request: for generic requests ("create a sample agent"), build a tool-free Prompt Agent or `basic` Hosted Agent and ask only for Agent kind (`Prompt` vs `Hosted`) when unclear. Do not suggest or mention tools, MCP servers, connections, Toolboxes, or Azure AI Search unless the user asks for tools, external data, or a named resource.
+Choose the simplest path that satisfies the request: by default (including general or domain agent requests such as "create a sample agent" or "build a Foundry agent for..." and Prompt Agent requests), initialize a Microsoft Copilot harness Prompt Agent with `foundryx agent init` (`harness-agent` sample); use a plain Prompt Agent without `harness` only when explicitly requested or when the project region does not support the Microsoft Copilot harness, and use a Hosted Agent (`--sample basic|tools|toolbox`) only when the user requests a Hosted Agent, custom Python runtime code, local tool functions, or a Toolbox. Do not suggest or mention extra tools, MCP servers, connections, Toolboxes, or Azure AI Search unless the user asks for tools, external data, or a named resource.
 
 ```text
 foundryx access project list
+foundryx access show --project <project-id>
 foundryx agent list --project <project-id>
 foundryx model list --project <project-id>
 ```
 
 1. **Exact name check**: Pipe full project-wide `agent list` JSON stdout (without `--owned-only`) into a local parser in the same shell command and return only `items` whose `name` exactly matches the candidate name (a truncated raw-list preview is not a completed name check). Pick a name unique across Prompt and Hosted Agents in `<project-id>`; reuse an existing name only when the user intends to update that Agent.
-2. **Model check**: Set `agent.model` to an item's `name` (deployment name) with ready status and `allowed: true` from `model list`, never its underlying `model_name`. Check `agent.deploy` with that model and the intended tool keys before deployment.
+2. **Model and harness toolset check**: Set `agent.model` to an item's `name` (deployment name) with ready status and `allowed: true` from `model list`, never its underlying `model_name`. Inspect `allowed_tools` from `foundryx access show --project <project-id>` for `builtin:microsoft_copilot_toolset_preview` so a `harness-agent` Prompt Agent enables its built-in harness tools (`default_config.enabled: true`) when allowed and keeps them disabled (`default_config.enabled: false`) otherwise. Check `agent.deploy` with that model and any enabled tool keys before deployment (include `--tool builtin:microsoft_copilot_toolset_preview` only when at least one harness tool remains enabled after `default_config.enabled` and `configs` overrides; omit it when all 5 harness tools resolve to `enabled: false`).
 
 ### Step 2: Discover and reuse existing tools (only when tools are requested)
 
@@ -176,16 +143,19 @@ permissions.
 
 ### Step 3: Initialize and configure `foundryx.yaml` and source
 
-Never infer, request, print, or store credentials, headers, tokens, virtualenvs, or caches in `foundryx.yaml` or packaged source (`.agentignore` controls Hosted ZIP packaging; the service deploys it with the customer-tenant FoundryX service principal).
+Never infer, request, print, or store credentials, headers, tokens, virtualenvs, or caches in `foundryx.yaml` or packaged source (`.agentignore` controls Hosted ZIP packaging; the service deploys it with the customer-tenant FoundryX service principal). When the current working directory is empty, initialize into `.` instead of creating a subdirectory; choose a new `<directory>` only when the current directory already has content (`agent init` requires an empty destination).
 
-- **Prompt Agent (`kind: prompt`)**: Write `foundryx.yaml` with `version: 1`, `project: <project-id>`, and `agent` (`kind: prompt`, `name: <agent-name>`, `model: <deployment-name>`, `instructions`).
-  - **Prompt Agent tools**: For `web_search`, `code_interpreter`, `azure_ai_search`, or direct public `mcp` under `agent.tools`, read [Prompt Agent tools](references/prompt-agent-tools.md).
-- **Hosted Agent (`kind: hosted`)**: Pick the sample matching the tool boundary (`foundryx agent sample list`):
+- **Prompt Agent (`kind: prompt`)**: Initialize with the default `harness-agent` sample (`foundryx agent init` defaults to `--sample harness-agent` and writes `foundryx.yaml` with `harness.type: microsoft_copilot_preview` and `microsoft_copilot_toolset_preview` set to `default_config.enabled: false`):
+  ```text
+  foundryx agent init .|<directory>
+  ```
+  Set `project: <project-id>`, `agent.name: <agent-name>`, `agent.model: <deployment-name>`, and `agent.instructions` in `foundryx.yaml`. When `builtin:microsoft_copilot_toolset_preview` is in `allowed_tools` from `foundryx access show --project <project-id>`, change `default_config.enabled` to `true`; otherwise keep `default_config.enabled: false` (do not remove `microsoft_copilot_toolset_preview`, because omitting it on a `microsoft_copilot_preview` Agent causes Foundry to enable the 5 built-in harness tools by default and requires `builtin:microsoft_copilot_toolset_preview`). Use a plain Prompt Agent without `harness` (omitting `harness` and `microsoft_copilot_toolset_preview`) only when explicitly requested or when the project region does not support the Microsoft Copilot harness. Existing Agents cannot switch `harness` across versions (`409 agent_harness_immutable`); create a new Agent with a new name instead.
+  - **Prompt Agent tools**: For `microsoft_copilot_toolset_preview`, `web_search`, `code_interpreter`, `azure_ai_search`, or direct public `mcp` under `agent.tools`, read [Prompt Agent tools](references/prompt-agent-tools.md).
+- **Hosted Agent (`kind: hosted`)**: Pass `--sample basic|tools|toolbox` explicitly matching the tool boundary (`foundryx agent sample list`):
   - `basic`: no tools.
   - `tools`: in-process local Python functions only.
   - `toolbox`: an existing project Toolbox; use its inspected `endpoint` as `TOOLBOX_ENDPOINT` in `main.py` per [Hosted Agent Toolbox](references/hosted-agent-toolbox.md). Do not ask for an endpoint already returned by discovery, set `TOOLBOX_NAME`, or add custom env/tool fields to Hosted `foundryx.yaml`. Unknown native tool types remain runtime-dependent; do not claim universal compatibility.
 
-  When the current working directory is empty, initialize into `.` instead of creating a subdirectory; choose a new `<directory>` only when the current directory already has content (`agent init` requires an empty destination):
   ```text
   foundryx agent init .|<directory> --sample basic|tools|toolbox
   ```
@@ -269,6 +239,12 @@ Always include the observed `--project` and `--agent-id` so the CLI command work
 - **M365 / Teams publishing (`foundryx agent publish`, `foundryx auth publish`)**: Never publish automatically after an ordinary deployment. Publish an existing ready Agent without rebuilding/redeploying it (or continue after deploy+invoke when both were requested), reusing known metadata and bundled icons/URL defaults. Read [M365 / Teams publishing](references/publishing.md).
 
 ## Administer tool resources
+
+Native Foundry skills are a separate project resource, not this coding-agent skill.
+All `foundryx skill` commands, including list/show/download, require Project Owner.
+Only for explicit administration requests, read [Native skills](references/native-skills.md).
+Normal Agent developers inspect attached skill references through an allowed
+`toolbox show`; do not attempt standalone skill discovery or download for them.
 
 This is separate from the normal developer workflow. Only for an explicit resource
 administration request, follow [RemoteTool MCP connections](references/connection-create.md)

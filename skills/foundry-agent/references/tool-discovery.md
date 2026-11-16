@@ -44,6 +44,12 @@ their direct-use grants are absent; inspect them through `toolbox show`, not a
 separate `connection show` that requires direct access.
 Unknown native types or auth modes must remain explicit, not silently converted.
 
+`toolbox show` also summarizes attached native skills by name and optional pinned
+version. An omitted version follows the skill default. These are configuration
+references, not skill content or proof of loading. Standalone `skill` list/show/
+download is Owner-only; ordinary developers must not use it to inspect a project's
+skill library. Toolbox lists intentionally omit attached skill details.
+
 ## 2. Configure the appropriate Agent path
 
 | Resource | Agent path |

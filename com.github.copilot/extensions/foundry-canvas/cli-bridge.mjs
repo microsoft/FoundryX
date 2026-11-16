@@ -36,8 +36,8 @@ export function requireCliVersion(version) {
     const match = typeof version === "string" && /^(\d+)\.(\d+)\.(\d+)(?:[-+][0-9A-Za-z.+-]+)?$/.exec(version.trim());
     const parts = match ? match.slice(1, 4).map(Number) : [];
     if (parts.length !== 3 || !parts.every(Number.isSafeInteger)
-        || !(parts[0] > 0 || parts[1] > 7 || (parts[1] === 7 && parts[2] >= 5))) {
-        throw new Error("The canvas requires FoundryX CLI 0.7.5 or later on PATH. Upgrade the CLI and reopen the canvas.");
+        || !(parts[0] > 0 || parts[1] > 7 || (parts[1] === 7 && parts[2] >= 6))) {
+        throw new Error("The canvas requires FoundryX CLI 0.7.6 or later on PATH. Upgrade the CLI and reopen the canvas.");
     }
 }
 
@@ -60,7 +60,7 @@ export async function startCliBridge() {
             : await execute("foundryx", ["auth", "canvas", "--entrypoint"], { timeout: 15_000 });
         metadata = JSON.parse(stdout);
     } catch {
-        throw new Error("The canvas requires FoundryX CLI 0.7.5 or later on PATH. Finish installing the matching release and reopen the canvas.");
+        throw new Error("The canvas requires FoundryX CLI 0.7.6 or later on PATH. Finish installing the matching release and reopen the canvas.");
     }
     if (metadata.protocol !== 1 || typeof metadata.entrypoint !== "string" || !isAbsolute(metadata.entrypoint)
         || typeof metadata.node !== "string" || !isAbsolute(metadata.node)) {
@@ -73,17 +73,19 @@ export async function startCliBridge() {
     const pending = new Map();
     let nextId = 0;
     let failure;
-    let stderr = "";
     const fail = (error) => {
         failure = error;
         for (const request of pending.values()) request.reject(error);
         pending.clear();
     };
-    child.stderr.on("data", (chunk) => { stderr = (stderr + chunk.toString()).slice(-4096); });
+    child.stderr.on("data", (chunk) => {
+        const text = chunk.toString();
+        console.error(text.trimEnd());
+    });
     child.on("error", () => fail(new Error("Could not start the FoundryX CLI authentication bridge.")));
     child.stdin.on("error", () => fail(new Error("The FoundryX CLI bridge input was closed.")));
     child.on("exit", (code) => fail(new Error(
-        `The FoundryX CLI bridge stopped (${code}). Reload the canvas. ${stderr.trim()}`,
+        `The FoundryX CLI bridge stopped (${code}). Reload the canvas.`,
     )));
     lines.on("line", (line) => {
         let message;

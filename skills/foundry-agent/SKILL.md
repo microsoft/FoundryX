@@ -2,7 +2,7 @@
 name: foundry-agent
 description: Use the FoundryX CLI to manage Microsoft Foundry access, projects, models, Toolboxes, agents, agent publishing, conversations, agent evaluation, operational metrics, and Hosted Agent diagnostics; author FoundryX Terraform access configurations using the provider schema. When you are manually invoked by "/foundry-agent", never use your "microsoft-foundry" skill or "microsoft-foundry" canvas plugin.
 metadata:
-  version: "0.7.7"
+  version: "0.7.8"
 ---
 
 IMPORTANT: When manually invoked by `/foundry-agent`, use the installed `foundryx` CLI. Do not run the requested operation through `az`, `azd`, the `microsoft-foundry` skill, or the `microsoft-foundry` canvas plugin.
@@ -150,7 +150,7 @@ Never infer, request, print, or store credentials, headers, tokens, virtualenvs,
   foundryx agent init .|<directory>
   ```
   Set `project: <project-id>`, `agent.name: <agent-name>`, `agent.model: <deployment-name>`, and `agent.instructions` in `foundryx.yaml`. When `builtin:microsoft_copilot_toolset_preview` is in `allowed_tools` from `foundryx access show --project <project-id>`, change `default_config.enabled` to `true`; otherwise keep `default_config.enabled: false` (do not remove `microsoft_copilot_toolset_preview`, because omitting it on a `microsoft_copilot_preview` Agent causes Foundry to enable the 5 built-in harness tools by default and requires `builtin:microsoft_copilot_toolset_preview`). Use a plain Prompt Agent without `harness` (omitting `harness` and `microsoft_copilot_toolset_preview`) only when explicitly requested or when the project region does not support the Microsoft Copilot harness. Existing Agents cannot switch `harness` across versions (`409 agent_harness_immutable`); create a new Agent with a new name instead.
-  - **Prompt Agent tools**: For `microsoft_copilot_toolset_preview`, `web_search`, `code_interpreter`, `azure_ai_search`, or direct public `mcp` under `agent.tools`, read [Prompt Agent tools](references/prompt-agent-tools.md).
+  - **Prompt Agent tools**: For `microsoft_copilot_toolset_preview`, `web_search`, `code_interpreter`, `azure_ai_search`, direct public `mcp`, or `function` tools under `agent.tools`, read [Prompt Agent tools](references/prompt-agent-tools.md).
 - **Hosted Agent (`kind: hosted`)**: Pass `--sample basic|tools|toolbox` explicitly matching the tool boundary (`foundryx agent sample list`):
   - `basic`: no tools.
   - `tools`: in-process local Python functions only.

@@ -87,3 +87,43 @@ tools:
 - **Approval & least privilege**: Require distinct `server_label` values (`^[A-Za-z0-9_-]{1,64}$`) and explicit `require_approval: never` (approval/resume is unsupported; an unexpected approval is an error, not permission to approve). Because all consumers share the connection's key without per-call confirmation, prefer read-only keys and a narrow `allowed_tools` list (omitting it exposes all tools).
 - **Hosted-only MCP cases**: Do not add OAuth/OBO, Entra identity connections (`project-managed-identity`, `agentic-identity`), private MCP endpoints, or Toolboxes through Prompt `agent.tools`; use a Hosted Agent ([Hosted Agent Toolbox](hosted-agent-toolbox.md)).
 - **Verification**: Inspect `MCP calls:` (`<server_label>/<tool>: completed|failed`) in output or `tool_calls` in `--json`, not just tool discovery or answer prose. Key rotation is live; changed target URLs require reviewed redeployment. Do not retry ambiguous execution automatically.
+
+## 5. Function tools (`type: function`)
+
+```yaml
+tools:
+  - type: function
+    name: get_weather
+    description: Get weather for a city.
+    parameters:
+      type: object
+      properties:
+        city:
+          type: string
+      required: [city]
+      additionalProperties: false
+    strict: false
+```
+
+- **Schema & policy**: Each function requires a unique `name` and an object-root JSON Schema in `parameters` (local `$ref` only). Omit `strict` or set `strict: false` on `microsoft_copilot_preview` harness Agents (`strict: true` is rejected). Function tools bypass project `allowed_tools` because the caller executes them; model and other enabled tool policies still apply.
+- **Execution loop**: FoundryX registers definitions and returns tool calls; the caller executes handlers and submits results.
+  1. Invoke with `--json`:
+     ```text
+     foundryx agent invoke "<prompt>" --project <project-id> --agent-id <agent-id> --json
+     ```
+  2. When `function_calls` is present, execute each requested function (`call_id`, `name`, `arguments`) using registered handlers and collect outputs for all pending calls:
+     ```json
+     [
+       {
+         "type": "function_call_output",
+         "call_id": "<call-id>",
+         "output": "{\"temperature\":20,\"unit\":\"c\"}"
+       }
+     ]
+     ```
+  3. Submit the full batch in the same conversation (`--tool-outputs <file|->` requires `--conversation-id` and cannot be combined with positional input or `--local`):
+     ```text
+     foundryx agent invoke --tool-outputs <file|-> --conversation-id <conversation-id> --project <project-id> --agent-id <agent-id> --json
+     ```
+  4. Repeat until `function_calls` is absent, then read `output_text`.
+- **Inspection**: Use `agent response show` to inspect `function_calls` on a specific turn and `agent conversation show` to inspect `function_items` across the conversation.
